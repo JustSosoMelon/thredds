@@ -40,6 +40,8 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.charset.Charset;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.http.*;
 import org.apache.http.auth.AuthScope;
@@ -800,4 +802,8 @@ public class HTTPMethod
         return this.response;
     }
 
+<<<<<<< HEAD:httpclient/src/main/java/ucar/httpclient/HTTPMethod.java
 }
+=======
+}
+>>>>>>> Refactor to move:httpclient/src/main/java/ucar/httpclient/HTTPMethod.java
