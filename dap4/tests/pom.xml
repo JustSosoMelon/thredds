@@ -3,6 +3,7 @@
 <modelVersion>4.0.0</modelVersion>
 
 <parent>
+<<<<<<< HEAD
   <groupId>edu.ucar</groupId>
   <artifactId>dap4</artifactId>
   <version>4.5.0-SNAPSHOT</version>
@@ -11,6 +12,14 @@
 <artifactId>tests</artifactId>
 <version>4.5.0-SNAPSHOT</version>
 
+=======
+  <groupId>edu.ucar.dap4</groupId>
+  <artifactId>dap4</artifactId>
+  <version>1.0-SNAPSHOT</version>
+</parent>
+
+<artifactId>tests</artifactId>
+>>>>>>> add dap4
 <packaging>jar</packaging>
 
 <dependencies>
@@ -45,6 +54,7 @@
       <groupId>edu.ucar</groupId>
       <artifactId>netcdf4</artifactId>
   </dependency>
+<<<<<<< HEAD
   <dependency>
       <groupId>edu.ucar</groupId>
       <artifactId>tds</artifactId>
@@ -52,12 +62,17 @@
 
   <!-- testing dependencies -->
 <!--
+=======
+
+  <!-- testing dependencies -->
+>>>>>>> add dap4
   <dependency>
     <groupId>junit</groupId>
     <artifactId>junit</artifactId>
     <version>4.8.1</version>
     <scope>test</scope>
   </dependency>
+<<<<<<< HEAD
 -->
 
   <dependency>
@@ -69,6 +84,8 @@
       <artifactId>spring-test</artifactId>
       <scope>test</scope>
   </dependency>
+=======
+>>>>>>> add dap4
 
   <!-- library dependencies -->
   <dependency>
@@ -88,12 +105,18 @@
     <groupId>org.apache.httpcomponents</groupId>
     <artifactId>httpmime</artifactId>
   </dependency>
+<<<<<<< HEAD
 <!--
+=======
+>>>>>>> add dap4
   <dependency>
     <groupId>net.jcip</groupId>
     <artifactId>jcip-annotations</artifactId>
   </dependency>
+<<<<<<< HEAD
 -->
+=======
+>>>>>>> add dap4
   <dependency>
     <groupId>org.apache.logging.log4j</groupId>
     <artifactId>log4j-api</artifactId>
@@ -124,6 +147,45 @@
 
 </dependencies>
 
+<<<<<<< HEAD
+=======
+<build>
+  <plugins>
+
+    <plugin>
+      <groupId>org.apache.maven.plugins</groupId>
+      <artifactId>maven-surefire-plugin</artifactId>
+      <version>2.16</version>
+       <configuration>
+         <argLine>-Dfile.encoding=UTF-8</argLine>
+	 <encoding>UTF-8</encoding>                    
+         <skip>${skipTests}</skip>
+         <testFailureIgnore>true</testFailureIgnore>
+         <includes>
+	    <include>**/TestAll.java</include>
+         </includes>
+       </configuration>
+       <executions>
+         <execution>
+           <id>unit-test</id>
+           <phase>test</phase>
+           <goals>
+             <goal>test</goal>
+           </goals>
+           <configuration>
+             <skip>false</skip>
+             <includes>
+	       <include>**/TestAll.java</include>
+             </includes>   
+           </configuration>
+         </execution>
+       </executions>
+    </plugin>
+
+  </plugins>
+
+</build>
+>>>>>>> add dap4
 
 </project>
 
