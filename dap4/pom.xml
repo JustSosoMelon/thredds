@@ -5,8 +5,6 @@
 
 <!-- prerequisites> <maven>2.0.9</maven> </prerequisites -->
 
-<!-- Propagate version changes to propery dap4.version -->
-
 <parent>
   <groupId>edu.ucar</groupId>
   <artifactId>thredds-parent</artifactId>
@@ -171,13 +169,6 @@ http://repo1.maven.org/maven2/
       <artifactId>ehcache-core</artifactId>
       <version>${net.sf.ehcache.version}</version>
     </dependency>
-<!--
-    <dependency>
-      <groupId>net.jcip</groupId>
-      <artifactId>jcip-annotations</artifactId>
-      <version>${net.jcip.version}</version>
-    </dependency>
--->
     <dependency>
       <groupId>com.sun.jna</groupId>
       <artifactId>jna</artifactId>
@@ -216,6 +207,7 @@ http://repo1.maven.org/maven2/
      2. a need to construct a number of products,for which maven
      requires a module for each product
 -->
+
 <modules>
   <module>core</module>
   <module>dap4shared</module>
@@ -224,6 +216,7 @@ http://repo1.maven.org/maven2/
   <module>cdmclient</module>
   <module>servlet</module>
   <module>dap4servlet</module>
+
   <module>d4ts</module>
   <module>tests</module>
   <module>d4tswar</module> 
@@ -247,6 +240,7 @@ http://repo1.maven.org/maven2/
   <build.timestamp>${maven.build.timestamp}</build.timestamp>
   
   <!-- Dependency versions -->
+  <thredds.version>4.4.3-SNAPSHOT</thredds.version>
   <httpcomponents.httpcore.version>4.2.5</httpcomponents.httpcore.version>
   <httpcomponents.httpclient.version>4.2.6</httpcomponents.httpclient.version>
   <httpcomponents.httpmime.version>4.2.6</httpcomponents.httpmime.version>
@@ -277,6 +271,7 @@ http://repo1.maven.org/maven2/
   
 </properties>
   
+
 <build>
   <plugins>
       <plugin>
@@ -329,9 +324,6 @@ http://repo1.maven.org/maven2/
   </plugins>
 
 </build>
-
-
-
 
 </project>
   

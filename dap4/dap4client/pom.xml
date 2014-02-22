@@ -93,12 +93,8 @@ Dependencies: Mandatory dependencies are listed first. Then
               <goal>shade</goal>
             </goals>
             <configuration>
-<finalName>dap4-${dap4.version}</finalName>
               <artifactSet>
                 <excludes>
-                  <exclude>org.apache.httpclient:httpcore</exclude>
-                  <exclude>org.apache.httpclient:httpclient</exclude>
-                  <exclude>org.apache.httpclient:httpmime</exclude>
                   <exclude>classworlds:classworlds</exclude>
                   <exclude>junit:junit</exclude>
                   <exclude>jmock:*</exclude>

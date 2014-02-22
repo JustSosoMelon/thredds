@@ -32,26 +32,41 @@ Dependencies: Mandatory dependencies are listed first. Then
   <dependency>
     <groupId>edu.ucar</groupId>
     <artifactId>httpclient</artifactId>
+<<<<<<< HEAD
     <scope>provided</scope>
   </dependency>
 
+=======
+  </dependency>
+
+
+>>>>>>> add dap4
     <dependency>
       <groupId>org.apache.httpcomponents</groupId>
       <artifactId>httpclient</artifactId>
       <version>${httpcomponents.httpclient.version}</version>
+<<<<<<< HEAD
     <scope>provided</scope>
+=======
+>>>>>>> add dap4
     </dependency>
       <dependency>
         <groupId>org.apache.httpcomponents</groupId>
         <artifactId>httpcore</artifactId>
         <version>${httpcomponents.httpcore.version}</version>
+<<<<<<< HEAD
     <scope>provided</scope>
+=======
+>>>>>>> add dap4
       </dependency>
       <dependency>
         <groupId>org.apache.httpcomponents</groupId>
         <artifactId>httpmime</artifactId>
         <version>${httpcomponents.httpmime.version}</version>
+<<<<<<< HEAD
     <scope>provided</scope>
+=======
+>>>>>>> add dap4
       </dependency>
 
 </dependencies>
