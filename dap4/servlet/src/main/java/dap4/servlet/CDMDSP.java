@@ -97,16 +97,15 @@ public class CDMDSP extends AbstractDSP
     public CDMDSP(String path)
         throws DapException
     {
-        this(path,new DapContext());
+        this(path,null);
     }
-
 
     public
     CDMDSP(String path, DapContext cxt)
         throws DapException
     {
         super(path, cxt);
-        ncfile = (NetcdfDataset) createNetcdfFile(path);
+        ncfile = (NetcdfDataset) createNetcdfFile();
         if(ncfile == null)
             throw new DapException("CDMDSP: cannot open: " + path);
         this.factory = (DapFactory)cxt.get(FACTORYKEY);
@@ -886,29 +885,29 @@ public class CDMDSP extends AbstractDSP
     }
 
     //////////////////////////////////////////////////
-    // Utilities
+    // Subclass Overrideable
 
     protected NetcdfFile
-    createNetcdfFile(String path)
+    createNetcdfFile()
         throws DapException
     {
         try {
-            path = DapUtil.canonicalpath(path, false);
-            int dotpos = path.lastIndexOf('.');
+            path = DapUtil.canonicalpath(this.path, false);
+            int dotpos = this.path.lastIndexOf('.');
             NetcdfFile ncfile = null;
-            if(dotpos > 0 && dotpos + 1 < path.length()) {
-                String extension = path.substring(dotpos + 1, path.length());
+            if(dotpos > 0 && dotpos + 1 < this.path.length()) {
+                String extension = this.path.substring(dotpos + 1, this.path.length());
                 if(extension.equals("nc")) {
                     loadNc4Iosp();
                     Nc4Iosp nc4Iosp = new Nc4Iosp(NetcdfFileWriter.Version.netcdf4);
                     // try to open it using Nc4Iosp
-                    ncfile = nc4Iosp.open(path);
+                    ncfile = nc4Iosp.open(this.path);
                     ncfile = new NetcdfDataset(ncfile, ENHANCEMENT);
                     return ncfile;
                 }
             }
             // Not sure if the file is netcdf4, so just let openDataset handle it
-            ncfile = NetcdfDataset.openDataset(path,
+            ncfile = NetcdfDataset.openDataset(this.path,
                 ENHANCEMENT,
                 -1,    // buffer size
                 null,  //canceltask
@@ -918,6 +917,9 @@ public class CDMDSP extends AbstractDSP
             return null;
         }
     }
+
+    //////////////////////////////////////////////////
+    // Utilities
 
     /**
      * Some attributes that are added by the NetcdfDataset
