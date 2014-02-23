@@ -494,6 +494,7 @@ servlet/src/main/java/dap4/servlet/SerialWriter.java
 servlet/src/main/java/dap4/servlet/ServletInfo.java
 servlet/src/main/java/dap4/servlet/Value.java
 dap4servlet/src/main/java/dap4/dap4servlet/Dap4Servlet.java
+dap4servlet/src/main/java/dap4/dap4servlet/DapRequest.java
 tests/src/test/java/dap4/test/servlet/FakeServlet.java
 tests/src/test/java/dap4/test/servlet/FakeServletOutputStream.java
 tests/src/test/java/dap4/test/servlet/FakeServletRequest.java

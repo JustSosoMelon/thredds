@@ -49,10 +49,6 @@ Dependencies: Mandatory dependencies are listed first. Then
 
 </dependencies>
 
-=======
-
-</dependencies>
-
 <build>
   <plugins>
     <plugin>
@@ -108,4 +104,15 @@ Dependencies: Mandatory dependencies are listed first. Then
 
 </build>
 >>>>>>> add dap4
+=======
+  <!-- concurrency annotations -->
+<!--
+  <dependency>
+    <groupId>net.jcip</groupId>
+    <artifactId>jcip-annotations</artifactId>
+  </dependency>
+-->
+</dependencies>
+
+>>>>>>> cleanup
 </project>

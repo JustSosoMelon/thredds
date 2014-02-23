@@ -802,8 +802,4 @@ public class HTTPMethod
         return this.response;
     }
 
-<<<<<<< HEAD:httpclient/src/main/java/ucar/httpclient/HTTPMethod.java
 }
-=======
-}
->>>>>>> Refactor to move:httpclient/src/main/java/ucar/httpclient/HTTPMethod.java
