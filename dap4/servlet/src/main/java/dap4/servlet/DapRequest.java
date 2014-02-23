@@ -1,11 +1,9 @@
 /* Copyright 2009, UCAR/Unidata and OPeNDAP, Inc.
    See the LICENCE file for more information. */
 
-package dap4.d4ts;
+package dap4.servlet;
 
 import dap4.core.util.*;
-import dap4.servlet.DapLog;
-import dap4.servlet.ServletInfo;
 import dap4.dap4shared.RequestMode;
 
 import javax.servlet.http.HttpServletRequest;
@@ -211,12 +209,12 @@ public class DapRequest
      * @param name  the header name
      * @param value the header value
      */
-    void setResponseHeader(String name, String value)
+    public void setResponseHeader(String name, String value)
     {
         this.response.setHeader(name, value);
     }
 
-    String queryLookup(String name)
+    public String queryLookup(String name)
     {
         return queries.get(name.toLowerCase());
     }
