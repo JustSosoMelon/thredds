@@ -5,6 +5,8 @@
 
 <!-- prerequisites> <maven>2.0.9</maven> </prerequisites -->
 
+<!-- Propagate version changes to propery dap4.version -->
+
 <parent>
   <groupId>edu.ucar</groupId>
   <artifactId>thredds-parent</artifactId>
@@ -13,10 +15,10 @@
 
 <!-- Project description (including license) -->
 
-<groupId>edu.ucar.dap4</groupId>
+<groupId>edu.ucar</groupId>
 <artifactId>dap4</artifactId>
 <packaging>pom</packaging>
-<version>1.0-SNAPSHOT</version>
+<version>4.4.3-SNAPSHOT</version>
 <organization>
   <name>UCAR/Unidata</name>
   <url>http://www.unidata.ucar.edu/</url>
@@ -68,6 +70,11 @@ http://repo1.maven.org/maven2/
     <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>servlet</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>dap4servlet</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
@@ -159,11 +166,13 @@ http://repo1.maven.org/maven2/
       <artifactId>ehcache-core</artifactId>
       <version>${net.sf.ehcache.version}</version>
     </dependency>
+<!--
     <dependency>
       <groupId>net.jcip</groupId>
       <artifactId>jcip-annotations</artifactId>
       <version>${net.jcip.version}</version>
     </dependency>
+-->
     <dependency>
       <groupId>com.sun.jna</groupId>
       <artifactId>jna</artifactId>
@@ -297,6 +306,11 @@ http://repo1.maven.org/maven2/
 </build>
     
 <!-- Modules for the build in approximate dependency order -->
+<!-- The reason there are so may modules is two-fold:
+     1. because the layering diagram is relatively complex.
+     2. a need to construct a number of products,for which maven
+     requires a module for each product
+-->
 <modules>
   <module>core</module>
   <module>dap4shared</module>
@@ -304,6 +318,7 @@ http://repo1.maven.org/maven2/
   <module>cdmshared</module>
   <module>cdmclient</module>
   <module>servlet</module>
+  <module>dap4servlet</module>
   <module>d4ts</module>
   <module>tests</module>
   <module>d4tswar</module> 
@@ -311,7 +326,9 @@ http://repo1.maven.org/maven2/
     
 <properties>
 
-  <project.groupid>edu.ucar.dap4</project.groupid>
+  <project.groupid>edu.ucar</project.groupid>
+  <!-- Define a non-snapshot version -->
+  <dap4.version>4.4.3</dap4.version>
 
   <!-- default is to skip tests. use mvn test -DskipTests=false to override on command line -->
   <skipTests>true</skipTests>
@@ -325,7 +342,6 @@ http://repo1.maven.org/maven2/
   <build.timestamp>${maven.build.timestamp}</build.timestamp>
   
   <!-- Dependency versions -->
-  <thredds.version>4.4.3-SNAPSHOT</thredds.version>
   <httpcomponents.httpcore.version>4.2.5</httpcomponents.httpcore.version>
   <httpcomponents.httpclient.version>4.2.6</httpcomponents.httpclient.version>
   <httpcomponents.httpmime.version>4.2.6</httpcomponents.httpmime.version>

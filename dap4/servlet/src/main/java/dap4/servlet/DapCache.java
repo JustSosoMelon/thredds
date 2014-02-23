@@ -1,9 +1,8 @@
 /* Copyright 2012, UCAR/Unidata.
    See the LICENSE file for more information. */
 
-package dap4.d4ts;
+package dap4.servlet;
 
-import dap4.servlet.DSPFactory;
 import dap4.dap4shared.DSP;
 
 import java.io.IOException;
@@ -29,16 +28,15 @@ abstract public class DapCache
     static final int MAXFILES = 100; // size of the cache
 
     //////////////////////////////////////////////////
-    // Class variables
+    // Instance variables
 
     /**
      * Define an lru cache of known DSP objects: oldest first.
      */
-    static List<DSP> lru = new ArrayList<DSP>();
-
+    static protected List<DSP> lru = new ArrayList<DSP>();
 
     //////////////////////////////////////////////////
-    // Class methods
+    // API
 
     static public synchronized DSP
     open(String path)
