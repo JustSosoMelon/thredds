@@ -5,7 +5,7 @@ import junit.framework.TestResult;
 import junit.framework.TestSuite;
 import dap4.test.util.UnitTestCommon;
 
-public class TestAll extends UnitTestCommon
+public class TestDap4All extends UnitTestCommon
 {
 
 
@@ -44,13 +44,13 @@ TestSerial.java
     //////////////////////////////////////////////////
     // Constructor(s)
 
-    public TestAll()
+    public TestDap4All()
         throws Exception
     {
-        this("TestAll");
+        this("TestDap4All");
     }
 
-    public TestAll(String name)
+    public TestDap4All(String name)
         throws Exception
     {
         super(name);

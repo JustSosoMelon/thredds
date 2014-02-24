@@ -498,7 +498,7 @@ tests/src/test/java/dap4/test/servlet/FakeServlet.java
 tests/src/test/java/dap4/test/servlet/FakeServletOutputStream.java
 tests/src/test/java/dap4/test/servlet/FakeServletRequest.java
 tests/src/test/java/dap4/test/servlet/FakeServletResponse.java
-tests/src/test/java/dap4/test/TestAll.java
+tests/src/test/java/dap4/test/TestDap4All.java
 tests/src/test/java/dap4/test/TestCDMClient.java
 tests/src/test/java/dap4/test/TestConstraints.java
 tests/src/test/java/dap4/test/TestDSR.java

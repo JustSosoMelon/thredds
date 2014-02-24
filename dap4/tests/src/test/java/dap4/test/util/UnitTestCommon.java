@@ -14,12 +14,14 @@ import java.util.*;
 
 public class UnitTestCommon extends TestCase
 {
-	//////////////////////////////////////////////////
-	// Constants
+    //////////////////////////////////////////////////
+    // Constants
+
+    static final boolean DEBUG = false;
 
     static protected final Charset UTF8 = Charset.forName("UTF-8");
 
-    static final String DEFAULTTREEROOT = "opuls";
+    static final String DEFAULTTREEROOT = "dap4";
 	static final String[] DEFAULTSUBDIRS
 			= new String[]{"tests"};
 
@@ -67,6 +69,8 @@ public class UnitTestCommon extends TestCase
 		// all the directories in SUBROOTS.
 
 		String path = System.getProperty("user.dir");
+                if(DEBUG)
+		    System.err.println("user.dir="+path); System.err.flush();
 
 		// clean up the path
 		path = path.replace('\\', '/'); // only use forward slash
