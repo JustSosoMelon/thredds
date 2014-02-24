@@ -208,6 +208,7 @@ http://repo1.maven.org/maven2/
      2. a need to construct a number of products,for which maven
      requires a module for each product
 -->
+
 <modules>
   <module>core</module>
   <module>dap4shared</module>
@@ -269,7 +270,6 @@ http://repo1.maven.org/maven2/
   
 </properties>
   
-
 <build>
   <plugins>
       <plugin>
