@@ -205,106 +205,6 @@ http://repo1.maven.org/maven2/
   </dependency>
 </dependencies>
     
-<!-- Build configuration -->
-
-<build>
-  <!-- Temporary source directory for test sources -->
-  <!-- testSourceDirectory>src/test_framework/java</testSourceDirectory -->
-  <pluginManagement>
-    <plugins>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-antrun-plugin</artifactId>
-        <version>${maven-antrun-plugin.version}</version>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-assembly-plugin</artifactId>
-        <version>${maven-assembly-plugin.version}</version>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-compiler-plugin</artifactId>
-        <version>${maven-compiler-plugin.version}</version>
-        <configuration>
-          <source>1.6</source>
-          <target>1.6</target>
-        </configuration>
-        <!-- Tests compilation -->
-        <executions>
-          <execution>
-            <id>default-testCompile</id>
-            <phase>test-compile</phase>
-            <goals>
-              <goal>testCompile</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-jar-plugin</artifactId>
-        <version>${maven-jar-plugin.version}</version>
-        <configuration>
-          <archive>
-            <index>true</index>
-            <!-- Archive will contain an INDEX.LIST file. -->
-            <manifest>
-              <addClasspath>true</addClasspath>
-              <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
-            </manifest>
-            <manifestEntries>
-              <Built-On>${maven.build.timestamp}</Built-On>
-            </manifestEntries>
-          </archive>
-        </configuration>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-deploy-plugin</artifactId>
-        <version>${maven-deploy-plugin.version}</version>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-javadoc-plugin</artifactId>
-        <version>${maven-javadoc-plugin.version}</version>
-        <configuration>
-          <links>
-            <link>http://docs.oracle.com/javase/6/docs/api/</link>
-          </links>
-          <use>false</use>
-          <quiet>true</quiet>
-          <maxmemory>1024m</maxmemory>
-          <minmemory>512m</minmemory>
-        </configuration>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-release-plugin</artifactId>
-        <version>${maven-release-plugin.version}</version>
-        <configuration>
-          <tagNameFormat>v@{project.version}</tagNameFormat>
-        </configuration>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-surefire-plugin</artifactId>
-        <version>${maven-surefire-plugin.version}</version>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-shade-plugin</artifactId>
-        <version>${maven-shade-plugin.version}</version>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-war-plugin</artifactId>
-        <version>${maven-war-plugin.version}</version>
-      </plugin>
-    </plugins>
-  </pluginManagement>
-</build>
-    
 <!-- Modules for the build in approximate dependency order -->
 <!-- The reason there are so may modules is two-fold:
      1. because the layering diagram is relatively complex.
@@ -372,5 +272,61 @@ http://repo1.maven.org/maven2/
   
 </properties>
   
+<build>
+  <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <version>${maven-compiler-plugin.version}</version>
+        <configuration>
+         <argLine>-Dfile.encoding=UTF-8</argLine>
+	 <encoding>UTF-8</encoding>                    
+         <includes>
+	    <include>tests/src/test/java/dap4/test/Test*.java</include>
+	    <include>tests/src/test/java/dap4/test/util/UnitTestCommon.java</include>
+         </includes>
+       </configuration>
+        <!-- Tests compilation -->
+        <!--executions>
+          <execution>
+            <id>default-testCompile</id>
+            <phase>test-compile</phase>
+            <goals>
+              <goal>testCompile</goal>
+            </goals>
+          </execution>
+        </executions-->
+      </plugin>
+
+    <plugin>
+      <groupId>org.apache.maven.plugins</groupId>
+      <artifactId>maven-surefire-plugin</artifactId>
+      <version>2.16</version>
+      <configuration>
+         <skip>${skipTests}</skip>
+         <testFailureIgnore>true</testFailureIgnore>
+          <!--failIfNoTests>true</failIfNoTests-->
+         <argLine>-Dfile.encoding=UTF-8</argLine>
+	 <encoding>UTF-8</encoding>                    
+         <includes>
+	    <include>tests/src/test/java/dap4/test/TestDap4All.java</include>
+         </includes>
+       </configuration>
+       <!--executions>
+          <execution>
+            <phase>test</phase>
+            <goals>
+              <goal>test</goal>
+            </goals>
+          </execution>
+       </executions-->
+    </plugin>
+  </plugins>
+
+</build>
+
+
+
+
 </project>
   
