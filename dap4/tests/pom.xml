@@ -50,14 +50,22 @@
   </dependency>
 
   <!-- testing dependencies -->
-<!--
   <dependency>
     <groupId>junit</groupId>
     <artifactId>junit</artifactId>
     <version>4.8.1</version>
     <scope>test</scope>
   </dependency>
--->
+
+  <dependency>
+    <groupId>org.springframework</groupId>
+    <artifactId>spring-webmvc</artifactId>
+  </dependency>
+  <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-test</artifactId>
+      <scope>test</scope>
+  </dependency>
 
   <!-- library dependencies -->
   <dependency>
@@ -77,12 +85,6 @@
     <groupId>org.apache.httpcomponents</groupId>
     <artifactId>httpmime</artifactId>
   </dependency>
-<!--
-  <dependency>
-    <groupId>net.jcip</groupId>
-    <artifactId>jcip-annotations</artifactId>
-  </dependency>
--->
   <dependency>
     <groupId>org.apache.logging.log4j</groupId>
     <artifactId>log4j-api</artifactId>
