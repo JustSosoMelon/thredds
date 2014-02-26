@@ -12,6 +12,7 @@ import dap4.cdmshared.*;
 import ucar.ma2.*;
 import ucar.nc2.*;
 import ucar.nc2.dataset.*;
+import ucar.nc2.jni.netcdf.Nc4Iosp;
 
 import java.io.IOException;
 import java.util.*;
