@@ -36,8 +36,7 @@ public class CDMDSP extends AbstractDSP
     static protected final String DAPVERSION = "4.0";
     static protected final String DMRVERSION = "1.0";
 
-    //static final Class NC4CLASS = ucar.nc2.jni.netcdf.Nc4Iosp.class;
-    static protected final Class NC4CLASS = dap4.servlet.Nc4Iosp.class;
+    static protected final Class NC4CLASS = ucar.nc2.jni.netcdf.Nc4Iosp.class;
 
     // NetcdfDataset enhancement to use: need only coord systems
     static protected Set<NetcdfDataset.Enhance> ENHANCEMENT = EnumSet.of(NetcdfDataset.Enhance.CoordSystems);
@@ -59,12 +58,12 @@ public class CDMDSP extends AbstractDSP
     {
         if(nc4loaded) return;
         nc4loaded = true;
-        if(!NetcdfFile.iospRegistered(dap4.servlet.Nc4Iosp.class)) {
+        if(!NetcdfFile.iospRegistered(NC4CLASS)) {
             try {
                 // register before H5Iosp
                 NetcdfFile.registerIOProvider(NC4CLASS, false);
                 // Use null to force use of JNA_PATH
-                dap4.servlet.Nc4Iosp.setLibraryAndPath(null, "netcdf");
+                Nc4Iosp.setLibraryAndPath(null, "netcdf");
             } catch (Throwable e) {
                 DapLog.error("Cant load IOSP Nc4Iosp");
                 throw new DapException(e.getMessage(), e.getCause());
