@@ -109,6 +109,11 @@ http://repo1.maven.org/maven2/
       <artifactId>netcdf4</artifactId>
       <version>${thredds.version}</version>
     </dependency>
+    <dependency>
+      <groupId>edu.ucar</groupId>
+      <artifactId>tds</artifactId>
+      <version>${thredds.version}</version>
+    </dependency>
 
     <!-- logging -->
     <dependency>

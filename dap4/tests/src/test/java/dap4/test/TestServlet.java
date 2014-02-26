@@ -186,7 +186,7 @@ public class TestServlet extends UnitTestCommon
     //////////////////////////////////////////////////
     // Define test cases
 
-    void
+    protected void
     chooseTestcases()
     {
         if(false) {
@@ -197,7 +197,8 @@ public class TestServlet extends UnitTestCommon
         }
     }
 
-    void defineAllTestcases(String root)
+    protected void
+    defineAllTestcases(String root)
     {
         ServletTest.root = root;
         this.alltestcases.add(
