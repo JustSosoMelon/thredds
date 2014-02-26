@@ -45,13 +45,29 @@
       <groupId>edu.ucar</groupId>
       <artifactId>netcdf4</artifactId>
   </dependency>
+  <dependency>
+      <groupId>edu.ucar</groupId>
+      <artifactId>tds</artifactId>
+  </dependency>
 
   <!-- testing dependencies -->
+<!--
   <dependency>
     <groupId>junit</groupId>
     <artifactId>junit</artifactId>
     <version>4.8.1</version>
     <scope>test</scope>
+  </dependency>
+-->
+
+  <dependency>
+    <groupId>org.springframework</groupId>
+    <artifactId>spring-webmvc</artifactId>
+  </dependency>
+  <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-test</artifactId>
+      <scope>test</scope>
   </dependency>
 
   <!-- library dependencies -->
