@@ -902,8 +902,15 @@ public class HTTPSession
     execute(HttpRequestBase request)
         throws IOException
     {
-        HttpResponse response = sessionClient.execute(request, this.execcontext);
-        return response;
+        if(false)
+            return sessionClient.execute(request, this.execcontext);
+        else
+            return sessionClient.execute(request);
+    }
+
+    /*package*/ void invalidate(AuthScope scope)
+    {
+        HTTPCachingProvider.invalidate(scope);
     }
 
     //////////////////////////////////////////////////
