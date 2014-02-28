@@ -746,7 +746,7 @@ public class HTTPSession
         return this.sessionClient;
     }
 
-    HttpContext
+    HttpClient
     getExecutionContext()
     {
         return this.execcontext;
@@ -902,15 +902,7 @@ public class HTTPSession
     execute(HttpRequestBase request)
         throws IOException
     {
-        if(false)
-            return sessionClient.execute(request, this.execcontext);
-        else
-            return sessionClient.execute(request);
-    }
-
-    /*package*/ void invalidate(AuthScope scope)
-    {
-        HTTPCachingProvider.invalidate(scope);
+        return sessionClient.execute(request, this.execcontext);
     }
 
     //////////////////////////////////////////////////
