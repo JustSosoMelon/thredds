@@ -439,7 +439,7 @@ public class TestAuth extends UnitTestCommon
                     break;
                 default:
                     System.err.println("Redirect: Unexpected status = " + status);
-                    pass = true; //for now
+                    pass = false;
                     break;
                 }
             }
