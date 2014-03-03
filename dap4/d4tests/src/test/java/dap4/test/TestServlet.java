@@ -174,6 +174,7 @@ public class TestServlet extends UnitTestCommon
     {
         super(name);
         setSystemProperties();
+
         this.root = getDAP4Root();
         if(this.root == null)
             throw new Exception("dap4 root not found");

@@ -360,7 +360,6 @@ public class TestAuth extends UnitTestCommon
         }
     }
 
-    @Ignore
     @Test
     public void
     testDigest() throws Exception
@@ -402,14 +401,6 @@ public class TestAuth extends UnitTestCommon
             session.setCredentials(HTTPAuthPolicy.BASIC, cred);
             HTTPMethod method = HTTPFactory.Get(session);
             int status = method.execute();
-            Header[] reqhdrs = reqinterceptor.getHeaders();
-            Header[] resphdrs = respinterceptor.getHeaders();
-            for(Header hdr : reqhdrs) {
-                System.err.println("Request: " + hdr);
-            }
-            for(Header hdr : resphdrs) {
-                System.err.println("Response: " + hdr);
-            }
             System.err.printf("\tlocal provider: status code = %d\n", status);
             switch (status) {
             case 200:

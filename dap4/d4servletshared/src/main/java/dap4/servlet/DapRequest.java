@@ -92,7 +92,6 @@ public class DapRequest
         if(this.datasetpath == null) {
             // Presume mode is a capabilities request
             this.mode = RequestMode.CAPABILITIES;
-            this.format = ResponseFormat.HTML;
         } else {
             String[] segments = datasetpath.split("/");
             if(segments.length > 0 && segments[0].length() > 0) {

@@ -692,7 +692,7 @@ public class HTTPMethod
             scope = HTTPAuthScope.urlToScope(HTTPAuthPolicy.BASIC, surl, principalp);
 
         // Provide a credentials (provider) to enact the process
-	// We use the a caching instance so we can intercept getCredentials
+        // We use the a caching instance so we can intercept getCredentials
         // requests to check the cache.
         HTTPCachingProvider hap = new HTTPCachingProvider(this.session.getAuthStore(),
             scope, principalp[0]);
