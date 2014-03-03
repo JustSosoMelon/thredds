@@ -68,7 +68,6 @@ public class TestParserDMR extends UnitTestCommon
     public TestParserDMR(String name)
     {
         super(name);
-        this.dap4root = super.threddsroot + "/" + "dap4";
         setSystemProperties();
         setControls();
         defineTestCases();
@@ -132,31 +131,31 @@ public class TestParserDMR extends UnitTestCommon
 
     void setControls()
     {
-        if(prop_controls == null)
-            return;
+	if(prop_controls == null)
+	    return;
         flags = ParseUtil.FLAG_NOCR; // always
-        for(int i = 0;i < prop_controls.length();i++) {
-            char c = prop_controls.charAt(i);
-            switch (c) {
-            case 'w':
+	for(int i=0;i<prop_controls.length();i++) {
+	    char c = prop_controls.charAt(i);	
+	    switch (c) {
+	    case 'w':	
                 flags |= ParseUtil.FLAG_TRIMTEXT;
-                break;
-            case 'l':
+	        break;
+            case 'l':       
                 flags |= ParseUtil.FLAG_ELIDETEXT;
                 break;
-            case 'e':
+            case 'e':       
                 flags |= ParseUtil.FLAG_ESCAPE;
                 break;
-            case 'T':
+            case 'T':       
                 flags |= ParseUtil.FLAG_TRACE;
-                break;
-            case 'd':
+		break;
+            case 'd':       
                 debug = true;
-                break;
-            default:
-                System.err.println("unknown X option: " + c);
-                break;
-            }
+		break;
+	    default:
+		System.err.println("unknown X option: "+c);
+		break;
+	    }
         }
     }
 
@@ -166,12 +165,12 @@ public class TestParserDMR extends UnitTestCommon
     public void testParser()
         throws Exception
     {
-        for(TestCase testcase : testcases) {
-            if(!doOneTest(testcase)) {
-                assertTrue(false);
-                System.exit(1);
+            for(TestCase testcase : testcases) {
+                if(!doOneTest(testcase)) {
+                    assertTrue(false);
+                    System.exit(1);
+                }
             }
-        }
     }
 
     boolean

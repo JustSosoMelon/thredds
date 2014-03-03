@@ -25,13 +25,31 @@ public class TestCDMClient extends UnitTestCommon
     //////////////////////////////////////////////////
     // Constants
 
-    static final String DATADIR = "d4tests/src/test/data"; // relative to dap4 root
+    static final String DATADIR = "tests/src/test/data"; // relative to opuls root
     static final String TESTDATADIR = DATADIR + "/resources/TestCDMClient";
     static final String BASELINEDIR = TESTDATADIR + "/baseline";
     static final String TESTINPUTDIR = TESTDATADIR + "/testinput";
 
+    static final String FILESERVER = "dap4:file://";
+
     //Define the names of the xfail tests
     static final String[] XFAIL_TESTS = {"test_struct_array.nc"};
+
+    // Order is important; testing reachability is in the order
+    // listed
+    static final Source[] SOURCES = new Source[]{
+        new Source("localhost", false,
+            "http://localhost:8080/d4ts",
+            "dap4:http://localhost:8080/d4ts"),
+        new Source("motherlode", false,
+            "http://motherlode.ucar.edu:8081/d4ts",
+            "dap4://motherlode.ucar.edu:8081/d4ts"),
+        new Source("thredds", false,
+            "http://thredds-test.ucar.edu/d4ts",
+            "dap4://thredds-test.ucar.edu/d4ts"),
+
+        new Source("file", true, null, FILESERVER),
+    };
 
     static boolean isXfailTest(String t)
     {
@@ -43,6 +61,22 @@ public class TestCDMClient extends UnitTestCommon
 
     //////////////////////////////////////////////////
     // Type Declarations
+
+    static class Source
+    {
+        public String name;
+        public String testurl;
+        public String prefix;
+        public boolean isfile;
+
+        public Source(String name, boolean isfile, String testurl, String prefix)
+        {
+            this.name = name;
+            this.prefix = prefix;
+            this.testurl = testurl;
+            this.isfile = isfile;
+        }
+    }
 
     static class ClientTest
     {
@@ -129,6 +163,7 @@ public class TestCDMClient extends UnitTestCommon
     List<ClientTest> alltestcases = new ArrayList<ClientTest>();
     List<ClientTest> chosentests = new ArrayList<ClientTest>();
 
+    String root = null;
     String datasetpath = null;
 
     String sourceurl = null;
@@ -162,7 +197,7 @@ public class TestCDMClient extends UnitTestCommon
         makefilesource(this.datasetpath);
         this.sourceurl = getSourceURL();
         System.out.println("Using source url " + this.sourceurl);
-        defineAllTestcases(this.dap4root, this.sourceurl);
+        defineAllTestcases(this.root, this.sourceurl);
         chooseTestcases();
     }
 

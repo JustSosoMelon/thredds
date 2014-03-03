@@ -78,121 +78,117 @@ public class UnitTestCommon extends TestCase
     //////////////////////////////////////////////////
     // static methods
 
-    static void setTreePattern(String root, String[] subdirs)
-    {
-        patternroot = root;
-        patternsubdirs = subdirs;
-    }
+	static public org.slf4j.Logger log;
 
-    // Walk around the directory structure to locate
-    // the path to a given directory.
+	// Define a tree pattern to recognize the root.
+	static String patternroot = DEFAULTTREEROOT; // dir to locate
+	static String[] patternsubdirs = DEFAULTSUBDIRS; // with these immediate subdirectories
+	static final String root;
 
-    static String locateThreddsRoot()
-    {
-        // Walk up the user.dir path looking for a node that has
-        // the name of the ROOTNAME and
-        // all the directories in SUBROOTS.
-
-        String path = System.getProperty("user.dir");
-        if(DEBUG)
-            System.err.println("user.dir=" + path);
-        System.err.flush();
-
-        // clean up the path
-        path = path.replace('\\', '/'); // only use forward slash
-        assert (path != null);
-        if(path.endsWith("/")) path = path.substring(0, path.length() - 1);
-
-        if(path != null) {
-            String[] pieces = path.split("[/]");
-            // look for path element with the proper name
-            // assumes we are not above the patternroot.
-            String root = null;
-            for(int i=pieces.length-1;i>=0;i--) {
-                if(pieces[i].equals(patternroot)) {
-                    String piecepath = rebuildpath(pieces,i);
-                    File candidate = new File(piecepath);
-                    if(!candidate.isDirectory()) continue;
-                    boolean allfound = true;
-                    int matchcount = 0;
-                    File[] files = candidate.listFiles();
-                    for(String sd: patternsubdirs) {
-                        for(File file: files) {
-                            if(file.isDirectory() && file.getName().equals(sd)) {
-                                matchcount++;
-                                break;
-                            }
-                        }
-                    }
-                    if(matchcount == patternsubdirs.length)
-                        return piecepath;
-                }
-            }
+        static {
+            // Compute the root path
+            root = locateOpulsRoot();
         }
-        throw new IllegalStateException("Executing in unknown location:"+path);
-    }
 
-    static protected String
-    rebuildpath(String[] pieces, int last)
-    {
-        StringBuilder buf = new StringBuilder();
-        // Check for a possible leading windows drive letter
-        boolean hasdriveletter = false;
-        if(pieces[0].length() == 2) {
-            char c0 = pieces[0].charAt(0);
-            char c1 = pieces[0].charAt(1);
-            if(c1 == ':' && ((c0 >= 'a' && c0 <= 'z') || (c0 >= 'A' && c0 <= 'Z')))
-                hasdriveletter = true;
-        }
-        for(int i=0;i<=last;i++)  {
-            if(i>0 || !hasdriveletter)
-                buf.append("/");
-            buf.append(pieces[i]);
-        }
-        return buf.toString();
-    }
+	//////////////////////////////////////////////////
+	// static methods
 
-    static public void
-    clearDir(File dir, boolean clearsubdirs)
-    {
-        // wipe out the dir contents
-        if(!dir.exists()) return;
-        for(File f : dir.listFiles()) {
-            if(f.isDirectory()) {
-                if(clearsubdirs) {
-                    clearDir(f, true); // clear subdirs
+	static public String getRoot()
+	{
+		return root;
+	}
+
+	static void setTreePattern(String root, String[] subdirs)
+	{
+		patternroot = root;
+		patternsubdirs = subdirs;
+	}
+
+	// Walk around the directory structure to locate
+	// the path to a given directory.
+
+	static String locateOpulsRoot()
+	{
+		// Walk up the user.dir path looking for a node that has
+		// the name of the ROOTNAME and
+		// all the directories in SUBROOTS.
+
+		String path = System.getProperty("user.dir");
+                if(DEBUG)
+		    System.err.println("user.dir="+path); System.err.flush();
+
+		// clean up the path
+		path = path.replace('\\', '/'); // only use forward slash
+		assert (path != null);
+		if(path.endsWith("/")) path = path.substring(0, path.length() - 1);
+
+		while(path != null) {
+			// See if this is the tree root
+			int index = path.lastIndexOf("/");
+			if(index < 0)
+				return null; // not found => we are root
+			String lastdir = path.substring(index + 1, path.length());
+			if(patternroot.equals(lastdir)) {// We have a candidate
+				// See if all subdirs are immediate subdirectories
+				boolean allfound = true;
+				for(String dirname : patternsubdirs) {
+					// look for dirname in current directory
+					String s = path + "/" + dirname;
+					File tmp = new File(s);
+					if(!tmp.exists() || !tmp.isDirectory()) {
+						allfound = false;
+						break;
+					}
+				}
+				if(allfound)
+					return path; // presumably the root
+			}
+            path = path.substring(0, index);  // move up the tree
+        }
+		return null;
+	}
+
+	static public void
+	clearDir(File dir, boolean clearsubdirs)
+	{
+		// wipe out the dir contents
+		if(!dir.exists()) return;
+		for(File f : dir.listFiles()) {
+			if(f.isDirectory()) {
+				if(clearsubdirs) {
+					clearDir(f, true); // clear subdirs
                     f.delete();
                 }
-            } else
-                f.delete();
-        }
-    }
+			} else
+			    f.delete();
+		}
+	}
 
-    //////////////////////////////////////////////////
-    // Instance databuffer
+	//////////////////////////////////////////////////
+	// Instance databuffer
 
-    protected String title = "Testing";
+	protected String title = "Testing";
 
-    public UnitTestCommon()
-    {
-        this("UnitTest");
-    }
+	public UnitTestCommon()
+	{
+		this("UnitTest");
+	}
 
-    public UnitTestCommon(String name)
-    {
-        super(name);
-        this.title = name;
-    }
+	public UnitTestCommon(String name)
+	{
+		super(name);
+		this.title = name;
+	}
 
-    public void setTitle(String title)
-    {
-        this.title = title;
-    }
+	public void setTitle(String title)
+	{
+		this.title = title;
+	}
 
-    public String getTitle()
-    {
-        return this.title;
-    }
+	public String getTitle()
+	{
+		return this.title;
+	}
 
     // Copy result into the a specified dir
     public void
@@ -233,7 +229,7 @@ public class UnitTestCommon extends TestCase
     readbinaryfile(String filename)
             throws IOException
     {
-        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+	    ByteArrayOutputStream bytes = new ByteArrayOutputStream();
         FileInputStream file = new FileInputStream(filename);
         return DapUtil.readbinaryfile(file);
     }
@@ -244,7 +240,7 @@ public class UnitTestCommon extends TestCase
         if (!captured.endsWith("\n"))
             captured = captured + "\n";
         // Dump the output for visual comparison
-        System.out.println("Testing " + getName() + ": " + header + ":");
+        System.out.println("Testing " + getName() + ": "+header+":");
         System.out.println("---------------");
         System.out.print(captured);
         System.out.println("---------------");
@@ -268,7 +264,7 @@ public class UnitTestCommon extends TestCase
     static public NetcdfDataset openDataset(String url)
             throws IOException
     {
-        return NetcdfDataset.acquireDataset(null, url, ENHANCEMENT, -1, null, null);
+	return NetcdfDataset.acquireDataset(null, url, ENHANCEMENT, -1, null, null);
     }
 
     // Fix up a filename reference in a string
@@ -277,11 +273,11 @@ public class UnitTestCommon extends TestCase
         // In order to achieve diff consistentcy, we need to
         // modify the output to change "netcdf .../file.nc {...}"
         // to "netcdf file.nc {...}"
-        String fixed = filename.replace('\\', '/');
+        String fixed = filename.replace('\\','/');
         String shortname = filename;
         if(fixed.lastIndexOf('/') >= 0)
-            shortname = filename.substring(fixed.lastIndexOf('/') + 1, filename.length());
-        text = text.replaceAll(filename, shortname);
+            shortname = filename.substring(fixed.lastIndexOf('/')+1,filename.length());
+        text= text.replaceAll(filename,shortname);
         return text;
     }
 

@@ -746,7 +746,7 @@ public class HTTPSession
         return this.sessionClient;
     }
 
-    HttpClient
+    HttpContext
     getExecutionContext()
     {
         return this.execcontext;
@@ -902,7 +902,8 @@ public class HTTPSession
     execute(HttpRequestBase request)
         throws IOException
     {
-        return sessionClient.execute(request, this.execcontext);
+        HttpResponse response = sessionClient.execute(request, this.execcontext);
+        return response;
     }
 
     //////////////////////////////////////////////////

@@ -86,6 +86,8 @@ public class TestNc4Iosp extends UnitTestCommon
 
     protected String datasetpath = null;
 
+    protected String root = null;
+
     //////////////////////////////////////////////////
     // Constructor(s)
 
@@ -105,7 +107,6 @@ public class TestNc4Iosp extends UnitTestCommon
         throws Exception
     {
         super(name);
-        this.dap4root = super.threddsroot + "/dap4";
         setSystemProperties();
         if(!HDF5) {
             CDMDSP.loadNc4Iosp();  // Load Nc4Iosp
@@ -116,7 +117,7 @@ public class TestNc4Iosp extends UnitTestCommon
         Nc4IospTest.root = root;
         File f = new File(root + "/" + BASELINEDIR);
         if(!f.exists()) f.mkdir();
-        this.datasetpath = this.dap4root + "/" + DATADIR;
+        this.datasetpath = this.root + "/" + DATADIR;
         defineAllTestcases();
         chooseTestcases();
     }
