@@ -37,6 +37,8 @@ public class TestDSR extends UnitTestCommon
 
     protected String datasetpath = null;
 
+    protected String root = null;
+
     //////////////////////////////////////////////////
     // Constructor(s)
 
@@ -95,7 +97,7 @@ public class TestDSR extends UnitTestCommon
             visual("TestDSR", dsr);
 
         // Figure out the baseline
-        String baselinepath = this.dap4root + "/" + BASELINEDIR + "/" + FAKEDATASET + ".dsr";
+        String baselinepath = this.root + "/" + BASELINEDIR + "/" + FAKEDATASET + ".dsr";
 	
         if(prop_baseline) {
             writefile(baselinepath, dsr);

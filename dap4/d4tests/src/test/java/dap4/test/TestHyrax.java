@@ -155,6 +155,7 @@ public class TestHyrax extends UnitTestCommon
     List<ClientTest> alltestcases = new ArrayList<ClientTest>();
     List<ClientTest> chosentests = new ArrayList<ClientTest>();
 
+    String root = null;
     String datasetpath = null;
 
     String sourceurl = null;
@@ -186,7 +187,7 @@ public class TestHyrax extends UnitTestCommon
             this.root = "/" + this.root; // handle problem of windows paths
         this.sourceurl = getSourceURL();
         System.out.println("Using source url " + this.sourceurl);
-        defineAllTestcases(this.dap4root, this.sourceurl);
+        defineAllTestcases(this.root, this.sourceurl);
         chooseTestcases();
     }
 
