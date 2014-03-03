@@ -24,7 +24,7 @@ public class TestNc4Iosp extends UnitTestCommon
     //////////////////////////////////////////////////
     // Constants
 
-    static protected String DATADIR = "d4tests/src/test/data"; // relative to opuls root
+    static protected String DATADIR = "tests/src/test/data"; // relative to opuls root
     static protected String TESTDATADIR = DATADIR + "/resources/";
     static protected String BASELINEDIR = DATADIR + "/resources/TestIosp/baseline";
     static protected String TESTINPUTDIR = DATADIR + "/resources/testfiles";
@@ -86,6 +86,8 @@ public class TestNc4Iosp extends UnitTestCommon
 
     protected String datasetpath = null;
 
+    protected String root = null;
+
     //////////////////////////////////////////////////
     // Constructor(s)
 
@@ -105,15 +107,17 @@ public class TestNc4Iosp extends UnitTestCommon
         throws Exception
     {
         super(name);
-        this.dap4root = super.threddsroot + "/dap4";
         setSystemProperties();
         if(!HDF5) {
             CDMDSP.loadNc4Iosp();  // Load Nc4Iosp
         }
-        Nc4IospTest.root = dap4root;
-        File f = new File(dap4root + "/" + BASELINEDIR);
+        this.root = getRoot();
+        if(this.root == null)
+            throw new Exception("Opuls root not found");
+        Nc4IospTest.root = root;
+        File f = new File(root + "/" + BASELINEDIR);
         if(!f.exists()) f.mkdir();
-        this.datasetpath = this.dap4root + "/" + DATADIR;
+        this.datasetpath = this.root + "/" + DATADIR;
         defineAllTestcases();
         chooseTestcases();
     }

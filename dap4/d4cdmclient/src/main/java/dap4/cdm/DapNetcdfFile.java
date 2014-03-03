@@ -2,7 +2,7 @@
    See the LICENSE file for more information.
 */
 
-package dap4.cdm;
+package   dap4.cdm;
 
 import dap4.cdmshared.CDMUtil;
 import dap4.cdmshared.NodeMap;
@@ -99,14 +99,12 @@ public class DapNetcdfFile extends ucar.nc2.NetcdfFile
     {
         super();
         cancel = (cancelTask == null ? nullcancel : cancelTask);
-        // The url might have a leading dap4:, so canonicalize it
-        url = canonicalURL(url);
         this.originalurl = url;
         // 1. Get and parse the constrained DMR and Data v-a-v URL
         this.dsp = new D4DSP().open(url);
         // 2. Construct an equivalent CDM tree and populate 
         //    this NetcdfFile object.
-        CDMCompiler compiler = new CDMCompiler(this, this.dsp);
+        CDMCompiler compiler = new CDMCompiler(this,this.dsp);
         compiler.compile();
         // set the pseudo-location, otherwise we get a name that is full path.
         setLocation(this.dsp.getDMR().getDataset().getShortName());
@@ -258,23 +256,4 @@ public class DapNetcdfFile extends ucar.nc2.NetcdfFile
         }
         return result;
     }
-
-    protected static String
-    canonicalURL(String location)
-    {
-        assert (location != null);
-        // Canonicalize the location
-        location = location.trim();
-
-        if(location.startsWith("dap4:")) {
-            location = location.substring("dap4:".length(),location.length());
-            // See if this is multiprotocol
-            if(location.startsWith("//"))
-                location = "http:" + location;
-            // else use remainder as is
-        }
-        return location;
-    }
-
-}	    
-
+}

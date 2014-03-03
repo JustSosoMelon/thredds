@@ -17,7 +17,7 @@ public class TestDSR extends UnitTestCommon
     //////////////////////////////////////////////////
     // Constants
 
-    static protected String DATADIR = "d4tests/src/test/data"; // relative to opuls root
+    static protected String DATADIR = "tests/src/test/data"; // relative to opuls root
     static protected String TESTDATADIR = DATADIR + "/resources/";
     static protected String BASELINEDIR = DATADIR + "/resources/TestDSR/baseline";
 
@@ -36,6 +36,8 @@ public class TestDSR extends UnitTestCommon
     protected boolean prop_debug = DEBUG;
 
     protected String datasetpath = null;
+
+    protected String root = null;
 
     //////////////////////////////////////////////////
     // Constructor(s)
@@ -56,9 +58,11 @@ public class TestDSR extends UnitTestCommon
         throws Exception
     {
         super(name);
-        this.dap4root = super.threddsroot + "/dap4";
         setSystemProperties();
-        this.datasetpath = this.dap4root + "/" + DATADIR;
+        this.root = getRoot();
+        if(this.root == null)
+            throw new Exception("Opuls root not found");
+        this.datasetpath = this.root + "/" + DATADIR;
     }
 
     //////////////////////////////////////////////////
@@ -94,7 +98,7 @@ public class TestDSR extends UnitTestCommon
             visual("TestDSR", dsr);
 
         // Figure out the baseline
-        String baselinepath = this.dap4root + "/" + BASELINEDIR + "/" + FAKEDATASET + ".dsr";
+        String baselinepath = this.root + "/" + BASELINEDIR + "/" + FAKEDATASET + ".dsr";
 	
         if(prop_baseline) {
             writefile(baselinepath, dsr);

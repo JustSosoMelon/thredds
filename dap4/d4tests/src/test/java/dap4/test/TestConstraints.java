@@ -23,13 +23,38 @@ public class TestConstraints extends UnitTestCommon
     //////////////////////////////////////////////////
     // Constants
 
-    static final String DATADIR = "d4tests/src/test/data"; // relative to opuls root
+    static final String DATADIR = "tests/src/test/data"; // relative to opuls root
     static final String TESTDATADIR = DATADIR + "/resources/TestCDMClient";
     static final String BASELINEDIR = TESTDATADIR + "/baseline";
     static final String TESTINPUTDIR = TESTDATADIR + "/testinput";
 
+    // Order is important; testing reachability is in the order
+    // listed
+    static final Source[] SOURCES = new Source[]{
+        new Source("localhost", "http://localhost:8080/d4ts","dap4://localhost:8080/d4ts"),
+        new Source("motherlode","http://motherlode.ucar.edu:8081/d4ts","dap4://motherlode.ucar.edu:8081/d4ts"),
+        new Source("thredds","http://thredds-test.ucar.edu/d4ts","dap4://thredds-test.ucar.edu/d4ts"),
+    };
+
     static final String alpha = "abcdefghijklmnopqrstuvwxyz"
         + "abcdefghijklmnopqrstuvwxyz".toUpperCase();
+
+    //////////////////////////////////////////////////
+    // Type Declarations
+
+    static class Source
+    {
+        public String name;
+        public String testurl;
+        public String prefix;
+
+        public Source(String name, String testurl, String prefix)
+        {
+            this.name = name;
+            this.testurl = testurl;
+            this.prefix = prefix;
+        }
+    }
 
     static class ClientTest
     {
@@ -117,7 +142,7 @@ public class TestConstraints extends UnitTestCommon
     {
         super(name);
         setSystemProperties();
-        this.root = super.dap4root;
+        this.root = getRoot();
         if(this.root == null)
             throw new Exception("Opuls root cannot be located");
         // Check for windows path
@@ -324,7 +349,6 @@ public class TestConstraints extends UnitTestCommon
         Source chosen = null;
         if(prop_server != null) {
             for(int i = 0;i < SOURCES.length;i++) {
-		if(SOURCES[i].isfile) continue;
                 if(SOURCES[i].name.equals(prop_server)) {
                     chosen = SOURCES[i];
                     break;
