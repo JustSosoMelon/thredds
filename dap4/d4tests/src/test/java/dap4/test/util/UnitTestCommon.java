@@ -25,6 +25,8 @@ public class UnitTestCommon extends TestCase
 
     static public final String FILESERVER = "dap4:file://";
 
+    static public final String FILESERVER = "dap4:file://";
+
     // NetcdfDataset enhancement to use: need only coord systems
     static Set<NetcdfDataset.Enhance> ENHANCEMENT = EnumSet.of(NetcdfDataset.Enhance.CoordSystems);
 
@@ -41,7 +43,6 @@ public class UnitTestCommon extends TestCase
                     "dap4://localhost:8080/d4ts"),
             new Source("file", true, null, FILESERVER),
     };
-
     //////////////////////////////////////////////////
     // Type Declarations
 
