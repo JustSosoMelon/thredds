@@ -25,10 +25,49 @@ public class UnitTestCommon extends TestCase
     static final String[] DEFAULTSUBDIRS
 			= new String[]{"tests"};
 
+    static public final String FILESERVER = "dap4:file://";
+
     // NetcdfDataset enhancement to use: need only coord systems
     static Set<NetcdfDataset.Enhance> ENHANCEMENT = EnumSet.of(NetcdfDataset.Enhance.CoordSystems);
 
     static public final String CONSTRAINTTAG = "dap4.ce";
+
+    // Order is important; testing reachability is in the order
+    // listed
+    static public final Source[] SOURCES = new Source[]{
+        new Source("localhost", false,
+                   "http://localhost:8080/d4ts",
+	                "dap4://localhost:8080/d4ts"),
+        new Source("remotetest", false,
+                   "http://remotetest.unidata.ucar.edu/d4ts",
+                   "dap4://remotetest.unidata.ucar.edu/d4ts"),
+        new Source("thredds", false,
+                   "http://thredds-test.ucar.edu/d4ts",
+                   "dap4://thredds-test.ucar.edu/d4ts"),
+        new Source("motherlode", false,
+                   "http://motherlode.ucar.edu:8081/d4ts",
+                    "dap4://motherlode.ucar.edu:8081/d4ts"),
+        new Source("file", true, null, FILESERVER),
+    };
+
+    //////////////////////////////////////////////////
+    // Type Declarations
+
+    static public class Source
+    {
+        public String name;
+        public String testurl;
+        public String prefix;
+        public boolean isfile;
+
+        public Source(String name, boolean isfile, String testurl, String prefix)
+        {
+            this.name = name;
+            this.testurl = testurl;
+            this.prefix = prefix;
+            this.isfile = isfile;
+        }
+    }
 
 	//////////////////////////////////////////////////
 	// Static variables

@@ -30,30 +30,11 @@ public class TestSerial extends UnitTestCommon
     static protected final String TESTDATADIR = DATADIR + "/resources/TestCDMClient";
     static protected final String BASELINEDIR = TESTDATADIR + "/baseline";
 
-    // Order is important; testing reachability is in the order
-    // listed
-    static protected final Source[] SOURCES = new Source[]{
-        new Source("remote", "dap4:http://thredds-test.unidata.ucar.edu/d4ts"),
-        new Source("local", "dap4:http://localhost:8080/d4ts"),
-    };
-
     static protected final String alpha = "abcdefghijklmnopqrstuvwxyz"
         + "abcdefghijklmnopqrstuvwxyz".toUpperCase();
 
     //////////////////////////////////////////////////
     // Type Declarations
-
-    static protected class Source
-    {
-        public String name;
-        public String prefix;
-
-        public Source(String name, String prefix)
-        {
-            this.name = name;
-            this.prefix = prefix;
-        }
-    }
 
     static protected class ClientTest
     {
@@ -352,6 +333,7 @@ public class TestSerial extends UnitTestCommon
         Source chosen = null;
         if(prop_server != null) {
             for(int i = 0;i < SOURCES.length;i++) {
+		if(SOURCES[i].isfile) continue;
                 if(SOURCES[i].name.equals(prop_server)) {
                     chosen = SOURCES[i];
                     break;
