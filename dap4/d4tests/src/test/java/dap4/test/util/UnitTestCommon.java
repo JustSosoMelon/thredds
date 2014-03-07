@@ -25,6 +25,8 @@ public class UnitTestCommon extends TestCase
     static final String[] DEFAULTSUBDIRS
 			= new String[]{"tests"};
 
+    static public final String FILESERVER = "dap4:file://";
+
     // NetcdfDataset enhancement to use: need only coord systems
     static Set<NetcdfDataset.Enhance> ENHANCEMENT = EnumSet.of(NetcdfDataset.Enhance.CoordSystems);
 
@@ -76,76 +78,6 @@ public class UnitTestCommon extends TestCase
     }
 
     //////////////////////////////////////////////////
-
-	static public org.slf4j.Logger log;
-
-	// Define a tree pattern to recognize the root.
-	static String patternroot = DEFAULTTREEROOT; // dir to locate
-	static String[] patternsubdirs = DEFAULTSUBDIRS; // with these immediate subdirectories
-	static final String root;
-
-        static {
-            // Compute the root path
-            root = locateOpulsRoot();
-        }
-
-	//////////////////////////////////////////////////
-	// static methods
-
-	static public String getRoot()
-	{
-		return root;
-	}
-
-	static void setTreePattern(String root, String[] subdirs)
-	{
-		patternroot = root;
-		patternsubdirs = subdirs;
-	}
-
-	// Walk around the directory structure to locate
-	// the path to a given directory.
-
-	static String locateOpulsRoot()
-	{
-		// Walk up the user.dir path looking for a node that has
-		// the name of the ROOTNAME and
-		// all the directories in SUBROOTS.
-
-		String path = System.getProperty("user.dir");
-                if(DEBUG)
-		    System.err.println("user.dir="+path); System.err.flush();
-
-		// clean up the path
-		path = path.replace('\\', '/'); // only use forward slash
-		assert (path != null);
-		if(path.endsWith("/")) path = path.substring(0, path.length() - 1);
-
-		while(path != null) {
-			// See if this is the tree root
-			int index = path.lastIndexOf("/");
-			if(index < 0)
-				return null; // not found => we are root
-			String lastdir = path.substring(index + 1, path.length());
-			if(patternroot.equals(lastdir)) {// We have a candidate
-				// See if all subdirs are immediate subdirectories
-				boolean allfound = true;
-				for(String dirname : patternsubdirs) {
-					// look for dirname in current directory
-					String s = path + "/" + dirname;
-					File tmp = new File(s);
-					if(!tmp.exists() || !tmp.isDirectory()) {
-						allfound = false;
-						break;
-					}
-				}
-				if(allfound)
-					return path; // presumably the root
-			}
-            path = path.substring(0, index);  // move up the tree
-        }
-		return null;
-	}
 
 	static public void
 	clearDir(File dir, boolean clearsubdirs)
