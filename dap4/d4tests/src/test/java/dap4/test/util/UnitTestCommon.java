@@ -25,6 +25,8 @@ public class UnitTestCommon extends TestCase
 
     static public final String FILESERVER = "dap4:file://";
 
+    static public final String FILESERVER = "dap4:file://";
+
     // NetcdfDataset enhancement to use: need only coord systems
     static Set<NetcdfDataset.Enhance> ENHANCEMENT = EnumSet.of(NetcdfDataset.Enhance.CoordSystems);
 

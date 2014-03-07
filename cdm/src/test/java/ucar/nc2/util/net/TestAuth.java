@@ -442,7 +442,6 @@ public class TestAuth extends UnitTestCommon
     }
 
     // This test is turned off until such time as the server can handle it.
-    @Ignore
     @Test
     public void
     testKeystore() throws Exception
