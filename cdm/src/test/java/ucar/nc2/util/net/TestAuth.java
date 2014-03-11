@@ -307,7 +307,6 @@ public class TestAuth extends UnitTestCommon
         }
     }
 
-    @Ignore
     @Test
     public void
     testCache() throws Exception
