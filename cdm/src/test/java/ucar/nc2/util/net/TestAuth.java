@@ -217,8 +217,8 @@ public class TestAuth extends UnitTestCommon
     }
 
     static AuthDataBasic[] basictests = {
-        new AuthDataBasic("http://" + REMOTESERVER + "/thredds/dodsC/restrict/testData.nc.dds",
-            "tiggeUser", "tigge"),
+        new AuthDataBasic("http://" + REMOTESERVER + "/thredds/restricted/basicAuth",
+            "remoteUser", "remotePassword"),
     };
 
     static AuthDataBasic[] redirecttests = {
@@ -267,7 +267,6 @@ public class TestAuth extends UnitTestCommon
         }
     }
 
-    @Ignore
     @Test
     public void
     testBasicDirect() throws Exception
