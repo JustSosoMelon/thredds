@@ -37,8 +37,6 @@ public class TestDSR extends UnitTestCommon
 
     protected String datasetpath = null;
 
-    protected String root = null;
-
     //////////////////////////////////////////////////
     // Constructor(s)
 
@@ -58,8 +56,7 @@ public class TestDSR extends UnitTestCommon
         throws Exception
     {
         super(name);
-        setSystemProperties();
-        this.root = getDAP4Root();
+        this.dap4root = getDAP4Root(); 
         if(this.root == null)
             throw new Exception("dap4 root not found");
         this.datasetpath = this.root + "/" + DATADIR;
@@ -98,7 +95,7 @@ public class TestDSR extends UnitTestCommon
             visual("TestDSR", dsr);
 
         // Figure out the baseline
-        String baselinepath = this.root + "/" + BASELINEDIR + "/" + FAKEDATASET + ".dsr";
+        String baselinepath = this.dap4root + "/" + BASELINEDIR + "/" + FAKEDATASET + ".dsr";
 	
         if(prop_baseline) {
             writefile(baselinepath, dsr);

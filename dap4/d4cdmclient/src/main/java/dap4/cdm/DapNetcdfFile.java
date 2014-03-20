@@ -99,6 +99,9 @@ public class DapNetcdfFile extends ucar.nc2.NetcdfFile
         throws IOException
     {
         super();
+        cancel = (cancelTask == null ? nullcancel : cancelTask);
+        // The url might have a leading dap4:, so canonicalize it
+        url = canonicalURL(url);
         this.originalurl = url;
         // url may have leading dap4:
         List<String> allprotocols = getProtocols(url);
@@ -276,4 +279,23 @@ public class DapNetcdfFile extends ucar.nc2.NetcdfFile
         }
         return result;
     }
-}
+
+    protected static String
+    canonicalURL(String location)
+    {
+        assert (location != null);
+        // Canonicalize the location
+        location = location.trim();
+
+        if(location.startsWith("dap4:")) {
+            location = location.substring("dap4:".length(),location.length());
+            // See if this is multiprotocol
+            if(location.startsWith("//"))
+                location = "http:" + location;
+            // else use remainder as is
+        }
+        return location;
+    }
+
+}	    
+

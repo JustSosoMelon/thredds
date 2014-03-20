@@ -21,7 +21,10 @@ public class UnitTestCommon extends TestCase
 
     static protected final Charset UTF8 = Charset.forName("UTF-8");
 
-    static final String DEFAULTTREEROOT = "dap4";
+    static final String DEFAULTTREEROOT = "thredds";
+    static final String DAP4DIR = "dap4";
+    static final String[] DEFAULTSUBDIRS
+        = new String[]{DAP4DIR};
 
     static public final String FILESERVER = "dap4:file://";
 
@@ -78,50 +81,75 @@ public class UnitTestCommon extends TestCase
     //////////////////////////////////////////////////
     // static methods
 
-    static public String getDAP4Root()
-    {
-        return dap4Root;
-    }
-
     static void setTreePattern(String root, String[] subdirs)
     {
         patternroot = root;
+        patternsubdirs = subdirs;
     }
 
     // Walk around the directory structure to locate
-    // the path to the thredds root
+    // the path to a given directory.
 
-    static String
-    locateDAP4Root()
+    static String locateThreddsRoot()
     {
         // Walk up the user.dir path looking for a node that has
-        // the name of the DEFAULTTREEROOT 
+        // the name of the ROOTNAME and
+        // all the directories in SUBROOTS.
 
         String path = System.getProperty("user.dir");
-
-        if (DEBUG) {
+        if(DEBUG)
             System.err.println("user.dir=" + path);
-            System.err.flush();
-        }
+        System.err.flush();
 
         // clean up the path
-        path = DapUtil.canonicalpath(path, false);
+        path = path.replace('\\', '/'); // only use forward slash
+        assert (path != null);
+        if(path.endsWith("/")) path = path.substring(0, path.length() - 1);
 
-        File prefix = new File(path);
-        for (; prefix != null; prefix = prefix.getParentFile()) {//walk up the tree
-            if (patternroot.equals(prefix.getName())) try {
-		return DapUtil.canonicalpath(prefix.getCanonicalPath(), false);
-            } catch (IOException ioe) {};
+        if(path != null) {
+            String[] pieces = path.split("[/]");
+            // look for path element with the proper name
+            // assumes we are not above the patternroot.
+            String root = null;
+            for(int i=pieces.length-1;i>=0;i--) {
+                if(pieces[i].equals(patternroot)) {
+                    String piecepath = rebuildpath(pieces,i);
+                    File candidate = new File(piecepath);
+                    if(!candidate.isDirectory()) continue;
+                    boolean allfound = true;
+                    int matchcount = 0;
+                    File[] files = candidate.listFiles();
+                    for(String sd: patternsubdirs) {
+                        for(File file: files) {
+                            if(file.isDirectory() && file.getName().equals(sd)) {
+                                matchcount++;
+                                break;
+                            }
+                        }
+                    }
+                    if(matchcount == patternsubdirs.length)
+                        return piecepath;
+                }
+            }
         }
-        return null;
+        throw new IllegalStateException("Executing in unknown location:"+path);
     }
 
     static protected String
     rebuildpath(String[] pieces, int last)
     {
         StringBuilder buf = new StringBuilder();
-        for (int i = 0; i <= last; i++) {
-            buf.append("/");
+        // Check for a possible leading windows drive letter
+        boolean hasdriveletter = false;
+        if(pieces[0].length() == 2) {
+            char c0 = pieces[0].charAt(0);
+            char c1 = pieces[0].charAt(1);
+            if(c1 == ':' && ((c0 >= 'a' && c0 <= 'z') || (c0 >= 'A' && c0 <= 'Z')))
+                hasdriveletter = true;
+        }
+        for(int i=0;i<=last;i++)  {
+            if(i>0 || !hasdriveletter)
+                buf.append("/");
             buf.append(pieces[i]);
         }
         return buf.toString();
@@ -131,10 +159,10 @@ public class UnitTestCommon extends TestCase
     clearDir(File dir, boolean clearsubdirs)
     {
         // wipe out the dir contents
-        if (!dir.exists()) return;
-        for (File f : dir.listFiles()) {
-            if (f.isDirectory()) {
-                if (clearsubdirs) {
+        if(!dir.exists()) return;
+        for(File f : dir.listFiles()) {
+            if(f.isDirectory()) {
+                if(clearsubdirs) {
                     clearDir(f, true); // clear subdirs
                     f.delete();
                 }
@@ -254,7 +282,7 @@ public class UnitTestCommon extends TestCase
         // to "netcdf file.nc {...}"
         String fixed = filename.replace('\\', '/');
         String shortname = filename;
-        if (fixed.lastIndexOf('/') >= 0)
+        if(fixed.lastIndexOf('/') >= 0)
             shortname = filename.substring(fixed.lastIndexOf('/') + 1, filename.length());
         text = text.replaceAll(filename, shortname);
         return text;
