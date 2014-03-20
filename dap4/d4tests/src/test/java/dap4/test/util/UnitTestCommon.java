@@ -83,45 +83,21 @@ public class UnitTestCommon extends TestCase
         return dap4Root;
     }
 
-    static void setTreePattern(String root, String[] subdirs)
-    {
-        patternroot = root;
-    }
-
-    // Walk around the directory structure to locate
-    // the path to the thredds root
-
-    static String
-    locateDAP4Root()
-    {
-        // Walk up the user.dir path looking for a node that has
-        // the name of the DEFAULTTREEROOT 
-
-        String path = System.getProperty("user.dir");
-
-        if (DEBUG) {
-            System.err.println("user.dir=" + path);
-            System.err.flush();
-        }
-
-        // clean up the path
-        path = DapUtil.canonicalpath(path, false);
-
-        File prefix = new File(path);
-        for (; prefix != null; prefix = prefix.getParentFile()) {//walk up the tree
-            if (patternroot.equals(prefix.getName())) try {
-		return DapUtil.canonicalpath(prefix.getCanonicalPath(), false);
-            } catch (IOException ioe) {};
-        }
-        return null;
-    }
-
     static protected String
     rebuildpath(String[] pieces, int last)
     {
         StringBuilder buf = new StringBuilder();
-        for (int i = 0; i <= last; i++) {
-            buf.append("/");
+        // Check for a possible leading windows drive letter
+        boolean hasdriveletter = false;
+        if(pieces[0].length() == 2) {
+            char c0 = pieces[0].charAt(0);
+            char c1 = pieces[0].charAt(1);
+            if(c1 == ':' && ((c0 >= 'a' && c0 <= 'z') || (c0 >= 'A' && c0 <= 'Z')))
+                hasdriveletter = true;
+        }
+        for(int i=0;i<=last;i++)  {
+            if(i>0 || !hasdriveletter)
+                buf.append("/");
             buf.append(pieces[i]);
         }
         return buf.toString();
@@ -131,10 +107,10 @@ public class UnitTestCommon extends TestCase
     clearDir(File dir, boolean clearsubdirs)
     {
         // wipe out the dir contents
-        if (!dir.exists()) return;
-        for (File f : dir.listFiles()) {
-            if (f.isDirectory()) {
-                if (clearsubdirs) {
+        if(!dir.exists()) return;
+        for(File f : dir.listFiles()) {
+            if(f.isDirectory()) {
+                if(clearsubdirs) {
                     clearDir(f, true); // clear subdirs
                     f.delete();
                 }
