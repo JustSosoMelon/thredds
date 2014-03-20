@@ -25,7 +25,7 @@ public class TestCDMClient extends UnitTestCommon
     //////////////////////////////////////////////////
     // Constants
 
-    static final String DATADIR = "tests/src/test/data"; // relative to opuls root
+    static final String DATADIR = "d4tests/src/test/data"; // relative to dap4 root
     static final String TESTDATADIR = DATADIR + "/resources/TestCDMClient";
     static final String BASELINEDIR = TESTDATADIR + "/baseline";
     static final String TESTINPUTDIR = TESTDATADIR + "/testinput";
@@ -129,7 +129,6 @@ public class TestCDMClient extends UnitTestCommon
     List<ClientTest> alltestcases = new ArrayList<ClientTest>();
     List<ClientTest> chosentests = new ArrayList<ClientTest>();
 
-    String root = null;
     String datasetpath = null;
 
     String sourceurl = null;
@@ -154,16 +153,11 @@ public class TestCDMClient extends UnitTestCommon
     {
         super(name);
         setSystemProperties();
-        this.root = getRoot();
-        if(this.root == null)
-            throw new Exception("Opuls root cannot be located");
-        if(this.root.charAt(0) != '/')
-            this.root = "/" + this.root; // handle problem of windows paths
-        this.datasetpath = this.root + "/" + TESTINPUTDIR;
+        this.datasetpath = this.dap4root + "/" + TESTINPUTDIR;
         makefilesource(this.datasetpath);
         this.sourceurl = getSourceURL();
         System.out.println("Using source url " + this.sourceurl);
-        defineAllTestcases(this.root, this.sourceurl);
+        defineAllTestcases(this.dap4root, this.sourceurl);
         chooseTestcases();
     }
 
@@ -174,7 +168,7 @@ public class TestCDMClient extends UnitTestCommon
     chooseTestcases()
     {
         if(true) {
-            chosentests = locate("test_struct_array.syn");
+            chosentests = locate("test_struct_nested3.nc");
         } else {
             for(ClientTest tc : alltestcases)
                 chosentests.add(tc);

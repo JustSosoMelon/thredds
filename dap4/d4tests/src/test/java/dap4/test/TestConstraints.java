@@ -23,7 +23,7 @@ public class TestConstraints extends UnitTestCommon
     //////////////////////////////////////////////////
     // Constants
 
-    static final String DATADIR = "tests/src/test/data"; // relative to opuls root
+    static final String DATADIR = "d4tests/src/test/data"; // relative to opuls root
     static final String TESTDATADIR = DATADIR + "/resources/TestCDMClient";
     static final String BASELINEDIR = TESTDATADIR + "/baseline";
     static final String TESTINPUTDIR = TESTDATADIR + "/testinput";
@@ -117,7 +117,7 @@ public class TestConstraints extends UnitTestCommon
     {
         super(name);
         setSystemProperties();
-        this.root = getRoot();
+        this.root = super.dap4root;
         if(this.root == null)
             throw new Exception("Opuls root cannot be located");
         // Check for windows path

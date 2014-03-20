@@ -29,7 +29,7 @@ public class TestHyrax extends UnitTestCommon
     //////////////////////////////////////////////////
     // Constants
 
-    static final String DATADIR = "tests/src/test/data"; // relative to opuls root
+    static final String DATADIR = "d4tests/src/test/data"; // relative to opuls root
     static final String TESTDATADIR = DATADIR + "/resources/TestHyrax";
     static final String BASELINEDIR = TESTDATADIR + "/baseline";
 
@@ -155,7 +155,6 @@ public class TestHyrax extends UnitTestCommon
     List<ClientTest> alltestcases = new ArrayList<ClientTest>();
     List<ClientTest> chosentests = new ArrayList<ClientTest>();
 
-    String root = null;
     String datasetpath = null;
 
     String sourceurl = null;
@@ -180,14 +179,10 @@ public class TestHyrax extends UnitTestCommon
     {
         super(name);
         setSystemProperties();
-        this.root = getRoot();
-        if(this.root == null)
-            throw new Exception("Opuls root cannot be located");
-        if(this.root.charAt(0) != '/')
-            this.root = "/" + this.root; // handle problem of windows paths
+        this.dap4root = super.threddsroot + "/dap4";
         this.sourceurl = getSourceURL();
         System.out.println("Using source url " + this.sourceurl);
-        defineAllTestcases(this.root, this.sourceurl);
+        defineAllTestcases(this.dap4root, this.sourceurl);
         chooseTestcases();
     }
 

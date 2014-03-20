@@ -26,7 +26,7 @@ public class TestServletConstraints extends UnitTestCommon
     //////////////////////////////////////////////////
     // Constants
 
-    static String DATADIR = "tests/src/test/data"; // relative to opuls root
+    static String DATADIR = "d4tests/src/test/data"; // relative to opuls root
     static String TESTDATADIR = DATADIR + "/resources/";
     static String BASELINEDIR = DATADIR + "/resources/TestServletConstraints/baseline";
     static String TESTINPUTDIR = DATADIR + "/resources/testfiles";
@@ -152,9 +152,7 @@ public class TestServletConstraints extends UnitTestCommon
     {
         super(name);
         setSystemProperties();
-        this.root = getRoot();
-        if(this.root == null)
-            throw new Exception("Opuls root not found");
+        this.root = super.dap4root;
         this.datasetpath = this.root + "/" + DATADIR;
         defineAllTestcases(this.root);
         chooseTestcases();

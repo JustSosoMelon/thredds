@@ -22,7 +22,7 @@ public class TestParserCE extends UnitTestCommon
     //////////////////////////////////////////////////
     // Constants
     static final boolean PARSEDEBUG = false;
-    static final String TESTCASEDIR = "tests/src/test/data/resources/TestParsers"; // relative to opuls root
+    static final String TESTCASEDIR = "d4tests/src/test/data/resources/TestParsers"; // relative to opuls root
 
     //////////////////////////////////////////////////
     // Type decls
@@ -52,7 +52,7 @@ public class TestParserCE extends UnitTestCommon
 
         String makepath(String file, String parent)
         {
-            return getRoot() + "/" + TESTCASEDIR + "/" + parent +"/" + file;
+            return dap4root + "/" + TESTCASEDIR + "/" + parent +"/" + file;
         }
 
     }
@@ -97,7 +97,7 @@ public class TestParserCE extends UnitTestCommon
     void defineTestCases()
         throws IOException
     {
-        TestSet.rootdir = getRoot();
+        TestSet.rootdir = super.dap4root;
         TestSet set = new TestSet("ce1"); // take the constraints from this.txt
         //set = set.setdebug("b[10:16]");
         alltestsets.add(set);

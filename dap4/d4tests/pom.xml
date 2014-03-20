@@ -123,6 +123,20 @@
             <goals>
               <goal>testCompile</goal>
             </goals>
+            <configuration>
+              <skip>${skipTests}</skip>
+              <testFailureIgnore>true</testFailureIgnore>
+              <argLine>-Dfile.encoding=UTF-8</argLine>
+              <argLine>-Dserver=remotetest</argLine>
+              <argLine>-Dmaven=true</argLine>
+              <encoding>UTF-8</encoding>
+              <excludes>
+	        <exclude>**/TestDap4All.java</exclude>
+		<exclude>**/TestFrontPage.java</exclude>
+		<exclude>**/TestHyrax.java</exclude>
+		<exclude>**/TestSerial.java</exclude>
+              </excludes>
+            </configuration>
           </execution>
         </executions>
     </plugin>
