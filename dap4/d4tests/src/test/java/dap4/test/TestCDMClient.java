@@ -129,7 +129,6 @@ public class TestCDMClient extends UnitTestCommon
     List<ClientTest> alltestcases = new ArrayList<ClientTest>();
     List<ClientTest> chosentests = new ArrayList<ClientTest>();
 
-    String root = null;
     String datasetpath = null;
 
     String sourceurl = null;
@@ -163,7 +162,7 @@ public class TestCDMClient extends UnitTestCommon
         makefilesource(this.datasetpath);
         this.sourceurl = getSourceURL();
         System.out.println("Using source url " + this.sourceurl);
-        defineAllTestcases(this.root, this.sourceurl);
+        defineAllTestcases(this.dap4root, this.sourceurl);
         chooseTestcases();
     }
 

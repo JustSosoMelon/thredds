@@ -178,6 +178,7 @@ public class TestServlet extends UnitTestCommon
         this.root = getDAP4Root();
         if (this.root == null)
             throw new Exception("dap4 root not found");
+
         this.datasetpath = this.root + "/" + DATADIR;
         defineAllTestcases(this.root);
         chooseTestcases();
