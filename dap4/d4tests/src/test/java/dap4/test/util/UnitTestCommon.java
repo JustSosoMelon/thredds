@@ -21,9 +21,10 @@ public class UnitTestCommon extends TestCase
 
     static protected final Charset UTF8 = Charset.forName("UTF-8");
 
-    static final String DEFAULTTREEROOT = "dap4";
+    static final String DEFAULTTREEROOT = "thredds";
+    static final String DAP4ROOT = "dap4";
     static final String[] DEFAULTSUBDIRS
-			= new String[]{"tests"};
+			= new String[]{DAP4ROOT};
 
     static public final String FILESERVER = "dap4:file://";
 
