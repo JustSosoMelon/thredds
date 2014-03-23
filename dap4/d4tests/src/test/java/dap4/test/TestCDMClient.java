@@ -25,7 +25,7 @@ public class TestCDMClient extends UnitTestCommon
     //////////////////////////////////////////////////
     // Constants
 
-    static final String DATADIR = "tests/src/test/data"; // relative to opuls root
+    static final String DATADIR = "tests/src/test/data"; // relative to dap4 root
     static final String TESTDATADIR = DATADIR + "/resources/TestCDMClient";
     static final String BASELINEDIR = TESTDATADIR + "/baseline";
     static final String TESTINPUTDIR = TESTDATADIR + "/testinput";
