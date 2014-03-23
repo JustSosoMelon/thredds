@@ -67,13 +67,9 @@ public class UnitTestCommon extends TestCase
 
     static public org.slf4j.Logger log;
 
-    // Define a tree pattern to recognize the root.
-    static String patternroot = DEFAULTTREEROOT; // dir to locate
-    static String dap4Root = null;
-
     static {
         // Compute the root path
-        dap4Root = locateDAP4Root();
+        threddsRoot = locateThreddsRoot();
     }
 
     //////////////////////////////////////////////////
@@ -84,12 +80,18 @@ public class UnitTestCommon extends TestCase
         return dap4Root;
     }
 
+
 	//////////////////////////////////////////////////
 	// static methods
 
-	static public String getRoot()
+	static public String getThreddsRoot()
 	{
-		return root;
+		return threddsRoot;
+	}
+
+	static public String getDAP4Root()
+	{
+		return dap4Root;
 	}
 
 	static void setTreePattern(String root, String[] subdirs)
@@ -99,13 +101,14 @@ public class UnitTestCommon extends TestCase
 	}
 
 	// Walk around the directory structure to locate
-	// the path to a given directory.
+	// the path to the thredds root
 
-	static String locateOpulsRoot()
+	static String
+	locateThreddRoot()
 	{
 		// Walk up the user.dir path looking for a node that has
-		// the name of the ROOTNAME and
-		// all the directories in SUBROOTS.
+		// the name of the DEFAULTTREEROOT and
+		// all the directories in DEFAULTSUBDIRS
 
 		String path = System.getProperty("user.dir");
                 if(DEBUG)
@@ -115,32 +118,38 @@ public class UnitTestCommon extends TestCase
 		path = path.replace('\\', '/'); // only use forward slash
 		assert (path != null);
 		if(path.endsWith("/")) path = path.substring(0, path.length() - 1);
-
-		while(path != null) {
-			// See if this is the tree root
-			int index = path.lastIndexOf("/");
-			if(index < 0)
-				return null; // not found => we are root
-			String lastdir = path.substring(index + 1, path.length());
-			if(patternroot.equals(lastdir)) {// We have a candidate
-				// See if all subdirs are immediate subdirectories
-				boolean allfound = true;
-				for(String dirname : patternsubdirs) {
-					// look for dirname in current directory
-					String s = path + "/" + dirname;
-					File tmp = new File(s);
-					if(!tmp.exists() || !tmp.isDirectory()) {
-						allfound = false;
-						break;
-					}
-				}
-				if(allfound)
-					return path; // presumably the root
+		
+		File prefix = new File(path);
+	        while(prefix != null) {//walk up the tree
+	   	    if(patternroot.equals(prefix.getName())) {// We have a candidate
+		        // See if all subdirs are immediate subdirectories
+			File[] subdirs = prefix.listFiles();
+			int found = 0;
+			for(File sub : subdirs) {
+			    if(!tmp.isDirectory()) continue;
+			    for(String s: patternsubdirs)
+				if(s.equals(sub.getName()))
+				    found++;
+			    }
 			}
-            path = path.substring(0, index);  // move up the tree
-        }
+			if(found == patternsubdirs.length) {
+			    // this is probably it
+			    return prefix.getCanonicalName().replace('\\','/');
+			}
+		 }
 		return null;
-	}
+	    }
+
+	static protected String
+        rebuildpath(String[] pieces, int last)
+	{
+	    StringBuilder buf = new StringBuilder();
+	    for(int i=0;i<=last;i++) {
+		buf.append("/");
+		buf.append(pieces[i]);
+	    }
+	    return buf.toString();
+        }
 
 	static public void
 	clearDir(File dir, boolean clearsubdirs)
