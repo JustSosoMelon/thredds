@@ -14,8 +14,8 @@
 <artifactId>d4servlet</artifactId>
 <packaging>jar</packaging>
 <dependencies>
-
   <dependency>
+
     <groupId>${project.groupId}</groupId>
     <artifactId>d4core</artifactId>
   </dependency>
