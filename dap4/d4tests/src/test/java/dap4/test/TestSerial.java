@@ -26,7 +26,7 @@ public class TestSerial extends UnitTestCommon
     //////////////////////////////////////////////////
     // Constants
 
-    static protected final String DATADIR = "tests/src/test/data"; // relative to opuls root
+    static protected final String DATADIR = "tests/src/test/data"; // relative to dap4 root
     static protected final String TESTDATADIR = DATADIR + "/resources/TestCDMClient";
     static protected final String BASELINEDIR = TESTDATADIR + "/baseline";
 
@@ -127,7 +127,7 @@ public class TestSerial extends UnitTestCommon
         setSystemProperties();
         this.root = getRoot();
         if(this.root == null)
-            throw new Exception("Opuls root cannot be located");
+            throw new Exception("dap4 root cannot be located");
         // Check for windows path
         if(alpha.indexOf(this.root.charAt(0)) >= 0 && this.root.charAt(1) == ':') {
         } else if(this.root.charAt(0) != '/')

@@ -41,7 +41,7 @@ public class Generator extends DapSerializer
 
     static final ByteOrder DEFAULTORDER = ByteOrder.LITTLE_ENDIAN;
 
-    static final String DATADIR = "tests/src/test/data"; // relative to opuls root
+    static final String DATADIR = "tests/src/test/data"; // relative to dap4 root
     static final String TESTSRC = DATADIR + "/resources/testfiles";
 
     static final String SERIALEXT = ".ser";

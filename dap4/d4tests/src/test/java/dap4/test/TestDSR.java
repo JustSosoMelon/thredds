@@ -17,7 +17,7 @@ public class TestDSR extends UnitTestCommon
     //////////////////////////////////////////////////
     // Constants
 
-    static protected String DATADIR = "tests/src/test/data"; // relative to opuls root
+    static protected String DATADIR = "tests/src/test/data"; // relative to dap4 root
     static protected String TESTDATADIR = DATADIR + "/resources/";
     static protected String BASELINEDIR = DATADIR + "/resources/TestDSR/baseline";
 
@@ -61,7 +61,7 @@ public class TestDSR extends UnitTestCommon
         setSystemProperties();
         this.root = getRoot();
         if(this.root == null)
-            throw new Exception("Opuls root not found");
+            throw new Exception("dap4 root not found");
         this.datasetpath = this.root + "/" + DATADIR;
     }
 

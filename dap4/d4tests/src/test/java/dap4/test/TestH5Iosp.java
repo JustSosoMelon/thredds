@@ -22,7 +22,7 @@ public class TestH5Iosp extends UnitTestCommon
     //////////////////////////////////////////////////
     // Constants
 
-    static protected String DATADIR = "tests/src/test/data"; // relative to opuls root
+    static protected String DATADIR = "tests/src/test/data"; // relative to dap4 root
     static protected String TESTDATADIR = DATADIR + "/resources/";
     static protected String BASELINEDIR = DATADIR + "/resources/TestIosp/baseline";
     static protected String TESTINPUTDIR = DATADIR + "/resources/testfiles";
@@ -104,7 +104,7 @@ public class TestH5Iosp extends UnitTestCommon
         setSystemProperties();
         this.root = getRoot();
         if(this.root == null)
-            throw new Exception("Opuls root not found");
+            throw new Exception("dap4 root not found");
         File f = new File(root + "/" + BASELINEDIR);
         if(!f.exists()) f.mkdir();
         this.datasetpath = this.root + "/" + DATADIR;
