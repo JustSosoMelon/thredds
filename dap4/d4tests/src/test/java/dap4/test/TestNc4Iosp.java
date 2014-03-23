@@ -111,7 +111,7 @@ public class TestNc4Iosp extends UnitTestCommon
         if(!HDF5) {
             CDMDSP.loadNc4Iosp();  // Load Nc4Iosp
         }
-        this.root = getRoot();
+        this.root = getDAP4Root();
         if(this.root == null)
             throw new Exception("dap4 root not found");
         Nc4IospTest.root = root;

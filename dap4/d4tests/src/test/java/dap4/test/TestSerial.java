@@ -125,7 +125,7 @@ public class TestSerial extends UnitTestCommon
     {
         super(name);
         setSystemProperties();
-        this.root = getRoot();
+        this.root = getDAP4Root();
         if(this.root == null)
             throw new Exception("dap4 root cannot be located");
         // Check for windows path

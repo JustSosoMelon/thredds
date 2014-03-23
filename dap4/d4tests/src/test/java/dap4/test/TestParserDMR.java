@@ -79,9 +79,9 @@ public class TestParserDMR extends UnitTestCommon
 
     void defineTestCases()
     {
-        String dirpath1 = getRoot() + "/" + DIR1;
-        String dirpath2 = getRoot() + "/" + DIR2;
-        String dirpath3 = getRoot() + "/" + DIR3;
+        String dirpath1 = getDAP4Root() + "/" + DIR1;
+        String dirpath2 = getDAP4Root() + "/" + DIR2;
+        String dirpath3 = getDAP4Root() + "/" + DIR3;
         if(false) {
             testcases.add(new TestCase(dirpath1, "testx", "dmr"));
         } else {
@@ -181,7 +181,7 @@ public class TestParserDMR extends UnitTestCommon
         int i, c;
 
         String testinput = testcase.dir + "/" + testcase.name + "." + testcase.ext;
-        String baseline = getRoot() + "/" + BASELINEDIR + "/" + testcase.name + ".dmp";
+        String baseline = getDAP4Root() + "/" + BASELINEDIR + "/" + testcase.name + ".dmp";
 
         System.out.println("Testcase: " + testinput);
 

@@ -52,7 +52,7 @@ public class TestParserCE extends UnitTestCommon
 
         String makepath(String file, String parent)
         {
-            return getRoot() + "/" + TESTCASEDIR + "/" + parent +"/" + file;
+            return getDAP4Root() + "/" + TESTCASEDIR + "/" + parent +"/" + file;
         }
 
     }
@@ -97,7 +97,7 @@ public class TestParserCE extends UnitTestCommon
     void defineTestCases()
         throws IOException
     {
-        TestSet.rootdir = getRoot();
+        TestSet.rootdir = getDAP4Root();
         TestSet set = new TestSet("ce1"); // take the constraints from this.txt
         //set = set.setdebug("b[10:16]");
         alltestsets.add(set);

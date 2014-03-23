@@ -24,7 +24,7 @@ public class UnitTestCommon extends TestCase
     static final String DEFAULTTREEROOT = "thredds";
     static final String DAP4ROOT = "dap4";
     static final String[] DEFAULTSUBDIRS
-			= new String[]{DAP4ROOT};
+        = new String[]{DAP4ROOT};
 
     static public final String FILESERVER = "dap4:file://";
 
@@ -37,11 +37,11 @@ public class UnitTestCommon extends TestCase
     // listed
     static public final Source[] SOURCES = new Source[]{
         new Source("remotetest", false,
-                   "http://remotetest.unidata.ucar.edu/d4ts",
-                   "dap4://remotetest.unidata.ucar.edu/d4ts"),
+            "http://remotetest.unidata.ucar.edu/d4ts",
+            "dap4://remotetest.unidata.ucar.edu/d4ts"),
         new Source("localhost", false,
-                   "http://localhost:8080/d4ts",
-                   "dap4://localhost:8080/d4ts"),
+            "http://localhost:8080/d4ts",
+            "dap4://localhost:8080/d4ts"),
         new Source("file", true, null, FILESERVER),
     };
 
@@ -64,135 +64,138 @@ public class UnitTestCommon extends TestCase
         }
     }
 
-	//////////////////////////////////////////////////
-	// Static variables
+    //////////////////////////////////////////////////
+    // Static variables
 
-	static public org.slf4j.Logger log;
+    static public org.slf4j.Logger log;
 
-	// Define a tree pattern to recognize the root.
-	static String patternroot = DEFAULTTREEROOT; // dir to locate
-	static String[] patternsubdirs = DEFAULTSUBDIRS; // with these immediate subdirectories
-	static final String threddsRoot;
-	static final String dap4Root;
+    // Define a tree pattern to recognize the root.
+    static String patternroot = DEFAULTTREEROOT; // dir to locate
+    static String[] patternsubdirs = DEFAULTSUBDIRS; // with these immediate subdirectories
+    static final String threddsRoot;
+    static String dap4Root = null;
 
-        static {
-            // Compute the root path
-                threddsRoot = locateThreddsRoot();
-	        if(threddsRoot != null)
-		dap4Root = threddsRoot.replace('\\','/') + "/" + DAP4ROOT; 
+    static {
+        // Compute the root path
+        threddsRoot = locateThreddsRoot();
+        if(threddsRoot != null)
+            dap4Root = threddsRoot.replace('\\', '/') + "/" + DAP4ROOT;
+    }
+
+    //////////////////////////////////////////////////
+    // static methods
+
+    static public String getThreddsRoot()
+    {
+        return threddsRoot;
+    }
+
+    static public String getDAP4Root()
+    {
+        return dap4Root;
+    }
+
+    static void setTreePattern(String root, String[] subdirs)
+    {
+        patternroot = root;
+        patternsubdirs = subdirs;
+    }
+
+    // Walk around the directory structure to locate
+    // the path to the thredds root
+
+    static String
+    locateThreddsRoot()
+    {
+        // Walk up the user.dir path looking for a node that has
+        // the name of the DEFAULTTREEROOT and
+        // all the directories in DEFAULTSUBDIRS
+
+        String path = System.getProperty("user.dir");
+        if(DEBUG)
+            System.err.println("user.dir=" + path);
+        System.err.flush();
+
+        // clean up the path
+        path = path.replace('\\', '/'); // only use forward slash
+        assert (path != null);
+        if(path.endsWith("/")) path = path.substring(0, path.length() - 1);
+
+        File prefix = new File(path);
+        while(prefix != null) {//walk up the tree
+            if(patternroot.equals(prefix.getName())) {// We have a candidate
+                // See if all subdirs are immediate subdirectories
+                File[] subdirs = prefix.listFiles();
+                int found = 0;
+                for(File sub : subdirs) {
+                    if(!sub.isDirectory()) continue;
+                    for(String s : patternsubdirs)
+                        if(s.equals(sub.getName()))
+                            found++;
+                }
+                if(found == patternsubdirs.length) try {
+                    // this is probably it
+                    return prefix.getCanonicalPath().replace('\\', '/');
+                } catch (IOException ioe) {
+                    return null;
+                }
+            }
         }
+        return null;
+    }
 
-	//////////////////////////////////////////////////
-	// static methods
-
-	static public String getThreddsRoot()
-	{
-		return threddsRoot;
-	}
-
-	static public String getDAP4Root()
-	{
-		return dap4Root;
-	}
-
-	static void setTreePattern(String root, String[] subdirs)
-	{
-		patternroot = root;
-		patternsubdirs = subdirs;
-	}
-
-	// Walk around the directory structure to locate
-	// the path to the thredds root
-
-	static String
-	locateThreddRoot()
-	{
-		// Walk up the user.dir path looking for a node that has
-		// the name of the DEFAULTTREEROOT and
-		// all the directories in DEFAULTSUBDIRS
-
-		String path = System.getProperty("user.dir");
-                if(DEBUG)
-		    System.err.println("user.dir="+path); System.err.flush();
-
-		// clean up the path
-		path = path.replace('\\', '/'); // only use forward slash
-		assert (path != null);
-		if(path.endsWith("/")) path = path.substring(0, path.length() - 1);
-		
-		File prefix = new File(path);
-	        while(prefix != null) {//walk up the tree
-	   	    if(patternroot.equals(prefix.getName())) {// We have a candidate
-		        // See if all subdirs are immediate subdirectories
-			File[] subdirs = prefix.listFiles();
-			int found = 0;
-			for(File sub : subdirs) {
-			    if(!tmp.isDirectory()) continue;
-			    for(String s: patternsubdirs)
-				if(s.equals(sub.getName()))
-				    found++;
-			    }
-			}
-			if(found == patternsubdirs.length) {
-			    // this is probably it
-			    return prefix.getCanonicalName().replace('\\','/');
-			}
-		 }
-		return null;
-	    }
-
-	static protected String
-        rebuildpath(String[] pieces, int last)
-	{
-	    StringBuilder buf = new StringBuilder();
-	    for(int i=0;i<=last;i++) {
-		buf.append("/");
-		buf.append(pieces[i]);
-	    }
-	    return buf.toString();
+    static protected String
+    rebuildpath(String[] pieces, int last)
+    {
+        StringBuilder buf = new StringBuilder();
+        for(int i = 0;i <= last;i++) {
+            buf.append("/");
+            buf.append(pieces[i]);
         }
+        return buf.toString();
+    }
 
-	static public void
-	clearDir(File dir, boolean clearsubdirs)
-	{
-		// wipe out the dir contents
-		if(!dir.exists()) return;
-		for(File f : dir.listFiles()) {
-			if(f.isDirectory()) {
-				if(clearsubdirs) {
-					clearDir(f, true); // clear subdirs
+    static public void
+    clearDir(File dir, boolean clearsubdirs)
+    {
+        // wipe out the dir contents
+        if(!dir.exists()) return;
+        for(File f : dir.listFiles()) {
+            if(f.isDirectory()) {
+                if(clearsubdirs) {
+                    clearDir(f, true); // clear subdirs
                     f.delete();
                 }
-			} else
-			    f.delete();
-		}
-	}
+            } else
+                f.delete();
+        }
+    }
 
-	//////////////////////////////////////////////////
-	// Instance databuffer
+    //////////////////////////////////////////////////
+    // Instance databuffer
 
-	protected String title = "Testing";
+    protected String title = "Testing";
 
-	public UnitTestCommon()
-	{
-		this("UnitTest");
-	}
+    public UnitTestCommon()
+    {
+        this("UnitTest");
+    }
 
-	public UnitTestCommon(String name)
-	{
-		super(name);
-		this.title = name;
-	}
+    public UnitTestCommon(String name)
+    {
+        super(name);
+        this.title = name;
+    }
 
-	public void setTitle(String title)
-	{
-		this.title = title;
-	}
+    public void setTitle(String title)
+    {
+        this.title = title;
+    }
 
-	public String getTitle()
-	{
-		return this.title;
-	}
+    public String getTitle()
+    {
+        return this.title;
+    }
 
     // Copy result into the a specified dir
     public void
@@ -233,7 +236,7 @@ public class UnitTestCommon extends TestCase
     readbinaryfile(String filename)
         throws IOException
     {
-	    ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
         FileInputStream file = new FileInputStream(filename);
         return DapUtil.readbinaryfile(file);
     }
@@ -244,7 +247,7 @@ public class UnitTestCommon extends TestCase
         if(!captured.endsWith("\n"))
             captured = captured + "\n";
         // Dump the output for visual comparison
-        System.out.println("Testing " + getName() + ": "+header+":");
+        System.out.println("Testing " + getName() + ": " + header + ":");
         System.out.println("---------------");
         System.out.print(captured);
         System.out.println("---------------");
@@ -268,7 +271,7 @@ public class UnitTestCommon extends TestCase
     static public NetcdfDataset openDataset(String url)
         throws IOException
     {
-	return NetcdfDataset.acquireDataset(null, url, ENHANCEMENT, -1, null, null);
+        return NetcdfDataset.acquireDataset(null, url, ENHANCEMENT, -1, null, null);
     }
 
     // Fix up a filename reference in a string
@@ -277,11 +280,11 @@ public class UnitTestCommon extends TestCase
         // In order to achieve diff consistentcy, we need to
         // modify the output to change "netcdf .../file.nc {...}"
         // to "netcdf file.nc {...}"
-        String fixed = filename.replace('\\','/');
+        String fixed = filename.replace('\\', '/');
         String shortname = filename;
         if(fixed.lastIndexOf('/') >= 0)
-            shortname = filename.substring(fixed.lastIndexOf('/')+1,filename.length());
-        text= text.replaceAll(filename,shortname);
+            shortname = filename.substring(fixed.lastIndexOf('/') + 1, filename.length());
+        text = text.replaceAll(filename, shortname);
         return text;
     }
 
