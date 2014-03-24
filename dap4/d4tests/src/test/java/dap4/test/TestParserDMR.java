@@ -22,11 +22,11 @@ public class TestParserDMR extends UnitTestCommon
     //////////////////////////////////////////////////
     // Constants
 
-    static protected final String DIR1 = "tests/src/test/data/resources/TestParsers/testinput"; // relative to dap4 root
-    static protected final String DIR2 = "tests/src/test/data/resources/TestServlet/baseline"; // relative to dap4 root
-    static protected final String DIR3 = "tests/src/test/data/resources/TestParsers/dmrset"; // relative to dap4  root
+    static protected final String DIR1 = "d4tests/src/test/data/resources/TestParsers/testinput"; // relative to dap4 root
+    static protected final String DIR2 = "d4tests/src/test/data/resources/TestServlet/baseline"; // relative to dap4 root
+    static protected final String DIR3 = "d4tests/src/test/data/resources/TestParsers/dmrset"; // relative to dap4  root
 
-    static protected final String BASELINEDIR = "tests/src/test/data/resources/TestParsers/baseline";
+    static protected final String BASELINEDIR = "d4tests/src/test/data/resources/TestParsers/baseline";
 
     //////////////////////////////////////////////////
 

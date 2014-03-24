@@ -135,6 +135,7 @@
          <skip>${skipTests}</skip>
          <testFailureIgnore>true</testFailureIgnore>
          <argLine>-Dfile.encoding=UTF-8</argLine>
+         <argLine>-Dserver=remotetest</argLine>
 	 <encoding>UTF-8</encoding>                    
          <excludes>
 	    <exclude>src/test/java/dap4/test/TestFrontPage.java</exclude>

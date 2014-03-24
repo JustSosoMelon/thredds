@@ -23,7 +23,7 @@ public class TestConstraints extends UnitTestCommon
     //////////////////////////////////////////////////
     // Constants
 
-    static final String DATADIR = "tests/src/test/data"; // relative to dap4 root
+    static final String DATADIR = "d4tests/src/test/data"; // relative to dap4 root
     static final String TESTDATADIR = DATADIR + "/resources/TestCDMClient";
     static final String BASELINEDIR = TESTDATADIR + "/baseline";
     static final String TESTINPUTDIR = TESTDATADIR + "/testinput";

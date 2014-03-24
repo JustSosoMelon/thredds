@@ -22,7 +22,7 @@ public class TestParserCE extends UnitTestCommon
     //////////////////////////////////////////////////
     // Constants
     static final boolean PARSEDEBUG = false;
-    static final String TESTCASEDIR = "tests/src/test/data/resources/TestParsers"; // relative to dap4 root
+    static final String TESTCASEDIR = "d4tests/src/test/data/resources/TestParsers"; // relative to dap4 root
 
     //////////////////////////////////////////////////
     // Type decls

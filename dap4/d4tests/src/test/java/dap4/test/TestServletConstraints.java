@@ -26,7 +26,7 @@ public class TestServletConstraints extends UnitTestCommon
     //////////////////////////////////////////////////
     // Constants
 
-    static String DATADIR = "tests/src/test/data"; // relative to dap4 root
+    static String DATADIR = "d4tests/src/test/data"; // relative to dap4 root
     static String TESTDATADIR = DATADIR + "/resources/";
     static String BASELINEDIR = DATADIR + "/resources/TestServletConstraints/baseline";
     static String TESTINPUTDIR = DATADIR + "/resources/testfiles";
