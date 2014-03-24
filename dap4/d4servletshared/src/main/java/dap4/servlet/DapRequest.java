@@ -29,21 +29,21 @@ public class DapRequest
     //////////////////////////////////////////////////
     // Instance variables
 
-    ServletInfo svcinfo = null;
-    HttpServletRequest request = null;
-    HttpServletResponse response = null;
-    String url = null;  // without any query
-    String originalurl = null; // as given
-    String contextpath = null;
-    String fullpath = null;
-    String servletpath = null;
-    String datasetpath = null;
-    String querystring = null;
+    protected ServletInfo svcinfo = null;
+    protected HttpServletRequest request = null;
+    protected HttpServletResponse response = null;
+    protected String url = null;  // without any query
+    protected String originalurl = null; // as given
+    protected String contextpath = null;
+    protected String fullpath = null;
+    protected String servletpath = null;
+    protected String datasetpath = null;
+    protected String querystring = null;
 
-    RequestMode mode = null; // .dmr, .dap, or .dsr
-    ResponseFormat format = null; // e.g. .xml when given .dmr.xml
+    protected RequestMode mode = null; // .dmr, .dap, or .dsr
+    protected ResponseFormat format = null; // e.g. .xml when given .dmr.xml
 
-    Map<String, String> queries = new HashMap<String, String>();
+    protected Map<String, String> queries = new HashMap<String, String>();
 
     //////////////////////////////////////////////////
     // Constructor(s)
@@ -92,6 +92,7 @@ public class DapRequest
         if(this.datasetpath == null) {
             // Presume mode is a capabilities request
             this.mode = RequestMode.CAPABILITIES;
+            this.format = ResponseFormat.HTML;
         } else {
             String[] segments = datasetpath.split("/");
             if(segments.length > 0 && segments[0].length() > 0) {
@@ -128,7 +129,7 @@ public class DapRequest
                     datasetpath = buf.toString();
                 } else
                     datasetpath = endofpath;
-                // If we did not find a mode, assume DSR
+                // If we did not find a mode, assume dsr
                 if(this.mode == null)
                     this.mode = RequestMode.DSR;
             }

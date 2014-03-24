@@ -174,7 +174,7 @@ public class TestCDMClient extends UnitTestCommon
     chooseTestcases()
     {
         if(true) {
-            chosentests = locate("test_struct_array.syn");
+            chosentests = locate("test_atomic_array.nc");
         } else {
             for(ClientTest tc : alltestcases)
                 chosentests.add(tc);

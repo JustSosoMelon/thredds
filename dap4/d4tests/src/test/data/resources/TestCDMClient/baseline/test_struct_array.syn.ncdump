@@ -1,5 +1,78 @@
 netcdf test_struct_array_2.nc {
+  dimensions:
+    dx = 4;
+    dy = 3;
+  variables:
+    float z(dx=4);
+      :_DAP4_Checksum_CRC32 = "0x0061f2b3";
+
+    float t(dy=3);
+      :_DAP4_Checksum_CRC32 = "0xf0315213";
+
+
+    Structure {
+      int x;
+        :_CoordinateAxisType = "GeoX";
+      int y;
+        :_CoordinateAxisType = "GeoY";
+    } s(dx=4, dy=3);
+      :_DAP4_Checksum_CRC32 = "0xe0e11223";
+
+
   // global attributes:
   :_CoordSysBuilder = "ucar.nc2.dataset.conv.DefaultConvention";
  data:
+z =
+  {0.72765326, 0.785633, 0.513679, 0.24684471}
+t =
+  {0.738422, 0.21488869, 0.49479842}
+s =
+  {
+    x =73
+    y =4259
+  } s(0)
+  {
+    x =4200
+    y =3043
+  } s(1)
+  {
+    x =1706
+    y =1081
+  } s(2)
+  {
+    x =291
+    y =9
+  } s(3)
+  {
+    x =1994
+    y =2948
+  } s(4)
+  {
+    x =1431
+    y =2388
+  } s(5)
+  {
+    x =2340
+    y =167
+  } s(6)
+  {
+    x =1067
+    y =2440
+  } s(7)
+  {
+    x =761
+    y =3221
+  } s(8)
+  {
+    x =894
+    y =2883
+  } s(9)
+  {
+    x =3835
+    y =4641
+  } s(10)
+  {
+    x =815
+    y =3271
+  } s(11)
 }

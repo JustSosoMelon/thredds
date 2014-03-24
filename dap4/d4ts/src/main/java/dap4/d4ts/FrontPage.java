@@ -144,7 +144,7 @@ public class FrontPage
     // HTML prefix and suffix
     // (Remember that java does not allow Strings to cross lines)
     static final String HTML_PREFIX =
-        "<html>\n<head>\n<title>DAP4 Test Files</title>\n<meta http-equiv=\"Content-Type\" content=\"text/html\">\n</head>\n<body bgcolor=\"#FFFFFF\">\n";
+        "<html>\n<head>\n<title>DAP4 Test Files</title>\n<meta http-equiv=\"Content-Type\" content=\"text/html\">\n</meta>\n<body bgcolor=\"#FFFFFF\">\n";
 
     static final String HTML_HEADER1 = "<h1>DAP4 Test Files</h1>\n";
     static final String HTML_HEADER2 = "<h2>http://"+REMOTESERVER+"/d4ts/</h2>\n<hr>\n";

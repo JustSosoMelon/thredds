@@ -2,7 +2,7 @@
    See the LICENSE file for more information.
 */
 
-package   dap4.cdm;
+package dap4.cdm;
 
 import dap4.cdmshared.CDMUtil;
 import dap4.core.data.DataException;
@@ -37,6 +37,7 @@ public class CDMArrayStructure extends ArrayStructure implements CDMArray
 
     protected D4DataCompoundArray d4data = null;
     protected long dimsize = 0;
+    protected long nmembers = 0;
 
     protected int dimactual = 0;
 
@@ -60,7 +61,7 @@ public class CDMArrayStructure extends ArrayStructure implements CDMArray
      * in this class. The total number of StructureData objects
      * is dimsize.
      * If StructureDataA was an interface, then we
-     *  could merge with the instances vector above.
+     * could merge with the instances vector above.
      */
 
     protected StructureDataA[] structdata = null;
@@ -90,8 +91,8 @@ public class CDMArrayStructure extends ArrayStructure implements CDMArray
         // Fill in the instances and structdata vectors
         // The leaf instances arrays will be filled in by the CDM compiler
         structdata = new StructureDataA[(int) this.dimsize];
-        int nmembers = ((DapStructure) template).getFields().size();
-        instances = new CDMArray[(int) (this.dimsize*nmembers)];
+        this.nmembers = ((DapStructure) template).getFields().size();
+        instances = new CDMArray[(int) (this.dimsize * this.nmembers)];
         Arrays.fill(instances, null);
         for(int i = 0;i < dimsize;i++) {
             structdata[i] = new StructureDataA(this, i);
@@ -101,10 +102,9 @@ public class CDMArrayStructure extends ArrayStructure implements CDMArray
     /*package access*/ void
     finish()
     {
-        int nmembers = ((DapStructure) template).getFields().size();
-        for(int i=0;i<this.dimactual;i++) {
-            for(int m=0;m<nmembers;m++) {
-                int offset = (int)(i * this.dimsize) + m;
+        for(int i = 0;i < this.dimsize;i++) {
+            for(int m = 0;m < this.nmembers;m++) {
+                int offset = (int) (i * this.nmembers) + m;
                 assert instances[offset] != null;
             }
         }
@@ -166,13 +166,14 @@ public class CDMArrayStructure extends ArrayStructure implements CDMArray
         addField(index, m, instance);
     }
 
-    void addField(long index, int mindex, CDMArray instance)
+    void addField(long recno, int mindex, CDMArray instance)
     {
         assert this.instances != null : "Internal Error";
-        if(index < 0 || index >= this.instances.length)
-            throw new ArrayIndexOutOfBoundsException("CDMArrayStructure.addInstance: index out of range: " + index);
-        if(index > this.dimactual) this.dimactual = (int)index+1;
-        int offset = (int)(index * this.dimsize) + mindex;
+        if(recno < 0 || recno >= this.instances.length)
+            throw new ArrayIndexOutOfBoundsException("CDMArrayStructure.addInstance: index out of range: " + recno);
+        if(recno > this.dimactual)
+            this.dimactual = (int) recno + 1;
+        int offset = (int) (recno * this.nmembers) + mindex;
         this.instances[offset] = instance; // WARNING: overwrites
     }
 
@@ -182,16 +183,17 @@ public class CDMArrayStructure extends ArrayStructure implements CDMArray
     {
         StringBuilder buf = new StringBuilder();
         DapStructure struct = (DapStructure) this.template;
-        for(int i = 0;i < dimsize;i++) {
+        for(int i = 0;i < this.dimsize;i++) {
             List<DapVariable> fields = struct.getFields();
-            if(i < (dimsize - 1))
+            if(i < (this.dimsize - 1))
                 buf.append("\n");
             buf.append("Structure {\n");
-            if(fields != null)
-                for(int j = 0;j < fields.size();j++) {
+            if(fields != null) {
+                int nmembers = fields.size();
+                for(int j = 0;j < nmembers;j++) {
                     DapVariable field = fields.get(j);
                     String sfield;
-                    int offset = (int)((i*this.dimsize) + j);
+                    int offset = (int) ((i * nmembers) + j);
                     if(instances != null && offset < instances.length
                         && instances[offset] != null) {
                         CDMArray array = instances[offset];
@@ -200,6 +202,7 @@ public class CDMArrayStructure extends ArrayStructure implements CDMArray
                         sfield = "null";
                     buf.append(sfield + "\n");
                 }
+            }
             buf.append(String.format("} [%d/%d]", i, dimsize));
         }
         return buf.toString();
@@ -209,10 +212,9 @@ public class CDMArrayStructure extends ArrayStructure implements CDMArray
     computeTotalSize()
     {
         long totalsize = 0;
-        int nmembers = this.getStructureMembers().getMembers().size();
-        for(int recno = 0;recno < this.dimactual;recno++) {
-            for(int m = 0; m < nmembers;m++) {
-                int offset = (int)((recno*this.dimsize)+m);
+        for(int recno = 0;recno < this.dimsize;recno++) {
+            for(int m = 0;m < this.nmembers;m++) {
+                int offset = (int) ((recno * this.nmembers) + m);
                 totalsize += instances[offset].getByteSize();
             }
         }
@@ -225,17 +227,17 @@ public class CDMArrayStructure extends ArrayStructure implements CDMArray
     /**
      * Key interface method coming in from StructureDataA.
      *
-     * @param index The instance # of the array of Structure instances
+     * @param recno The instance # of the array of Structure instances
      * @param m     The member of interest in the Structure instance
      * @return The ucar.ma2.Array instance corresponding to the instance.
      */
     public ucar.ma2.Array
-    getArray(int index, StructureMembers.Member m)
+    getArray(int recno, StructureMembers.Member m)
     {
-        if(index < 0 || index >= this.instances.length)
-            throw new ArrayIndexOutOfBoundsException("CDMArrayStructure.getArray: index out of range: " + index);
+        if(recno < 0 || recno >= this.instances.length)
+            throw new ArrayIndexOutOfBoundsException("CDMArrayStructure.getArray: index out of range: " + recno);
         int mindex = memberIndex(m);
-        int offset = (int)((index*this.dimsize)+mindex);
+        int offset = (int) ((recno * this.nmembers) + mindex);
         return (ucar.ma2.Array) instances[offset];
     }
 
@@ -302,13 +304,13 @@ public class CDMArrayStructure extends ArrayStructure implements CDMArray
 
     public double[] getJavaArrayDouble(int recnum, StructureMembers.Member m)
     {
-        D4DataAtomic data = getAtomicArray(recnum,m).getData();
+        D4DataAtomic data = getAtomicArray(recnum, m).getData();
         DapType atype = data.getType();
         long count = atype.getSize();
         try {
-            Object vector = Dap4Util.createVector(atype.getPrimitiveType(),count);
-	        data.read(0,count,vector);
-            return (double[])Dap4Util.convertVector(DapType.FLOAT64,atype,vector);
+            Object vector = Dap4Util.createVector(atype.getPrimitiveType(), count);
+            data.read(0, count, vector);
+            return (double[]) Dap4Util.convertVector(DapType.FLOAT64, atype, vector);
         } catch (DataException de) {
             throw new UnsupportedOperationException(de);
         }
@@ -317,13 +319,13 @@ public class CDMArrayStructure extends ArrayStructure implements CDMArray
     public float[]
     getJavaArrayFloat(int index, StructureMembers.Member m)
     {
-        D4DataAtomic data = getAtomicArray(index,m).getData();
+        D4DataAtomic data = getAtomicArray(index, m).getData();
         DapType atype = data.getType();
         long count = atype.getSize();
         try {
-            Object vector = Dap4Util.createVector(atype.getPrimitiveType(),count);
-	        data.read(0,count,vector);
-            return (float[])Dap4Util.convertVector(DapType.FLOAT32,atype,vector);
+            Object vector = Dap4Util.createVector(atype.getPrimitiveType(), count);
+            data.read(0, count, vector);
+            return (float[]) Dap4Util.convertVector(DapType.FLOAT32, atype, vector);
         } catch (DataException de) {
             throw new UnsupportedOperationException(de);
         }
@@ -332,13 +334,13 @@ public class CDMArrayStructure extends ArrayStructure implements CDMArray
     public byte[]
     getJavaArrayByte(int index, StructureMembers.Member m)
     {
-        D4DataAtomic data = getAtomicArray(index,m).getData();
+        D4DataAtomic data = getAtomicArray(index, m).getData();
         DapType atype = data.getType();
         long count = atype.getSize();
         try {
-            Object vector = Dap4Util.createVector(atype.getPrimitiveType(),count);
-	        data.read(0,count,vector);
-            return (byte[])Dap4Util.convertVector(DapType.INT8,atype,vector);
+            Object vector = Dap4Util.createVector(atype.getPrimitiveType(), count);
+            data.read(0, count, vector);
+            return (byte[]) Dap4Util.convertVector(DapType.INT8, atype, vector);
         } catch (DataException de) {
             throw new UnsupportedOperationException(de);
         }
@@ -347,13 +349,13 @@ public class CDMArrayStructure extends ArrayStructure implements CDMArray
     public short[]
     getJavaArrayShort(int index, StructureMembers.Member m)
     {
-        D4DataAtomic data = getAtomicArray(index,m).getData();
+        D4DataAtomic data = getAtomicArray(index, m).getData();
         DapType atype = data.getType();
         long count = atype.getSize();
         try {
-            Object vector = Dap4Util.createVector(atype.getPrimitiveType(),count);
-	        data.read(0,count,vector);
-            return (short[])Dap4Util.convertVector(DapType.INT16,atype,vector);
+            Object vector = Dap4Util.createVector(atype.getPrimitiveType(), count);
+            data.read(0, count, vector);
+            return (short[]) Dap4Util.convertVector(DapType.INT16, atype, vector);
         } catch (DataException de) {
             throw new UnsupportedOperationException(de);
         }
@@ -362,13 +364,13 @@ public class CDMArrayStructure extends ArrayStructure implements CDMArray
     public int[]
     getJavaArrayInt(int index, StructureMembers.Member m)
     {
-        D4DataAtomic data = getAtomicArray(index,m).getData();
+        D4DataAtomic data = getAtomicArray(index, m).getData();
         DapType atype = data.getType();
         long count = atype.getSize();
         try {
-            Object vector = Dap4Util.createVector(atype.getPrimitiveType(),count);
-	        data.read(0,count,vector);
-            return (int[])Dap4Util.convertVector(DapType.INT32,atype,vector);
+            Object vector = Dap4Util.createVector(atype.getPrimitiveType(), count);
+            data.read(0, count, vector);
+            return (int[]) Dap4Util.convertVector(DapType.INT32, atype, vector);
         } catch (DataException de) {
             throw new UnsupportedOperationException(de);
         }
@@ -377,13 +379,13 @@ public class CDMArrayStructure extends ArrayStructure implements CDMArray
     public long[]
     getJavaArrayLong(int index, StructureMembers.Member m)
     {
-        D4DataAtomic data = getAtomicArray(index,m).getData();
+        D4DataAtomic data = getAtomicArray(index, m).getData();
         DapType atype = data.getType();
         long count = atype.getSize();
         try {
-            Object vector = Dap4Util.createVector(atype.getPrimitiveType(),count);
-	        data.read(0,count,vector);
-            return (long[])Dap4Util.convertVector(DapType.INT64,atype,vector);
+            Object vector = Dap4Util.createVector(atype.getPrimitiveType(), count);
+            data.read(0, count, vector);
+            return (long[]) Dap4Util.convertVector(DapType.INT64, atype, vector);
         } catch (DataException de) {
             throw new UnsupportedOperationException(de);
         }
@@ -392,13 +394,13 @@ public class CDMArrayStructure extends ArrayStructure implements CDMArray
     public char[]
     getJavaArrayChar(int index, StructureMembers.Member m)
     {
-        D4DataAtomic data = getAtomicArray(index,m).getData();
+        D4DataAtomic data = getAtomicArray(index, m).getData();
         DapType atype = data.getType();
         long count = atype.getSize();
         try {
-            Object vector = Dap4Util.createVector(atype.getPrimitiveType(),count);
-	        data.read(0,count,vector);
-            return (char[])Dap4Util.convertVector(DapType.CHAR,atype,vector);
+            Object vector = Dap4Util.createVector(atype.getPrimitiveType(), count);
+            data.read(0, count, vector);
+            return (char[]) Dap4Util.convertVector(DapType.CHAR, atype, vector);
         } catch (DataException de) {
             throw new UnsupportedOperationException(de);
         }
@@ -407,13 +409,13 @@ public class CDMArrayStructure extends ArrayStructure implements CDMArray
     public String[]
     getJavaArrayString(int index, StructureMembers.Member m)
     {
-        D4DataAtomic data = getAtomicArray(index,m).getData();
+        D4DataAtomic data = getAtomicArray(index, m).getData();
         DapType atype = data.getType();
         long count = atype.getSize();
         try {
-            Object vector = Dap4Util.createVector(atype.getPrimitiveType(),count);
-	        data.read(0,count,vector);
-            return (String[])Dap4Util.convertVector(DapType.STRING,atype,vector);
+            Object vector = Dap4Util.createVector(atype.getPrimitiveType(), count);
+            data.read(0, count, vector);
+            return (String[]) Dap4Util.convertVector(DapType.STRING, atype, vector);
         } catch (DataException de) {
             throw new UnsupportedOperationException(de);
         }
@@ -422,13 +424,13 @@ public class CDMArrayStructure extends ArrayStructure implements CDMArray
     public ByteBuffer[]
     getJavaArrayOpaque(int index, StructureMembers.Member m)
     {
-        D4DataAtomic data = getAtomicArray(index,m).getData();
+        D4DataAtomic data = getAtomicArray(index, m).getData();
         DapType atype = data.getType();
         long count = atype.getSize();
         try {
-            Object vector = Dap4Util.createVector(atype.getPrimitiveType(),count);
-	        data.read(0,count,vector);
-            return (ByteBuffer[])Dap4Util.convertVector(DapType.OPAQUE,atype,vector);
+            Object vector = Dap4Util.createVector(atype.getPrimitiveType(), count);
+            data.read(0, count, vector);
+            return (ByteBuffer[]) Dap4Util.convertVector(DapType.OPAQUE, atype, vector);
         } catch (DataException de) {
             throw new UnsupportedOperationException(de);
         }
@@ -461,6 +463,12 @@ public class CDMArrayStructure extends ArrayStructure implements CDMArray
     public ArraySequence getArraySequence(StructureMembers.Member m)
     {
         throw new UnsupportedOperationException("CDMArraySequence");
+    }
+
+    @Override
+    public Array copy()
+    {
+        return this; // temporary
     }
 
     //////////////////////////////////////////////////
@@ -510,7 +518,7 @@ public class CDMArrayStructure extends ArrayStructure implements CDMArray
     protected CDMArray
     memberArray(int recno, int memberindex)
     {
-        int offset = (int)((recno*this.dimsize)+memberindex);
+        int offset = (int) ((recno * this.nmembers) + memberindex);
         CDMArray cdmdata = instances[offset];
         return cdmdata;
     }

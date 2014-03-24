@@ -172,27 +172,26 @@ public class CDMCompiler
      * structure arrays; so this code may throw an exception.
      *
      * @param d4var     the data underlying this structure instance
-     * @param index     the index in the parent compound array.
+     * @param recno     the index in the parent compound array.
      * @param container the parent CDMArrayStructure
      * @return An Array for this instance
      * @throws DapException
      */
     protected CDMArray
-    compileStructure(D4DataStructure d4var, int index, CDMArrayStructure container)
+    compileStructure(D4DataStructure d4var, int recno, CDMArrayStructure container)
         throws DapException
     {
         assert (d4var.getSort() == DataSort.STRUCTURE);
         DapStructure dapstruct = (DapStructure) d4var.getTemplate();
-        assert (dapstruct.getRank() > 0 || index == 0);
+        assert (dapstruct.getRank() > 0 || recno == 0);
         int nmembers = dapstruct.getFields().size();
         List<DapVariable> dfields = dapstruct.getFields();
         assert nmembers == dfields.size();
         for(int m = 0;m<nmembers;m++) {
             DataVariable dfield = d4var.readfield(m);
             CDMArray afield = (CDMArray) compileVar(dfield);
-            container.addField(index, m, afield);
+            container.addField(recno, m, afield);
         }
-        container.finish();
         return container;
     }
 

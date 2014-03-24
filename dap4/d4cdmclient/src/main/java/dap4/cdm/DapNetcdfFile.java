@@ -2,7 +2,7 @@
    See the LICENSE file for more information.
 */
 
-package   dap4.cdm;
+package dap4.cdm;
 
 import dap4.cdmshared.CDMUtil;
 import dap4.cdmshared.NodeMap;
@@ -77,6 +77,7 @@ public class DapNetcdfFile extends ucar.nc2.NetcdfFile
     protected boolean closed = false;
 
     protected String originalurl = null;
+    protected String finalurl = null;
     protected XURI xuri = null;
     protected D4DSP dsp = null;
 
@@ -98,13 +99,32 @@ public class DapNetcdfFile extends ucar.nc2.NetcdfFile
         throws IOException
     {
         super();
-        cancel = (cancelTask == null ? nullcancel : cancelTask);
         this.originalurl = url;
+        // url may have leading dap4:
+        List<String> allprotocols = getProtocols(url);
+        switch (allprotocols.size()) {
+        case 0:
+            url = "file://" + url;
+            break;
+        case 1:
+            if(allprotocols.get(0).equalsIgnoreCase("dap4"))
+                url = "http" + url.substring(4/*dap4*/, url.length());
+            break;
+        case 2:
+            if(allprotocols.get(0).equalsIgnoreCase("dap4"))
+                url = url.substring(5/*dap4:*/, url.length());
+            break;
+        default:
+            break;
+
+        }
+        this.finalurl = url;
+        cancel = (cancelTask == null ? nullcancel : cancelTask);
         // 1. Get and parse the constrained DMR and Data v-a-v URL
         this.dsp = new D4DSP().open(url);
         // 2. Construct an equivalent CDM tree and populate 
         //    this NetcdfFile object.
-        CDMCompiler compiler = new CDMCompiler(this,this.dsp);
+        CDMCompiler compiler = new CDMCompiler(this, this.dsp);
         compiler.compile();
         // set the pseudo-location, otherwise we get a name that is full path.
         setLocation(this.dsp.getDMR().getDataset().getShortName());

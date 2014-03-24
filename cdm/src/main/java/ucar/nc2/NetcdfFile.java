@@ -94,8 +94,12 @@ public class NetcdfFile implements ucar.nc2.util.cache.FileCacheable {
   static public final String IOSP_MESSAGE_CONVERT_RECORD_STRUCTURE = "ConvertRecordStructure"; // not implemented yet
   static public final String IOSP_MESSAGE_REMOVE_RECORD_STRUCTURE = "RemoveRecordStructure";
   static public final String IOSP_MESSAGE_RANDOM_ACCESS_FILE = "RandomAccessFile";
+  /**
+    * Define the legal Windows drive letters
+    */
+  static public final String DRIVE_LETTERS = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
-  static private org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(NetcdfFile.class);
+    static private org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(NetcdfFile.class);
 
   static private int default_buffersize = 8092;
   static private ArrayList<IOServiceProvider> registeredProviders = new ArrayList<IOServiceProvider>();
@@ -823,7 +827,40 @@ public class NetcdfFile implements ucar.nc2.util.cache.FileCacheable {
     return result;
   }
 
-  ////////////////////////////////////////////////////////////////////////////////////////////////
+    /**
+     *  Return the set of leading protocols for a url; may be more than one.
+     * @param url  the url whose protocols to return
+     * @return list of leading protocols without the trailing :
+     */
+    static protected List<String>
+    getProtocols(String url)
+    {
+        // break off any leading protocols;
+        // there may be more than one.
+        // Watch out for Windows paths starting with a drive letter.
+        // Each protocol does not have trailing :
+
+        List<String> allprotocols = new ArrayList<String>(); // all leading protocols upto path or host
+
+        // Note, we cannot use split because of the context sensitivity
+        StringBuilder buf = new StringBuilder(url);
+        for(;;) {
+            int index = buf.indexOf(":");
+            if(index < 0) break; // no more protocols
+            String protocol = buf.substring(0,index);
+            // Check for windows drive letter
+            if(index == 1 //=>|protocol| == 1
+                && DRIVE_LETTERS.indexOf(buf.charAt(0)) >= 0) break;
+            allprotocols.add(protocol);
+            buf.delete(0,index+1); // remove the leading protocol
+            if(buf.indexOf("/") == 0)
+                break; // anything after this is not a protocol
+        }
+        return allprotocols;
+    }
+
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////
   protected String location, id, title, cacheName;
   protected Group rootGroup = makeRootGroup();
   //protected boolean unlocked = false; // in the cache and locked - detect unguarded access to this file
