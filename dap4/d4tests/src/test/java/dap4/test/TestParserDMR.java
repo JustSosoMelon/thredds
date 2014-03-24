@@ -27,6 +27,7 @@ public class TestParserDMR extends UnitTestCommon
     static protected final String DIR3 = "d4tests/src/test/data/resources/TestParsers/dmrset"; // relative to dap4  root
     static protected final String BASELINEDIR = "d4tests/src/test/data/resources/TestParsers/baseline";
 
+    static protected final String BASELINEDIR = "d4tests/src/test/data/resources/TestParsers/baseline";
 
     //////////////////////////////////////////////////
 
