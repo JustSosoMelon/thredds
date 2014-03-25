@@ -154,24 +154,17 @@ public class TestCDMClient extends UnitTestCommon
     {
         super(name);
         setSystemProperties();
-System.err.println("x1");
         this.root = getDAP4Root();
-System.err.println("x2");
         if(this.root == null)
             throw new Exception("dap4 root cannot be located");
         if(this.root.charAt(0) != '/')
             this.root = "/" + this.root; // handle problem of windows paths
         this.datasetpath = this.root + "/" + TESTINPUTDIR;
-System.err.println("x3");
         makefilesource(this.datasetpath);
-System.err.println("x4");
         this.sourceurl = getSourceURL();
-System.err.println("x5");
         System.out.println("Using source url " + this.sourceurl);
         defineAllTestcases(this.root, this.sourceurl);
-System.err.println("x6");
         chooseTestcases();
-System.err.println("x7");
     }
 
     //////////////////////////////////////////////////
@@ -237,7 +230,6 @@ System.err.println("x7");
     doOneTest(ClientTest testcase)
         throws Exception
     {
-        System.err.println("xx");
         boolean pass = true;
         System.out.println("Testcase: " + testcase.testinputpath);
         String url = testcase.makeurl();
