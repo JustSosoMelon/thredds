@@ -76,8 +76,8 @@ public class UnitTestCommon extends TestCase
     static {
         // Compute the root path
         threddsRoot = locateThreddsRoot();
-        if(threddsRoot != null)
-            dap4Root = DapUtil.canonicalpath(threddsRoot) + "/" + DAP4ROOT;
+        if (threddsRoot != null)
+            dap4Root = DapUtil.canonicalpath(threddsRoot, false) + "/" + DAP4ROOT;
     }
 
     //////////////////////////////////////////////////
@@ -110,33 +110,36 @@ public class UnitTestCommon extends TestCase
         // all the directories in DEFAULTSUBDIRS
 
         String path = System.getProperty("user.dir");
-        if(DEBUG) {
+
+        if (DEBUG) {
             System.err.println("user.dir=" + path);
             System.err.flush();
-	}
+        }
 
         // clean up the path
-        path = DapUtil.canonicalpath(path);
+        path = DapUtil.canonicalpath(path, false);
 
         File prefix = new File(path);
-        while(prefix != null) {//walk up the tree
-            if(patternroot.equals(prefix.getName())) {// We have a candidate
+        for (; prefix != null; prefix = prefix.getParentFile()) {//walk up the tree
+            if (patternroot.equals(prefix.getName())) {// We have a candidate
                 // See if all subdirs are immediate subdirectories
                 File[] subdirs = prefix.listFiles();
                 int found = 0;
-                for(File sub : subdirs) {
-                    if(!sub.isDirectory()) continue;
-		    if(DEBUG) try {
-		        System.err.println("candidate: "+sub.getCanonicalPath());
-			System.err.flush();
-		    } catch (IOException ioe) {/*ignore*/};
-                    for(String s : patternsubdirs)
-                        if(s.equals(sub.getName()))
+                for (File sub : subdirs) {
+                    if (!sub.isDirectory()) continue;
+                    if (DEBUG) try {
+                        System.err.println("candidate: " + sub.getCanonicalPath());
+                        System.err.flush();
+                    } catch (IOException ioe) {/*ignore*/}
+                    ;
+                    for (String s : patternsubdirs) {
+                        if (s.equals(sub.getName()))
                             found++;
+                    }
                 }
-                if(found == patternsubdirs.length) try {
+                if (found == patternsubdirs.length) try {
                     // this is probably it
-                    return DapUtil.canonicalpath(prefix);
+                    return DapUtil.canonicalpath(prefix.getCanonicalPath(), false);
                 } catch (IOException ioe) {
                     return null;
                 }
@@ -149,7 +152,7 @@ public class UnitTestCommon extends TestCase
     rebuildpath(String[] pieces, int last)
     {
         StringBuilder buf = new StringBuilder();
-        for(int i = 0;i <= last;i++) {
+        for (int i = 0; i <= last; i++) {
             buf.append("/");
             buf.append(pieces[i]);
         }
@@ -160,10 +163,10 @@ public class UnitTestCommon extends TestCase
     clearDir(File dir, boolean clearsubdirs)
     {
         // wipe out the dir contents
-        if(!dir.exists()) return;
-        for(File f : dir.listFiles()) {
-            if(f.isDirectory()) {
-                if(clearsubdirs) {
+        if (!dir.exists()) return;
+        for (File f : dir.listFiles()) {
+            if (f.isDirectory()) {
+                if (clearsubdirs) {
                     clearDir(f, true); // clear subdirs
                     f.delete();
                 }
@@ -283,7 +286,7 @@ public class UnitTestCommon extends TestCase
         // to "netcdf file.nc {...}"
         String fixed = filename.replace('\\', '/');
         String shortname = filename;
-        if(fixed.lastIndexOf('/') >= 0)
+        if (fixed.lastIndexOf('/') >= 0)
             shortname = filename.substring(fixed.lastIndexOf('/') + 1, filename.length());
         text = text.replaceAll(filename, shortname);
         return text;
