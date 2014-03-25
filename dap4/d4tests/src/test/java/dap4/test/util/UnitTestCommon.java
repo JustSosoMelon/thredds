@@ -77,7 +77,7 @@ public class UnitTestCommon extends TestCase
         // Compute the root path
         threddsRoot = locateThreddsRoot();
         if(threddsRoot != null)
-            dap4Root = threddsRoot.replace('\\', '/') + "/" + DAP4ROOT;
+            dap4Root = DapUtil.canonicalpath(threddsRoot) + "/" + DAP4ROOT;
     }
 
     //////////////////////////////////////////////////
@@ -110,14 +110,13 @@ public class UnitTestCommon extends TestCase
         // all the directories in DEFAULTSUBDIRS
 
         String path = System.getProperty("user.dir");
-        if(DEBUG)
+        if(DEBUG) {
             System.err.println("user.dir=" + path);
-        System.err.flush();
+            System.err.flush();
+	}
 
         // clean up the path
-        path = path.replace('\\', '/'); // only use forward slash
-        assert (path != null);
-        if(path.endsWith("/")) path = path.substring(0, path.length() - 1);
+        path = DapUtil.canonicalpath(path);
 
         File prefix = new File(path);
         while(prefix != null) {//walk up the tree
@@ -127,13 +126,17 @@ public class UnitTestCommon extends TestCase
                 int found = 0;
                 for(File sub : subdirs) {
                     if(!sub.isDirectory()) continue;
+		    if(DEBUG) try {
+		        System.err.println("candidate: "+sub.getCanonicalPath());
+			System.err.flush();
+		    } catch (IOException ioe) {/*ignore*/};
                     for(String s : patternsubdirs)
                         if(s.equals(sub.getName()))
                             found++;
                 }
                 if(found == patternsubdirs.length) try {
                     // this is probably it
-                    return prefix.getCanonicalPath().replace('\\', '/');
+                    return DapUtil.canonicalpath(prefix);
                 } catch (IOException ioe) {
                     return null;
                 }
