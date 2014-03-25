@@ -24,7 +24,7 @@ public class UnitTestCommon extends TestCase
     static final String DEFAULTTREEROOT = "thredds";
     static final String DAP4ROOT = "dap4";
     static final String[] DEFAULTSUBDIRS
-			= new String[]{DAP4ROOT};
+            = new String[]{DAP4ROOT};
 
     static public final String FILESERVER = "dap4:file://";
 
@@ -74,21 +74,100 @@ public class UnitTestCommon extends TestCase
     static protected String threddsroot;
     static protected String dap4root;
     static {
-        threddsroot = locateThreddsRoot();
-        dap4root = threddsroot + "/" + DAP4DIR;
+        // Compute the root path
+        threddsRoot = locateThreddsRoot();
+        if (threddsRoot != null)
+            dap4Root = DapUtil.canonicalpath(threddsRoot, false) + "/" + DAP4ROOT;
     }
 
     //////////////////////////////////////////////////
+    // static methods
 
-	static public void
-	clearDir(File dir, boolean clearsubdirs)
-	{
-		// wipe out the dir contents
-		if(!dir.exists()) return;
-		for(File f : dir.listFiles()) {
-			if(f.isDirectory()) {
-				if(clearsubdirs) {
-					clearDir(f, true); // clear subdirs
+    static public String getThreddsRoot()
+    {
+        return threddsRoot;
+    }
+
+    static public String getDAP4Root()
+    {
+        return dap4Root;
+    }
+
+    static void setTreePattern(String root, String[] subdirs)
+    {
+        patternroot = root;
+        patternsubdirs = subdirs;
+    }
+
+    // Walk around the directory structure to locate
+    // the path to the thredds root
+
+    static String
+    locateThreddsRoot()
+    {
+        // Walk up the user.dir path looking for a node that has
+        // the name of the DEFAULTTREEROOT and
+        // all the directories in DEFAULTSUBDIRS
+
+        String path = System.getProperty("user.dir");
+
+        if (DEBUG) {
+            System.err.println("user.dir=" + path);
+            System.err.flush();
+        }
+
+        // clean up the path
+        path = DapUtil.canonicalpath(path, false);
+
+        File prefix = new File(path);
+        for (; prefix != null; prefix = prefix.getParentFile()) {//walk up the tree
+            if (patternroot.equals(prefix.getName())) {// We have a candidate
+                // See if all subdirs are immediate subdirectories
+                File[] subdirs = prefix.listFiles();
+                int found = 0;
+                for (File sub : subdirs) {
+                    if (!sub.isDirectory()) continue;
+                    if (DEBUG) try {
+                        System.err.println("candidate: " + sub.getCanonicalPath());
+                        System.err.flush();
+                    } catch (IOException ioe) {/*ignore*/}
+                    ;
+                    for (String s : patternsubdirs) {
+                        if (s.equals(sub.getName()))
+                            found++;
+                    }
+                }
+                if (found == patternsubdirs.length) try {
+                    // this is probably it
+                    return DapUtil.canonicalpath(prefix.getCanonicalPath(), false);
+                } catch (IOException ioe) {
+                    return null;
+                }
+            }
+        }
+        return null;
+    }
+
+    static protected String
+    rebuildpath(String[] pieces, int last)
+    {
+        StringBuilder buf = new StringBuilder();
+        for (int i = 0; i <= last; i++) {
+            buf.append("/");
+            buf.append(pieces[i]);
+        }
+        return buf.toString();
+    }
+
+    static public void
+    clearDir(File dir, boolean clearsubdirs)
+    {
+        // wipe out the dir contents
+        if (!dir.exists()) return;
+        for (File f : dir.listFiles()) {
+            if (f.isDirectory()) {
+                if (clearsubdirs) {
+                    clearDir(f, true); // clear subdirs
                     f.delete();
                 }
 			} else
