@@ -174,10 +174,6 @@ public class Nc4Iosp extends AbstractIOServiceProvider implements IOServiceProvi
     if (nc4 == null) {
       if (jnaPath != null) {
         //Native.setProtected(true);
-<<<<<<< HEAD
-=======
-          libName = "c:\\Users\\dmh\\opt\\jna\\netcdf.dll";
->>>>>>> try to solve the mhermida/opt/lib problem:
         nc4 = (Nc4prototypes) Native.loadLibrary(libName, Nc4prototypes.class);
         if (debug)
           System.out.printf(" Netcdf nc_inq_libvers='%s' isProtected=%s %n ", nc4.nc_inq_libvers(), Native.isProtected());
