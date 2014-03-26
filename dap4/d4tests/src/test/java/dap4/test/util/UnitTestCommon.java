@@ -21,10 +21,7 @@ public class UnitTestCommon extends TestCase
 
     static protected final Charset UTF8 = Charset.forName("UTF-8");
 
-    static final String DEFAULTTREEROOT = "thredds";
-    static final String DAP4ROOT = "dap4";
-    static final String[] DEFAULTSUBDIRS
-            = new String[]{DAP4ROOT};
+    static final String DEFAULTTREEROOT = "dap4";
 
     static public final String FILESERVER = "dap4:file://";
 
@@ -75,18 +72,11 @@ public class UnitTestCommon extends TestCase
     static protected String dap4root;
     static {
         // Compute the root path
-        threddsRoot = locateThreddsRoot();
-        if (threddsRoot != null)
-            dap4Root = DapUtil.canonicalpath(threddsRoot, false) + "/" + DAP4ROOT;
+        dap4Root = locateDAP4Root();
     }
 
     //////////////////////////////////////////////////
     // static methods
-
-    static public String getThreddsRoot()
-    {
-        return threddsRoot;
-    }
 
     static public String getDAP4Root()
     {
@@ -96,18 +86,16 @@ public class UnitTestCommon extends TestCase
     static void setTreePattern(String root, String[] subdirs)
     {
         patternroot = root;
-        patternsubdirs = subdirs;
     }
 
     // Walk around the directory structure to locate
     // the path to the thredds root
 
     static String
-    locateThreddsRoot()
+    locateDAP4Root()
     {
         // Walk up the user.dir path looking for a node that has
-        // the name of the DEFAULTTREEROOT and
-        // all the directories in DEFAULTSUBDIRS
+        // the name of the DEFAULTTREEROOT 
 
         String path = System.getProperty("user.dir");
 
@@ -121,29 +109,9 @@ public class UnitTestCommon extends TestCase
 
         File prefix = new File(path);
         for (; prefix != null; prefix = prefix.getParentFile()) {//walk up the tree
-            if (patternroot.equals(prefix.getName())) {// We have a candidate
-                // See if all subdirs are immediate subdirectories
-                File[] subdirs = prefix.listFiles();
-                int found = 0;
-                for (File sub : subdirs) {
-                    if (!sub.isDirectory()) continue;
-                    if (DEBUG) try {
-                        System.err.println("candidate: " + sub.getCanonicalPath());
-                        System.err.flush();
-                    } catch (IOException ioe) {/*ignore*/}
-                    ;
-                    for (String s : patternsubdirs) {
-                        if (s.equals(sub.getName()))
-                            found++;
-                    }
-                }
-                if (found == patternsubdirs.length) try {
-                    // this is probably it
-                    return DapUtil.canonicalpath(prefix.getCanonicalPath(), false);
-                } catch (IOException ioe) {
-                    return null;
-                }
-            }
+            if (patternroot.equals(prefix.getName())) try {
+		return DapUtil.canonicalpath(prefix.getCanonicalPath(), false);
+            } catch (IOException ioe) {};
         }
         return null;
     }
