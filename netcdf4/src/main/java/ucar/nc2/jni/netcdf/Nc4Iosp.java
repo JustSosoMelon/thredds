@@ -129,22 +129,55 @@ public class Nc4Iosp extends AbstractIOServiceProvider implements IOServiceProvi
    */
   static public void setLibraryAndPath(String jna_path, String lib_name) {
     // See if jna_path exists
-    if(lib_name == null)
-        lib_name = DEFAULT_LIBNAME;
+    if(!checkLibraryPath(jna_path)) {
+	// See if the library locations list can provide an answer
+	for(String path: libraryLocations) {
+	    if(checkLibraryPath(path)) {
+		jna_path = path;
+		break;
+	    }
+	}
+    }
     if(jna_path != null) {
       jnaPath = jna_path;
       System.setProperty(JNA_PATH, jnaPath);
-    } else 
-	System.err.println("Now jna path specified");
+    }
     if (lib_name == null)
       lib_name = DEFAULT_LIBNAME;
     libName = lib_name;
+  }
+
+  static protected boolean
+  checkLibraryPath(String path)
+  {
+    if(path == null || path.length() == 0) return false;
+    File f = new File(path);
+    if(!f.isDirectory() || !f.canRead())
+	return false;
+    // Look for netcdf.dll or libnetcdf.so
+    if(!path.endsWith("/"))
+	path = path + "/";
+    String os = System.getProperty("os.name");
+    if(os == null)
+	    return false;
+    if(os.startsWith("Windows")) {// windows
+        f = new File(path+"netcdf.dll");
+	    return f.canRead() && f.canExecute();
+    } else { // Assume **nix
+        f = new File(path+"libnetcdf.so");
+	    return f.canRead() && f.canExecute();
+    }
+>>>>>>> try to solve the mhermida/opt/lib problem:
   }
 
   static private Nc4prototypes load() {
     if (nc4 == null) {
       if (jnaPath != null) {
         //Native.setProtected(true);
+<<<<<<< HEAD
+=======
+          libName = "c:\\Users\\dmh\\opt\\jna\\netcdf.dll";
+>>>>>>> try to solve the mhermida/opt/lib problem:
         nc4 = (Nc4prototypes) Native.loadLibrary(libName, Nc4prototypes.class);
         if (debug)
           System.out.printf(" Netcdf nc_inq_libvers='%s' isProtected=%s %n ", nc4.nc_inq_libvers(), Native.isProtected());
