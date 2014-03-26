@@ -25,8 +25,6 @@ public class UnitTestCommon extends TestCase
 
     static public final String FILESERVER = "dap4:file://";
 
-    static public final String FILESERVER = "dap4:file://";
-
     // NetcdfDataset enhancement to use: need only coord systems
     static Set<NetcdfDataset.Enhance> ENHANCEMENT = EnumSet.of(NetcdfDataset.Enhance.CoordSystems);
 
@@ -88,18 +86,16 @@ public class UnitTestCommon extends TestCase
     static void setTreePattern(String root, String[] subdirs)
     {
         patternroot = root;
-        patternsubdirs = subdirs;
     }
 
     // Walk around the directory structure to locate
     // the path to the thredds root
 
     static String
-    locateThreddsRoot()
+    locateDAP4Root()
     {
         // Walk up the user.dir path looking for a node that has
-        // the name of the DEFAULTTREEROOT and
-        // all the directories in DEFAULTSUBDIRS
+        // the name of the DEFAULTTREEROOT 
 
         String path = System.getProperty("user.dir");
 
@@ -113,29 +109,9 @@ public class UnitTestCommon extends TestCase
 
         File prefix = new File(path);
         for (; prefix != null; prefix = prefix.getParentFile()) {//walk up the tree
-            if (patternroot.equals(prefix.getName())) {// We have a candidate
-                // See if all subdirs are immediate subdirectories
-                File[] subdirs = prefix.listFiles();
-                int found = 0;
-                for (File sub : subdirs) {
-                    if (!sub.isDirectory()) continue;
-                    if (DEBUG) try {
-                        System.err.println("candidate: " + sub.getCanonicalPath());
-                        System.err.flush();
-                    } catch (IOException ioe) {/*ignore*/}
-                    ;
-                    for (String s : patternsubdirs) {
-                        if (s.equals(sub.getName()))
-                            found++;
-                    }
-                }
-                if (found == patternsubdirs.length) try {
-                    // this is probably it
-                    return DapUtil.canonicalpath(prefix.getCanonicalPath(), false);
-                } catch (IOException ioe) {
-                    return null;
-                }
-            }
+            if (patternroot.equals(prefix.getName())) try {
+		return DapUtil.canonicalpath(prefix.getCanonicalPath(), false);
+            } catch (IOException ioe) {};
         }
         return null;
     }
