@@ -696,7 +696,6 @@ public class NetcdfDataset extends ucar.nc2.NetcdfFile {
       if(svctype == null) // See if lead protocol tells us how to interpret
         svctype = decodeLeadProtocol(leadprotocol);
 
-
       if(svctype == null) {
         //There are several possibilities at this point; all of which
         // require further info to disambiguate
