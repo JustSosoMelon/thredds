@@ -189,8 +189,8 @@ public class TestServlet extends UnitTestCommon
     protected void
     chooseTestcases()
     {
-        if(false) {
-            chosentests = locate("test_anon_dim.syn");
+        if(true) {
+            chosentests = locate("test_atomic_array.nc");
         } else {
             for(ServletTest tc : alltestcases)
                 chosentests.add(tc);
