@@ -93,6 +93,7 @@ public class Nc4Iosp extends AbstractIOServiceProvider implements IOServiceProvi
           debugUserTypes = false,
           debugWrite = false;
 
+  static public void setWarnOff() {
     warn = false;// Suppress warning messages
   }
 

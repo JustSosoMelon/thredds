@@ -104,7 +104,6 @@ public class CDMDSP extends AbstractDSP
         return jnapath;
     }
 
-
     //////////////////////////////////////////////////
     // Instance variables
 
