@@ -110,14 +110,11 @@ public class Nc4Iosp extends AbstractIOServiceProvider implements IOServiceProvi
     if(jnapath !=  null)
 	    libraryLocations.add(jnapath);
     if(os.startsWith("Windows")) {// windows
-      libraryLocations.add("c:/Program Files (x86)/opt/jna");
-      libraryLocations.add("c:/Program Files/opt/jna");
       libraryLocations.add("c:/Users/"+username+"/opt/jna");
-        libraryLocations.add("c:/Users/dmh/opt/jna");
+      libraryLocations.add("c:/Users/dmh/opt/jna");
     } else { //assume **nix
-      libraryLocations.add("/usr/local/lib/jna");
+      libraryLocations.add("/usr/local/lib");
       libraryLocations.add("/home/"+username+"/opt/jna");
-      libraryLocations.add("/user/jna_lib");
       libraryLocations.add("/home/dmh/opt/jna");
       libraryLocations.add("/home/mhermida/opt/lib"); // special case
     }
@@ -128,7 +125,7 @@ public class Nc4Iosp extends AbstractIOServiceProvider implements IOServiceProvi
   }
 
   /**
-   * Test if the netcdf C library is present and loaded     *
+   * Test if the netcdf C library is present and loaded
    *
    * @return true if present
    */

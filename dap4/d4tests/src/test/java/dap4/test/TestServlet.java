@@ -213,6 +213,18 @@ public class TestServlet extends UnitTestCommon
                     }
                 }));
         this.alltestcases.add(
+            new ServletTest("test_opaque.nc", "dmr,dap", true,  //0
+                // S4
+                new Dump.Commands()
+                {
+                    public void run(Dump printer) throws IOException
+                    {
+                        for(int i = 0;i < 2;i++)
+                            printer.printvalue('O', 0, i);
+                        printer.printchecksum();
+                    }
+                }));
+        this.alltestcases.add(
             new ServletTest("test_one_vararray.nc", "dmr,dap", true,  //1
                 // S4
                 new Dump.Commands()
