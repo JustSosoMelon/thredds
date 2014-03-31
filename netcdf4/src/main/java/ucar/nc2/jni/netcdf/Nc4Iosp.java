@@ -1824,8 +1824,7 @@ public class Nc4Iosp extends AbstractIOServiceProvider implements IOServiceProvi
 
     ByteBuffer bb = ByteBuffer.allocate(len * size);
 
-    //ret = nc4.nc_get_vars(grpid, varid, origin, shape, stride, bb);
-    ret = nc4.nc_get_vara(grpid, varid, origin, shape, bb);
+    ret = nc4.nc_get_vars(grpid, varid, origin, shape, stride, bb);
     if (ret != 0)
       throw new IOException(ret + ": " + nc4.nc_strerror(ret));
     byte[] entire = bb.array();
