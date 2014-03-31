@@ -14,6 +14,7 @@ import ucar.nc2.*;
 import ucar.nc2.dataset.*;
 import ucar.nc2.jni.netcdf.Nc4Iosp;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.*;
 
@@ -55,21 +56,52 @@ public class CDMDSP extends AbstractDSP
      */
     static public void
     loadNc4Iosp()
-        throws DapException
+            throws DapException
     {
-        if(nc4loaded) return;
+        if (nc4loaded) return;
         nc4loaded = true;
-        if(!NetcdfFile.iospRegistered(NC4CLASS)) {
+        if (!NetcdfFile.iospRegistered(NC4CLASS)) {
             try {
                 // register before H5Iosp
                 NetcdfFile.registerIOProvider(NC4CLASS, false);
-                // Use null to force use of JNA_PATH
-                Nc4Iosp.setLibraryAndPath(null, "netcdf");
+                Nc4Iosp.setLibraryAndPath(computeJNAPath(), "netcdf");
             } catch (Throwable e) {
                 DapLog.error("Cant load IOSP Nc4Iosp");
                 throw new DapException(e.getMessage(), e.getCause());
             }
         }
+    }
+
+    static String
+    computeJNAPath()
+    {
+        // Compute the places to look for netcdf.dll or libnetcdf.so
+        String username = System.getProperty("user.name");
+        // Figure out windows vs linux
+        String os = System.getProperty("os.name").toLowerCase();
+        boolean windows = os.startsWith("windows");
+        // get the path separator
+        String sep = File.pathSeparator;
+        String jnapath = System.getProperty(Nc4Iosp.JNA_PATH);
+        String jnapathenv = System.getenv(Nc4Iosp.JNA_PATH_ENV);
+        if (jnapath != null && jnapath.length() == 0) jnapath = null;
+        if (jnapathenv != null && jnapathenv.length() == 0) jnapathenv = null;
+        if (jnapath == null) {
+            jnapath = jnapathenv;
+            if (jnapath == null) {// build it
+                if (windows) {
+                    jnapath =  "c:\\opt\\jna"
+                    ;
+                } else {
+                    jnapath = "/usr/local/lib"
+                            + sep + "/home/dmh/opt/jna" //temporary
+                            + sep + "/home/mhermida/opt/lib" //temporary
+                    ;
+                }
+            }
+            System.setProperty(Nc4Iosp.JNA_PATH, jnapath);
+        }
+        return jnapath;
     }
 
 
@@ -96,21 +128,20 @@ public class CDMDSP extends AbstractDSP
     }
 
     public CDMDSP(String path)
-        throws DapException
+            throws DapException
     {
-        this(path,null);
+        this(path, null);
     }
 
-    public
-    CDMDSP(String path, DapContext cxt)
-        throws DapException
+    public CDMDSP(String path, DapContext cxt)
+            throws DapException
     {
         super(path, cxt);
         ncfile = (NetcdfDataset) createNetcdfFile();
-        if(ncfile == null)
+        if (ncfile == null)
             throw new DapException("CDMDSP: cannot open: " + path);
-        this.factory = (DapFactory)cxt.get(FACTORYKEY);
-        if(this.factory == null)
+        this.factory = (DapFactory) cxt.get(FACTORYKEY);
+        if (this.factory == null)
             this.factory = new DapFactoryDMR();
         build();
         buildDataDataset();
@@ -128,7 +159,7 @@ public class CDMDSP extends AbstractDSP
     @Override
     public DSP open(String path) throws DapException
     {
-        return open(path,new DapContext());
+        return open(path, new DapContext());
     }
 
     @Override
@@ -141,7 +172,7 @@ public class CDMDSP extends AbstractDSP
     public void close()
     {
         try {
-            if(ncfile != null)
+            if (ncfile != null)
                 ncfile.close();
         } catch (IOException ioe) {/*ignore*/}
     }
@@ -219,7 +250,7 @@ public class CDMDSP extends AbstractDSP
     lookupNode(CDMNode cdmnode)
     {
         CDMSort sort = cdmnode.getSort();
-        if(sort == CDMSort.VARIABLE || sort == CDMSort.STRUCTURE) {
+        if (sort == CDMSort.VARIABLE || sort == CDMSort.STRUCTURE) {
             Variable basev = CDMUtil.unwrap((Variable) cdmnode);
             assert (basev != null) : "Unwrap() failed";
             cdmnode = (CDMNode) basev;
@@ -236,12 +267,12 @@ public class CDMDSP extends AbstractDSP
 
     public void
     build()
-        throws DapException
+            throws DapException
     {
-        if(dmr != null)
+        if (dmr != null)
             return;
         try {
-            if(DEBUG) {
+            if (DEBUG) {
                 System.out.println("writecdl:");
                 ncfile.writeCDL(System.out, false);
                 System.out.flush();
@@ -258,7 +289,7 @@ public class CDMDSP extends AbstractDSP
             name = DapUtil.canonicalpath(name, false);
             // Remove any path prefix
             int index = name.lastIndexOf('/');
-            if(index >= 0)
+            if (index >= 0)
                 name = name.substring(index + 1, name.length());
             dmr.setShortName(name);
             dmr.setDataset(this.dmr);
@@ -293,25 +324,25 @@ public class CDMDSP extends AbstractDSP
 
     protected void
     fillgroup(DapGroup dapgroup, Group cdmgroup)
-        throws DapException
+            throws DapException
     {
         // Create decls in dap group for Dimensions
-        for(Dimension cdmdim : cdmgroup.getDimensions()) {
+        for (Dimension cdmdim : cdmgroup.getDimensions()) {
             DapDimension dapdim = builddim(cdmdim);
         }
         // Create decls in dap group for Enumerations
-        for(EnumTypedef cdmenum : cdmgroup.getEnumTypedefs()) {
+        for (EnumTypedef cdmenum : cdmgroup.getEnumTypedefs()) {
             String name = cdmenum.getShortName();
             DapEnum dapenum = buildenum(cdmenum);
             dapenum.setShortName(name);
             dapgroup.addDecl(dapenum);
         }
         // Create decls in dap group for Variables
-        for(Variable cdmvar : cdmgroup.getVariables()) {
+        for (Variable cdmvar : cdmgroup.getVariables()) {
             DapNode newvar = buildvariable(cdmvar, dapgroup);
         }
         // Create decls in dap group for subgroups
-        for(Group subgroup : cdmgroup.getGroups()) {
+        for (Group subgroup : cdmgroup.getGroups()) {
             DapGroup newgroup = buildgroup(subgroup);
             dapgroup.addDecl(newgroup);
         }
@@ -324,22 +355,22 @@ public class CDMDSP extends AbstractDSP
 
     protected DapDimension
     builddim(Dimension cdmdim)
-        throws DapException
+            throws DapException
     {
         DapDimension dapdim = null;
         long cdmsize = dapsize(cdmdim);
         String name = cdmdim.getShortName();
-        if(name != null && name.length() == 0)
+        if (name != null && name.length() == 0)
             name = null;
         boolean shared = cdmdim.isShared();
-        if(!shared) {
+        if (!shared) {
             // Unlike the parser, since we are working
             // from a NetcdfDataset instance, there might
             // be multiple anonymous dimension objects
             // the same size. So, just go ahead and create
             // multiple instances.
             dapdim = (DapDimension) newNode(DapSort.DIMENSION);
-            if(cdmdim.isVariableLength())
+            if (cdmdim.isVariableLength())
                 dapdim.setSize(DapDimension.VARIABLELENGTH);
             else
                 dapdim.setSize(cdmsize);
@@ -360,7 +391,7 @@ public class CDMDSP extends AbstractDSP
 
     protected DapEnum
     buildenum(EnumTypedef cdmenum)
-        throws DapException
+            throws DapException
     {
         DapEnum dapenum = (DapEnum) newNode(DapSort.ENUMERATION);
         recordNode(cdmenum, dapenum);
@@ -380,7 +411,7 @@ public class CDMDSP extends AbstractDSP
         }
         // Create the enum constants
         Map<Integer, String> ecvalues = cdmenum.getMap();
-        for(Integer ecval : ecvalues.keySet()) {
+        for (Integer ecval : ecvalues.keySet()) {
             String name = ecvalues.get(ecval);
             assert (name != null);
             int value = (int) ecval;
@@ -391,7 +422,7 @@ public class CDMDSP extends AbstractDSP
 
     protected DapNode
     buildvariable(Variable cdmvar, DapNode parent)
-        throws DapException
+            throws DapException
     {
         cdmvar = CDMUtil.unwrap(cdmvar);
         List<Dimension> cdmdims = cdmvar.getDimensions();
@@ -401,14 +432,14 @@ public class CDMDSP extends AbstractDSP
 
     protected DapNode
     buildvariable(Variable cdmbasevar, List<Dimension> cdmdims, DapNode parent)
-        throws DapException
+            throws DapException
     {
         DapVariable dapvar = null;
         /* If this var has a variable length last dimension,
            then we must convert to a sequence.
 	*/
-        if(cdmdims != null && cdmdims.size() > 0
-            && cdmdims.get(cdmdims.size() - 1).isVariableLength()) {
+        if (cdmdims != null && cdmdims.size() > 0
+                && cdmdims.get(cdmdims.size() - 1).isVariableLength()) {
             // Create the sequence using the dimensions of the variable
             // and the variable as the sequence field.
             dapvar = buildsequence(cdmbasevar);
@@ -442,7 +473,7 @@ public class CDMDSP extends AbstractDSP
                 assert false : "Internal Error";
             }
 
-        if(parent != null) {
+        if (parent != null) {
             switch (parent.getSort()) {
             case GROUP:
             case DATASET:
@@ -462,14 +493,14 @@ public class CDMDSP extends AbstractDSP
 
     protected DapAtomicVariable
     buildatomicvar(Variable cdmvar)
-        throws DapException
+            throws DapException
     {
         // Atomic => not opaque and not enum
         DapType basetype = CDMUtil.cdmtype2daptype(cdmvar.getDataType(), cdmvar.isUnsigned());
-        if(basetype == null)
+        if (basetype == null)
             throw new DapException("DapFile: illegal CDM variable base type: " + cdmvar.getDataType());
         DapAtomicVariable dapvar
-            = (DapAtomicVariable) newNode(DapSort.ATOMICVARIABLE);
+                = (DapAtomicVariable) newNode(DapSort.ATOMICVARIABLE);
         dapvar.setShortName(cdmvar.getShortName());
         dapvar.setBaseType(basetype);
         recordNode(cdmvar, dapvar);
@@ -479,11 +510,11 @@ public class CDMDSP extends AbstractDSP
 
     protected DapAtomicVariable
     buildopaquevar(Variable cdmvar)
-        throws DapException
+            throws DapException
     {
         assert (cdmvar.getDataType() == DataType.OPAQUE) : "Internal error";
         DapAtomicVariable dapvar
-            = (DapAtomicVariable) newNode(DapSort.ATOMICVARIABLE);
+                = (DapAtomicVariable) newNode(DapSort.ATOMICVARIABLE);
         recordNode(cdmvar, dapvar);
         dapvar.setShortName(cdmvar.getShortName());
         dapvar.setBaseType(DapType.OPAQUE);
@@ -493,11 +524,11 @@ public class CDMDSP extends AbstractDSP
 
     protected DapAtomicVariable
     buildstringvar(Variable cdmvar)
-        throws DapException
+            throws DapException
     {
         assert (cdmvar.getDataType() == DataType.STRING) : "Internal error";
         DapAtomicVariable dapvar
-            = (DapAtomicVariable) newNode(DapSort.ATOMICVARIABLE);
+                = (DapAtomicVariable) newNode(DapSort.ATOMICVARIABLE);
         recordNode(cdmvar, dapvar);
         dapvar.setShortName(cdmvar.getShortName());
         dapvar.setBaseType(DapType.STRING);
@@ -507,15 +538,15 @@ public class CDMDSP extends AbstractDSP
 
     protected DapAtomicVariable
     buildenumvar(Variable cdmvar)
-        throws DapException
+            throws DapException
     {
         assert (
-            cdmvar.getDataType() == DataType.ENUM1
-                || cdmvar.getDataType() == DataType.ENUM2
-                || cdmvar.getDataType() == DataType.ENUM4
+                cdmvar.getDataType() == DataType.ENUM1
+                        || cdmvar.getDataType() == DataType.ENUM2
+                        || cdmvar.getDataType() == DataType.ENUM4
         ) : "Internal error";
         DapAtomicVariable dapvar
-            = (DapAtomicVariable) newNode(DapSort.ATOMICVARIABLE);
+                = (DapAtomicVariable) newNode(DapSort.ATOMICVARIABLE);
         recordNode(cdmvar, dapvar);
         dapvar.setShortName(cdmvar.getShortName());
         // Now, we need to locate the actual enumeration decl
@@ -530,16 +561,16 @@ public class CDMDSP extends AbstractDSP
 
     protected DapStructure
     buildstructvar(Variable cdmvar)
-        throws DapException
+            throws DapException
     {
         assert (cdmvar.getDataType() == DataType.STRUCTURE) : "Internal error";
         DapStructure dapvar
-            = (DapStructure) newNode(DapSort.STRUCTURE);
+                = (DapStructure) newNode(DapSort.STRUCTURE);
         recordNode(cdmvar, dapvar);
         dapvar.setShortName(cdmvar.getShortName());
         // We need to build the field variables
         Structure structvar = (Structure) cdmvar;
-        for(CDMNode node : structvar.getVariables()) {
+        for (CDMNode node : structvar.getVariables()) {
             Variable var = (Variable) node;
             buildvariable(var, dapvar);
         }
@@ -560,7 +591,7 @@ public class CDMDSP extends AbstractDSP
 
     protected DapSequence
     buildsequence(Variable cdmbasevar)
-        throws DapException
+            throws DapException
     {
         DapSequence seq = (DapSequence) newNode(DapSort.SEQUENCE);
         recordNode(cdmbasevar, seq);
@@ -573,10 +604,10 @@ public class CDMDSP extends AbstractDSP
 
     protected void
     buildattributes(DapNode node, List<Attribute> attributes)
-        throws DapException
+            throws DapException
     {
-        for(Attribute attr : attributes) {
-            if(!suppress(attr.getShortName())) {
+        for (Attribute attr : attributes) {
+            if (!suppress(attr.getShortName())) {
                 DapAttribute dapattr = buildattribute(attr);
                 node.addAttribute(dapattr);
             }
@@ -585,21 +616,21 @@ public class CDMDSP extends AbstractDSP
 
     protected DapAttribute
     buildattribute(Attribute attr)
-        throws DapException
+            throws DapException
     {
         DapAttribute dapattr = (DapAttribute) newNode(DapSort.ATTRIBUTE);
         recordNode(attr, dapattr);
         dapattr.setShortName(attr.getShortName());
         DapType basetype = CDMUtil.cdmtype2daptype(attr.getDataType(), attr.isUnsigned());
-        if(basetype == null)
+        if (basetype == null)
             throw new DapException("DapFile: illegal CDM variable attribute type: " + attr.getDataType());
         dapattr.setBaseType(basetype);
         // Transfer the values
         Array values = attr.getValues();
-        if(!validatecdmtype(attr.getDataType(), attr.isUnsigned(), values.getElementType()))
+        if (!validatecdmtype(attr.getDataType(), attr.isUnsigned(), values.getElementType()))
             throw new DapException("DapFile: attr type versus attribute data mismatch: " + values.getElementType());
         IndexIterator iter = values.getIndexIterator();
-        while(iter.hasNext()) {
+        while (iter.hasNext()) {
             Object o = iter.next();
             dapattr.addValue(o);
         }
@@ -614,21 +645,21 @@ public class CDMDSP extends AbstractDSP
      */
     protected void
     builddimrefs(DapVariable dapvar, List<Dimension> cdmdims)
-        throws DapException
+            throws DapException
     {
-        if(cdmdims == null || cdmdims.size() == 0)
+        if (cdmdims == null || cdmdims.size() == 0)
             return;
         // It is unfortunately the case that the dimensions
         // associated with the variable are not
         // necessarily the same object as those dimensions
         // as declared, so we need to use a non-trivial
         // matching algorithm.
-        for(Dimension cdmdim : cdmdims) {
+        for (Dimension cdmdim : cdmdims) {
             DapDimension dapdim = null;
-            if(cdmdim.isShared()) {
+            if (cdmdim.isShared()) {
                 Dimension declareddim = finddimdecl(cdmdim);
                 dapdim = (DapDimension) lookupNode(declareddim);
-            } else if(cdmdim.isVariableLength()) {// ignore
+            } else if (cdmdim.isVariableLength()) {// ignore
                 continue;
             } else {//anonymous
                 dapdim = builddim(cdmdim);
@@ -640,16 +671,16 @@ public class CDMDSP extends AbstractDSP
 
     protected void
     processmappedvariables(Group g)
-        throws DapException
+            throws DapException
     {
-        for(Variable v0 : g.getVariables()) {
+        for (Variable v0 : g.getVariables()) {
             Variable cdmvar = CDMUtil.unwrap(v0);
-            if(cdmvar == null)
+            if (cdmvar == null)
                 throw new DapException("NetcdfDataset synthetic variable: " + v0);
             DapNode dapvar = lookupNode(cdmvar);
-            if(dapvar == null)
+            if (dapvar == null)
                 throw new DapException("Unknown variable: " + cdmvar);
-            if(!(dapvar instanceof DapVariable))
+            if (!(dapvar instanceof DapVariable))
                 throw new DapException("CDMVariable not mapping to dap variable: " + cdmvar);
             buildmaps((DapVariable) dapvar, v0);
         }
@@ -662,38 +693,38 @@ public class CDMDSP extends AbstractDSP
      */
     protected void
     buildmaps(DapVariable dapvar, Variable var)
-        throws DapException
+            throws DapException
     {
         // See if this cdm variable has one (or more) coordinate system
         List<CoordinateSystem> css = null;
-        if(var.getSort() == CDMSort.VARIABLE) {
+        if (var.getSort() == CDMSort.VARIABLE) {
             VariableDS vds = (VariableDS) var;
             css = vds.getCoordinateSystems();
         } else {
             StructureDS sds = (StructureDS) var;
             css = sds.getCoordinateSystems();
         }
-        if(css != null && css.size() > 0) {
+        if (css != null && css.size() > 0) {
             // Not sure what to do with multiple coordinate systems
             // For now, only use the first
             CoordinateSystem coordsystems = css.get(0);
-            for(CoordinateAxis axis : coordsystems.getCoordinateAxes()) {
+            for (CoordinateAxis axis : coordsystems.getCoordinateAxes()) {
                 // First step is to find the dap variable
                 // corresponding to the map
                 VariableDS vds = (VariableDS) axis.getOriginalVariable();
-                if(vds != null) {
+                if (vds != null) {
                     Variable v = CDMUtil.unwrap(vds);
-                    if(v != null) {
+                    if (v != null) {
                         DapVariable mapvar = (DapVariable) lookupNode((CDMNode) v);
-                        if(mapvar == null)
+                        if (mapvar == null)
                             throw new DapException("Illegal map variable:" + v.toString());
-                        if(mapvar.getSort() != DapSort.ATOMICVARIABLE)
+                        if (mapvar.getSort() != DapSort.ATOMICVARIABLE)
                             throw new DapException("Non-atomic map variable:" + v.toString());
                         // Ignore maps where the map variable is inside this scope
-                        if(!mapvar.isTopLevel()) {
+                        if (!mapvar.isTopLevel()) {
                             DapVariable parent = (DapVariable) mapvar.getContainer();
                             assert parent.getSort() == DapSort.STRUCTURE;
-                            if(dapvar != parent) {// Do we need to do transitive closure?
+                            if (dapvar != parent) {// Do we need to do transitive closure?
                                 DapMap map = (DapMap) newNode(DapSort.MAP);
                                 map.setVariable((DapAtomicVariable) mapvar);
                                 dapvar.addMap(map);
@@ -707,7 +738,7 @@ public class CDMDSP extends AbstractDSP
 
     protected DapGroup
     buildgroup(Group cdmgroup)
-        throws DapException
+            throws DapException
     {
         DapGroup dapgroup = (DapGroup) newNode(DapSort.GROUP);
         recordNode(cdmgroup, dapgroup);
@@ -724,7 +755,7 @@ public class CDMDSP extends AbstractDSP
     newNode(DapSort sort)
     {
         DapNode node = (DapNode) factory.newNode(sort);
-        if(dmr != null) node.setDataset(dmr);
+        if (dmr != null) node.setDataset(dmr);
         return node;
     }
 
@@ -732,7 +763,7 @@ public class CDMDSP extends AbstractDSP
     protected long
     dapsize(Dimension cdmdim)
     {
-        if(cdmdim.isVariableLength()) return DapDimension.VARIABLELENGTH;
+        if (cdmdim.isVariableLength()) return DapDimension.VARIABLELENGTH;
         return (long) cdmdim.getLength();
     }
 
@@ -743,22 +774,22 @@ public class CDMDSP extends AbstractDSP
         case CHAR:
             return typeclass == char.class;
         case BYTE:
-            if(unsigned)
+            if (unsigned)
                 return typeclass == short.class;
             else
                 return typeclass == byte.class;
         case SHORT:
-            if(unsigned)
+            if (unsigned)
                 return typeclass == int.class;
             else
                 return typeclass == short.class;
         case INT:
-            if(unsigned)
+            if (unsigned)
                 return typeclass == long.class;
             else
                 return typeclass == int.class;
         case LONG:
-            if(unsigned)
+            if (unsigned)
                 return typeclass == long.class;
             else
                 return typeclass == long.class;
@@ -794,11 +825,11 @@ public class CDMDSP extends AbstractDSP
         // Search on the full name, but be careful,
         // the rule is that the declared dimension's fqn
         // must be a prefix of the dimension reference.
-        for(Map.Entry<DapNode, CDMNode> entry : nodemap.getCDMMap().entrySet()) {
-            if(entry.getValue().getSort() != CDMSort.DIMENSION)
+        for (Map.Entry<DapNode, CDMNode> entry : nodemap.getCDMMap().entrySet()) {
+            if (entry.getValue().getSort() != CDMSort.DIMENSION)
                 continue;
             Dimension d = (Dimension) entry.getValue();
-            if(isdeclfor(d, dimref))
+            if (isdeclfor(d, dimref))
                 return d;
         }
         return null;
@@ -807,9 +838,9 @@ public class CDMDSP extends AbstractDSP
     protected boolean isdeclfor(Dimension decl, Dimension ref)
     {
         // First check shortname and size
-        if(!decl.getShortName().equals(ref.getShortName()))
+        if (!decl.getShortName().equals(ref.getShortName()))
             return false;
-        if(decl.getLength() != ref.getLength())
+        if (decl.getLength() != ref.getLength())
             return false;
         // Make sure they are in the same group
         String dprefix = decl.getGroup().getFullName();
@@ -827,13 +858,13 @@ public class CDMDSP extends AbstractDSP
      */
     protected DataDataset
     buildDataDataset()
-        throws DataException
+            throws DataException
     {
         List<Variable> cdmvars = ncfile.getVariables();
         CDMDataDataset dds = new CDMDataDataset(this, dmr);
-        for(Variable v : cdmvars) {
+        for (Variable v : cdmvars) {
             DapVariable dv = (DapVariable) nodemap.get(v);
-            if(dv == null)
+            if (dv == null)
                 throw new DataException("Unknown cdm variable: " + v.getShortName());
             DataVariable cdv = buildData(dv);
             dds.addVariable(cdv);
@@ -843,14 +874,14 @@ public class CDMDSP extends AbstractDSP
 
     protected DataVariable
     buildData(DapVariable dap)
-        throws DataException
+            throws DataException
     {
         Variable cdmv = null;
         DataVariable dv = null;
         List<DapDimension> dimset = dap.getDimensions();
         long product = dap.getCount();
         cdmv = (Variable) nodemap.get(dap);
-        if(cdmv == null)
+        if (cdmv == null)
             throw new DataException("Node has no cdm match: " + dap.getShortName());
         switch (dap.getSort()) {
         case ATOMICVARIABLE:
@@ -865,12 +896,12 @@ public class CDMDSP extends AbstractDSP
             DapStructure ds = (DapStructure) dap;
             ArrayStructure array;
             try {
-                array = (ArrayStructure)cdmv.read();
+                array = (ArrayStructure) cdmv.read();
             } catch (IOException ioe) {
                 throw new DataException(ioe);
             }
-            if(ds.getRank() == 0) {
-                CDMDataStructure cds = new CDMDataStructure(this,ds,null, 0, array.getStructureData(0));
+            if (ds.getRank() == 0) {
+                CDMDataStructure cds = new CDMDataStructure(this, ds, null, 0, array.getStructureData(0));
                 dv = cds;
             } else {
                 CDMDataCompoundArray cdca = new CDMDataCompoundArray(this, ds, array);
@@ -890,15 +921,15 @@ public class CDMDSP extends AbstractDSP
 
     protected NetcdfFile
     createNetcdfFile()
-        throws DapException
+            throws DapException
     {
         try {
             path = DapUtil.canonicalpath(this.path, false);
             int dotpos = this.path.lastIndexOf('.');
             NetcdfFile ncfile = null;
-            if(dotpos > 0 && dotpos + 1 < this.path.length()) {
+            if (dotpos > 0 && dotpos + 1 < this.path.length()) {
                 String extension = this.path.substring(dotpos + 1, this.path.length());
-                if(extension.equals("nc")) {
+                if (extension.equals("nc")) {
                     loadNc4Iosp();
                     Nc4Iosp nc4Iosp = new Nc4Iosp(NetcdfFileWriter.Version.netcdf4);
                     // try to open it using Nc4Iosp
@@ -909,10 +940,10 @@ public class CDMDSP extends AbstractDSP
             }
             // Not sure if the file is netcdf4, so just let openDataset handle it
             ncfile = NetcdfDataset.openDataset(this.path,
-                ENHANCEMENT,
-                -1,    // buffer size
-                null,  //canceltask
-                null); // spi object
+                    ENHANCEMENT,
+                    -1,    // buffer size
+                    null,  //canceltask
+                    null); // spi object
             return ncfile;
         } catch (Exception e) {
             return null;
@@ -932,8 +963,8 @@ public class CDMDSP extends AbstractDSP
      */
     protected boolean suppress(String attrname)
     {
-        if(attrname.startsWith("_Coord")) return true;
-        if(attrname.equals("_Unsigned"))
+        if (attrname.startsWith("_Coord")) return true;
+        if (attrname.equals("_Unsigned"))
             return true;
         return false;
     }

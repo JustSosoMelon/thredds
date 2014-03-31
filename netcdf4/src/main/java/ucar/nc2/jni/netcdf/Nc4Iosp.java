@@ -93,33 +93,6 @@ public class Nc4Iosp extends AbstractIOServiceProvider implements IOServiceProvi
           debugUserTypes = false,
           debugWrite = false;
 
-  // If jna path is undefined, Define the set of places to look for the netcdf library
-  static protected List<String> libraryLocations = new ArrayList<String>();
-
-  static {
-    // Compute the places to look for netcdf.dll
-    // Get our user name
-    String username = System.getProperty("user.name");
-    // Figure out windows vs linux
-    String os = System.getProperty("os.name");
-    String jnapath = System.getProperty(JNA_PATH);
-    if(jnapath == null) 
-	    jnapath = System.getenv(JNA_PATH_ENV);
-    if(jnapath != null && jnapath.length() == 0)
-      jnapath =  null;
-    if(jnapath !=  null)
-	    libraryLocations.add(jnapath);
-    if(os.startsWith("Windows")) {// windows
-      libraryLocations.add("c:/Users/"+username+"/opt/jna");
-      libraryLocations.add("c:/Users/dmh/opt/jna");
-    } else { //assume **nix
-      libraryLocations.add("/usr/local/lib");
-      libraryLocations.add("/home/"+username+"/opt/jna");
-      libraryLocations.add("/home/dmh/opt/jna");
-      libraryLocations.add("/home/mhermida/opt/lib"); // special case
-    }
-  }
-
   static public void setWarnOff() {
     warn = false;// Suppress warning messages
   }
@@ -150,9 +123,6 @@ public class Nc4Iosp extends AbstractIOServiceProvider implements IOServiceProvi
   /**
    * set the path and name of the netcdf c library.
    * must be called before load() is called.
-   * Order of priority is (currently):
-   * 1. jna_path argument to this function, it if exists
-   * 2. libraryLocations list
    *
    * @param jna_path path to dlls
    * @param lib_name  library name
@@ -161,38 +131,14 @@ public class Nc4Iosp extends AbstractIOServiceProvider implements IOServiceProvi
     // See if jna_path exists
     if(lib_name == null)
         lib_name = DEFAULT_LIBNAME;
-    if(!checkLibraryPath(jna_path, lib_name)) {
-        // See if the library locations list can provide an answer
-        for(String path: libraryLocations) {
-            if(checkLibraryPath(path, lib_name)) {
-            jna_path = path;
-            break;
-            }
-        }
-    }
     if(jna_path != null) {
       jnaPath = jna_path;
       System.setProperty(JNA_PATH, jnaPath);
-    }
+    } else 
+	System.err.println("Now jna path specified");
     if (lib_name == null)
       lib_name = DEFAULT_LIBNAME;
     libName = lib_name;
-  }
-
-  static protected boolean
-  checkLibraryPath(String path, String libname)
-  {
-    if(path == null || path.length() == 0)
-        return false;
-    File f = new File(path);
-    if(!f.isDirectory() || !f.canRead())
-	    return false;
-    // Look for libname
-    if(!path.endsWith("/"))
-	    path = path + "/";
-    String fulllib = System.mapLibraryName(libname);
-    f = new File(path+fulllib);
-	return f.canRead() && f.canExecute();
   }
 
   static private Nc4prototypes load() {
@@ -1877,6 +1823,7 @@ public class Nc4Iosp extends AbstractIOServiceProvider implements IOServiceProvi
     int len = (int) section.computeSize();
 
     ByteBuffer bb = ByteBuffer.allocate(len * size);
+
     ret = nc4.nc_get_vars(grpid, varid, origin, shape, stride, bb);
     if (ret != 0)
       throw new IOException(ret + ": " + nc4.nc_strerror(ret));
