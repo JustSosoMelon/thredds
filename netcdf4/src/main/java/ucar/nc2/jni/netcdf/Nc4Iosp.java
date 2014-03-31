@@ -131,38 +131,14 @@ public class Nc4Iosp extends AbstractIOServiceProvider implements IOServiceProvi
     // See if jna_path exists
     if(lib_name == null)
         lib_name = DEFAULT_LIBNAME;
-    if(!checkLibraryPath(jna_path, lib_name)) {
-        // See if the library locations list can provide an answer
-        for(String path: libraryLocations) {
-            if(checkLibraryPath(path, lib_name)) {
-            jna_path = path;
-            break;
-            }
-        }
-    }
     if(jna_path != null) {
       jnaPath = jna_path;
       System.setProperty(JNA_PATH, jnaPath);
-    }
+    } else 
+	System.err.println("Now jna path specified");
     if (lib_name == null)
       lib_name = DEFAULT_LIBNAME;
     libName = lib_name;
-  }
-
-  static protected boolean
-  checkLibraryPath(String path, String libname)
-  {
-    if(path == null || path.length() == 0)
-        return false;
-    File f = new File(path);
-    if(!f.isDirectory() || !f.canRead())
-	    return false;
-    // Look for libname
-    if(!path.endsWith("/"))
-	    path = path + "/";
-    String fulllib = System.mapLibraryName(libname);
-    f = new File(path+fulllib);
-	return f.canRead() && f.canExecute();
   }
 
   static private Nc4prototypes load() {
@@ -1848,8 +1824,7 @@ public class Nc4Iosp extends AbstractIOServiceProvider implements IOServiceProvi
 
     ByteBuffer bb = ByteBuffer.allocate(len * size);
 
-    //ret = nc4.nc_get_vars(grpid, varid, origin, shape, stride, bb);
-    ret = nc4.nc_get_vara(grpid, varid, origin, shape, bb);
+    ret = nc4.nc_get_vars(grpid, varid, origin, shape, stride, bb);
     if (ret != 0)
       throw new IOException(ret + ": " + nc4.nc_strerror(ret));
     byte[] entire = bb.array();
