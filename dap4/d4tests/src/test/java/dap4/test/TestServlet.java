@@ -190,7 +190,7 @@ public class TestServlet extends UnitTestCommon
     chooseTestcases()
     {
         if(true) {
-            chosentests = locate("test_atomic_array.nc");
+            chosentests = locate("test_opaque.nc");
         } else {
             for(ServletTest tc : alltestcases)
                 chosentests.add(tc);
