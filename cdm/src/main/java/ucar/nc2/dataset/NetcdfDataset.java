@@ -700,7 +700,7 @@ public class NetcdfDataset extends ucar.nc2.NetcdfFile {
         //There are several possibilities at this point; all of which
         // require further info to disambiguate
         //  - we have file://<path> or file:<path>; we need to see if
-        //    the extension can help, otherwise, we are lost.
+        //    the extension can help, otherwise, start defaulting.
         //  - we have a simple url: e.g. http://... ; contact the server
         if(leadprotocol.equals("file")) {
             svctype = decodePathExtension(trueurl); // look at the path extension
