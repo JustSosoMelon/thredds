@@ -991,7 +991,7 @@
     <log4j.version>2.0-beta9</log4j.version>
     <net.jcip.version>1.0</net.jcip.version>
     <net.sf.ehcache.version>2.6.2</net.sf.ehcache.version>
-    <org.apache.tomcat.version>7.0.52</org.apache.tomcat.version>
+    <org.apache.tomcat.version>7.0.59</org.apache.tomcat.version>
     <org.hibernate.version>4.3.1.Final</org.hibernate.version>
     <org.jsoup.version>1.7.2</org.jsoup.version>
     <org.jdom2.version>2.0.4</org.jdom2.version>
