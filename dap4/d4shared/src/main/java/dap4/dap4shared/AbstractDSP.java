@@ -92,6 +92,7 @@ abstract public class AbstractDSP implements DSP
         try {
             this.xuri = new XURI(path);
         } catch (URISyntaxException use) {
+            use.printStackTrace();
             throw new DataException(use);
         }
     }
