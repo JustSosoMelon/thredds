@@ -88,6 +88,7 @@ abstract public class AbstractDSP implements DSP
     protected void setPath(String path)
         throws DapException
     {
+        System.err.println("xxx: setpath="+path); System.err.flush();
         this.path = path;
         try {
             this.xuri = new XURI(path);
