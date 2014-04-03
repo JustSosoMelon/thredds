@@ -113,6 +113,7 @@ public class D4TSServlet extends javax.servlet.http.HttpServlet
 
         if(DEBUG) {
             System.err.println("D4TSServlet: processing url: " + drq.getOriginalURL());
+            System.err.flush();
         }
 
         if(url.endsWith("favicon.ico")) {
@@ -335,6 +336,7 @@ public class D4TSServlet extends javax.servlet.http.HttpServlet
 
         OutputStream out = drq.getOutputStream();
         String datasetpath = getResourceFile(drq, datasetname, false);
+
         DSP dsp = DapCache.open(datasetpath);
 
         // Process any constraint
@@ -513,6 +515,11 @@ public class D4TSServlet extends javax.servlet.http.HttpServlet
         String resourcedir = drq.getResourcePath(); // presumed to be absolute path
         // Look the dataset file
         String datasetfilepath = DapUtil.locateRelative(datasetname, resourcedir, isdir);
+        if(DEBUG) {
+            System.err.println("D4TSServlet: resourcedir="+resourcedir);
+            System.err.println("D4TSServlet: datasetfilepath="+datasetfilepath);
+            System.err.flush();
+        }
         if(datasetfilepath == null)
             throw new FileNotFoundException("Cannot locate file:" + datasetfilepath);
         // See if it really exists and is readable and of proper type
