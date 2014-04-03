@@ -33,7 +33,9 @@
 
 package ucar.nc2.jni.netcdf;
 
+import com.sun.jna.*;
 import thredds.catalog.DataFormatType;
+import ucar.nc2.Structure;
 import ucar.nc2.constants.CDM;
 import ucar.nc2.iosp.AbstractIOServiceProvider;
 import ucar.nc2.iosp.IOServiceProvider;
@@ -60,8 +62,6 @@ import java.nio.ByteOrder;
 import java.nio.ShortBuffer;
 import java.nio.IntBuffer;
 
-import com.sun.jna.Native;
-import com.sun.jna.Pointer;
 import com.sun.jna.ptr.IntByReference;
 import com.sun.jna.ptr.NativeLongByReference;
 
@@ -1341,9 +1341,9 @@ public class Nc4Iosp extends AbstractIOServiceProvider implements IOServiceProvi
   private Array readDataSection(int grpid, int varid, int typeid, Section section)
           throws IOException, InvalidRangeException {
     // general sectioning with strides
-    long[] origin = convert(section.getOrigin());
-    long[] shape = convert(section.getShape());
-    long[] stride = convert(section.getStride());
+    NativeLong[] origin = convert(section.getOrigin());
+    NativeLong[] shape = convert(section.getShape());
+    NativeLong[] stride = convert(section.getStride());
     boolean isUnsigned = isUnsigned(typeid);
     int len = (int) section.computeSize();
     Array values;
@@ -1568,9 +1568,9 @@ public class Nc4Iosp extends AbstractIOServiceProvider implements IOServiceProvi
 
   private Array readCompound(int grpid, int varid, Section section, UserType userType)
           throws IOException {
-    long[] origin = convert(section.getOrigin());
-    long[] shape = convert(section.getShape());
-    long[] stride = convert(section.getStride());
+    NativeLong[] origin = convert(section.getOrigin());
+    NativeLong[] shape = convert(section.getShape());
+    NativeLong[] stride = convert(section.getStride());
     int len = (int) section.computeSize();
 
     int buffSize = len * userType.size;
@@ -1817,9 +1817,9 @@ public class Nc4Iosp extends AbstractIOServiceProvider implements IOServiceProvi
           throws IOException, InvalidRangeException {
     int ret;
 
-    long[] origin = convert(section.getOrigin());
-    long[] shape = convert(section.getShape());
-    long[] stride = convert(section.getStride());
+    NativeLong[] origin = convert(section.getOrigin());
+    NativeLong[] shape = convert(section.getShape());
+    NativeLong[] stride = convert(section.getStride());
     int len = (int) section.computeSize();
 
     ByteBuffer bb = ByteBuffer.allocate(len * size);
@@ -1834,7 +1834,7 @@ public class Nc4Iosp extends AbstractIOServiceProvider implements IOServiceProvi
     // was: ArrayObject values = new ArrayObject(ByteBuffer.class, new int[]{len});
     int[] intshape = new int[shape.length];
     for (int i = 0; i < intshape.length; i++) {
-      intshape[i] = (int) shape[i];
+      intshape[i] = shape[i].intValue();
     }
     ArrayObject values = new ArrayObject(ByteBuffer.class, intshape);
 
@@ -1897,10 +1897,10 @@ public class Nc4Iosp extends AbstractIOServiceProvider implements IOServiceProvi
     return true;
   }
 
-  private long[] convert(int[] from) {
-    long[] to = new long[from.length];
+  private NativeLong[] convert(int[] from) {
+    NativeLong[] to = new NativeLong[from.length];
     for (int i = 0; i < from.length; i++)
-      to[i] = from[i];
+      to[i] = new NativeLong(from[i]);
     return to;
   }
 
@@ -2200,7 +2200,16 @@ public class Nc4Iosp extends AbstractIOServiceProvider implements IOServiceProvi
       //   int nc_def_var_chunking(int ncid, int varid, int storage, long[] chunksizesp); // const size_t *   ??
       boolean isChunked = chunker.isChunked(v);
       int storage = isChunked ? Nc4prototypes.NC_CHUNKED : Nc4prototypes.NC_CONTIGUOUS;
-      long[] chunking = isChunked ? chunker.computeChunking(v) : new long[v.getRank()];
+
+      NativeLong[] chunking;
+      if(isChunked) {
+          long[] lchunks = chunker.computeChunking(v);
+          chunking = new NativeLong[lchunks.length];
+          for(int i=0;i<lchunks.length;i++)
+              chunking[i] = new NativeLong(lchunks[i]);
+
+      } else
+          chunking = new NativeLong[v.getRank()];
       ret = nc4.nc_def_var_chunking(grpid, varid, storage, chunking);
       if (ret != 0) {
         throw new IOException(nc4.nc_strerror(ret) + " nc_def_var_chunking on variable " + v.getFullName());
@@ -2326,9 +2335,9 @@ public class Nc4Iosp extends AbstractIOServiceProvider implements IOServiceProvi
   private void writeData(Variable v, int grpid, int varid, int typeid, Section section, Array values) throws IOException, InvalidRangeException {
 
     // general sectioning with strides
-    long[] origin = convert(section.getOrigin());
-    long[] shape = convert(section.getShape());
-    long[] stride = convert(section.getStride());
+    NativeLong[] origin = convert(section.getOrigin());
+    NativeLong[] shape = convert(section.getShape());
+    NativeLong[] stride = convert(section.getStride());
     boolean isUnsigned = isUnsigned(typeid);
     int sectionLen = (int) section.computeSize();
 
