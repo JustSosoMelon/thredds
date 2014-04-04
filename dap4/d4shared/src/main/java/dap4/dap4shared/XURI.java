@@ -65,7 +65,7 @@ public class XURI
         if(this.protocols.length == 0) {
             // pretend it is a file:
             this.protocols = new String[]{"file:"};
-            this.path = "file://" + this.path;
+            path = "file://" + path;
         } else if(this.protocols.length == 1) {
             // See if this looks like a drive character
             if(this.protocols[0].length() == 1) {
