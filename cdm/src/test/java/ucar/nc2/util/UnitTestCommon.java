@@ -76,21 +76,24 @@ public class UnitTestCommon extends TestCase
         assert (path != null);
         if (path.endsWith("/")) path = path.substring(0, path.length() - 1);
 
-        while (path != null) {
-            boolean allfound = true;
-            for (String dirname : SUBROOTS) {
-                // look for dirname in current directory
-                String s = path + "/" + dirname;
-                File tmp = new File(s);
-                if (!tmp.exists()) {
-                    allfound = false;
-                    break;
-                }
-            }
-            if (allfound)
-                return path; // presumably the thredds root
-            int index = path.lastIndexOf('/');
-            path = path.substring(0, index);
+        File prefix = new File(path);
+        for (; prefix != null; prefix = prefix.getParentFile()) {//walk up the tree
+            int found = 0;
+	    String[] subdirs = prefix.list();
+            for (String dirname : subdirs) {
+                for (String want : SUBROOTS) {
+		    if(dirname.equals(want)) {
+			found++;
+			break;
+		    }
+		}
+	    }
+	    if(found == SUBROOTS.length) {// Assume this is it
+		String root = prefix.getCanonicalPath();
+	        // clean up the root path
+	        root = root.replace('\\', '/'); // only use forward slash
+		return root;		
+	    }
         }
         return null;
     }
