@@ -79,21 +79,22 @@ public class UnitTestCommon extends TestCase
         File prefix = new File(path);
         for (; prefix != null; prefix = prefix.getParentFile()) {//walk up the tree
             int found = 0;
-	    String[] subdirs = prefix.list();
+            String[] subdirs = prefix.list();
             for (String dirname : subdirs) {
                 for (String want : SUBROOTS) {
-		    if(dirname.equals(want)) {
-			found++;
-			break;
-		    }
-		}
-	    }
-	    if(found == SUBROOTS.length) {// Assume this is it
-		String root = prefix.getCanonicalPath();
-	        // clean up the root path
-	        root = root.replace('\\', '/'); // only use forward slash
-		return root;		
-	    }
+                    if (dirname.equals(want)) {
+                        found++;
+                        break;
+                    }
+                }
+            }
+            if (found == SUBROOTS.length) try {// Assume this is it
+                String root = prefix.getCanonicalPath();
+                // clean up the root path
+                root = root.replace('\\', '/'); // only use forward slash
+                return root;
+            } catch (IOException ioe) {
+            }
         }
         return null;
     }
