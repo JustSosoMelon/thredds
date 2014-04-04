@@ -77,6 +77,7 @@ public class XURI
                 }
             }
         }
+        System.err.println("xx: path="+path); System.err.flush();
         // compute the core URI
         if(this.protocols.length == 0)
             this.coreuri = path;
@@ -88,6 +89,7 @@ public class XURI
                 prefix += (this.protocols[i] + ":").length();
             this.coreuri = path.substring(prefix);
         }
+        System.err.println("xx: coreuri="+this.coreuri); System.err.flush();
 
         // Make sure it parses
         this.uri = new URI(this.coreuri);
