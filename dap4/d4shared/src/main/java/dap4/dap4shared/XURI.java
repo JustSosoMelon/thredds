@@ -64,7 +64,7 @@ public class XURI
         this.protocols = DapUtil.getProtocols(path);
         if(this.protocols.length == 0) {
             // pretend it is a file:
-            this.protocols = new String[]{"file:"};
+            this.protocols = new String[]{"file"};
             path = "file://" + path;
         } else if(this.protocols.length == 1) {
             // See if this looks like a drive character

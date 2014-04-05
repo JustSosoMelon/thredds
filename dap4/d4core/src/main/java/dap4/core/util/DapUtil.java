@@ -351,7 +351,7 @@ abstract public class DapUtil // Should only contain static methods
     /**
      * Return a list of the protocols at the print of a url.
      * There might be multiple ones (e.g. dap4:http). Also
-     * not that this will be "fooled" by Windows paths containing
+     * note that this will be "fooled" by Windows paths containing
      * drive letters (e.g. "C:/...").
      * @param url the url to test
      * @return list of the protocols at the front of the url.
