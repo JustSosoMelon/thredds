@@ -94,7 +94,7 @@ public class CDMDSP extends AbstractDSP
                     ;
                 } else {
                     jnapath = "/usr/local/lib"
-                            + sep + "/home/dmh/opt/jna" //temporary
+                            + sep + "/home/dmh/opt/jna/lib" //temporary
                             + sep + "/home/mhermida/opt/lib" //temporary
                     ;
                 }
