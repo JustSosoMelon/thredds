@@ -27,7 +27,7 @@ public class D4TSServlet extends javax.servlet.http.HttpServlet
     //////////////////////////////////////////////////
     // Constants
 
-    static final boolean DEBUG = true;
+    static final boolean DEBUG = false;
 
     static final boolean PARSEDEBUG = false;
 

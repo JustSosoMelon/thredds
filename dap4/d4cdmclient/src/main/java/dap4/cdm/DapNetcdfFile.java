@@ -22,7 +22,7 @@ import static org.apache.http.HttpStatus.*;
 
 public class DapNetcdfFile extends ucar.nc2.NetcdfFile
 {
-    static final boolean DEBUG = true;
+    static final boolean DEBUG = false;
     static final boolean PARSEDEBUG = false;
     static final boolean MERGE = false;
 

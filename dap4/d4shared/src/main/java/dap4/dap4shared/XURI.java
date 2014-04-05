@@ -77,7 +77,6 @@ public class XURI
                 }
             }
         }
-        System.err.println("xx: path="+path); System.err.flush();
         // compute the core URI
         if(this.protocols.length == 0)
             this.coreuri = path;
@@ -89,7 +88,6 @@ public class XURI
                 prefix += (this.protocols[i] + ":").length();
             this.coreuri = path.substring(prefix);
         }
-        System.err.println("xx: coreuri="+this.coreuri); System.err.flush();
 
         // Make sure it parses
         this.uri = new URI(this.coreuri);
@@ -97,8 +95,6 @@ public class XURI
         // Extract the parts of the uri so they can
         // be modified and later reassembled
         String lastproto = this.protocols[this.protocols.length-1];
-        System.err.println("xx: lastproto="+lastproto); System.err.flush();
-        System.err.println("xx: scheme="+this.uri.getScheme()); System.err.flush();
 
         if(!lastproto.equals(canonical(this.uri.getScheme())))
             throw new URISyntaxException(this.uri.toString(),String.format("malformed url: %s :: %s",
