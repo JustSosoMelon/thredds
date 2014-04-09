@@ -23,6 +23,8 @@ public class UnitTestCommon extends TestCase
 
     static final String DEFAULTTREEROOT = "dap4";
 
+    static final String[] DEFAULTSUBDIRS = new String[]{"httpclient", "cdm", "tds", "opendap", "dap4"};
+
     static public final String FILESERVER = "dap4:file://";
 
     // NetcdfDataset enhancement to use: need only coord systems
@@ -66,13 +68,14 @@ public class UnitTestCommon extends TestCase
     static public org.slf4j.Logger log;
 
     // Define a tree pattern to recognize the root.
-    static String patternroot = DEFAULTTREEROOT; // dir to locate
-    static String[] patternsubdirs = DEFAULTSUBDIRS; // with these immediate subdirectories
-    static protected String threddsroot;
-    static protected String dap4root;
+    static protected String threddsroot = null;
+    static protected String dap4root = null;
+
     static {
         // Compute the root path
-        dap4Root = locateDAP4Root();
+        threddsroot = locateThreddsRoot();
+        if(threddsroot != null)
+            dap4root = threddsroot + "/" + DEFAULTTREEROOT;
     }
 
     //////////////////////////////////////////////////
@@ -80,38 +83,43 @@ public class UnitTestCommon extends TestCase
 
     static public String getDAP4Root()
     {
-        return dap4Root;
-    }
-
-    static void setTreePattern(String root, String[] subdirs)
-    {
-        patternroot = root;
+        return dap4root;
     }
 
     // Walk around the directory structure to locate
-    // the path to the thredds root
+    // the path to a given directory.
 
-    static String
-    locateDAP4Root()
+    static String locateThreddsRoot()
     {
         // Walk up the user.dir path looking for a node that has
-        // the name of the DEFAULTTREEROOT 
+        // all the directories in SUBROOTS.
 
         String path = System.getProperty("user.dir");
 
-        if (DEBUG) {
-            System.err.println("user.dir=" + path);
-            System.err.flush();
-        }
-
         // clean up the path
-        path = DapUtil.canonicalpath(path, false);
+        path = path.replace('\\', '/'); // only use forward slash
+        assert (path != null);
+        if (path.endsWith("/")) path = path.substring(0, path.length() - 1);
 
         File prefix = new File(path);
         for (; prefix != null; prefix = prefix.getParentFile()) {//walk up the tree
-            if (patternroot.equals(prefix.getName())) try {
-		return DapUtil.canonicalpath(prefix.getCanonicalPath(), false);
-            } catch (IOException ioe) {};
+            int found = 0;
+            String[] subdirs = prefix.list();
+            for (String dirname : subdirs) {
+                for (String want : DEFAULTSUBDIRS) {
+                    if (dirname.equals(want)) {
+                        found++;
+                        break;
+                    }
+                }
+            }
+            if (found == DEFAULTSUBDIRS.length) try {// Assume this is it
+                String root = prefix.getCanonicalPath();
+                // clean up the root path
+                root = root.replace('\\', '/'); // only use forward slash
+                return root;
+            } catch (IOException ioe) {
+            }
         }
         return null;
     }
