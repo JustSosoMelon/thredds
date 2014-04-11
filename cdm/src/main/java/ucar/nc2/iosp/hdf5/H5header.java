@@ -3240,7 +3240,7 @@ public class H5header {
           enumValue[i] = (int) readVariableSizeUnsigned(base.byteSize); // assume size is 1, 2, or 4
         raf.order(RandomAccessFile.LITTLE_ENDIAN);
 
-        enumTypeName = objectName;
+        enumTypeName = objectName;  // wrong name
         map = new TreeMap<Integer, String>();
         for (int i = 0; i < nmembers; i++)
           map.put(enumValue[i], enumName[i]);

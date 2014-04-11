@@ -116,9 +116,9 @@ public class TestH5Iosp extends DapTestCommon
     void
     chooseTestcases()
     {
-        if(false) {
-            //chosentests = locate("test_atomic_types.nc");
-            chosentests.add(new H5IospTest("test_test.nc"));
+        if(true) {
+            chosentests = locate("test_enum.nc");
+            //chosentests.add(new H5IospTest("test_test.nc"));
         } else {
             for(H5IospTest tc : alltestcases)
                 chosentests.add(tc);
