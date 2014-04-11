@@ -192,7 +192,7 @@ public class TestServlet extends DapTestCommon
     chooseTestcases()
     {
         if (true) {
-            chosentests = locate("test_atomic_types.nc");
+            chosentests = locate("test_enum.nc");
         } else {
             for (ServletTest tc : alltestcases) {
                 chosentests.add(tc);
