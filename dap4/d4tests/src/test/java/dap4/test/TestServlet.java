@@ -4,8 +4,8 @@ import dap4.dap4shared.ChunkInputStream;
 import dap4.core.util.DapDump;
 import dap4.dap4shared.RequestMode;
 import dap4.test.servlet.*;
+import dap4.test.util.DapTestCommon;
 import dap4.test.util.Dump;
-import dap4.test.util.UnitTestCommon;
 
 import java.io.*;
 import java.math.BigInteger;
@@ -22,7 +22,7 @@ import java.util.List;
  * test client side deserialization.
  */
 
-public class TestServlet extends UnitTestCommon
+public class TestServlet extends DapTestCommon
 {
     static protected final boolean DEBUG = false;
 
@@ -192,7 +192,7 @@ public class TestServlet extends UnitTestCommon
     chooseTestcases()
     {
         if (true) {
-            chosentests = locate("test_opaque.nc");
+            chosentests = locate("test_atomic_types.nc");
         } else {
             for (ServletTest tc : alltestcases) {
                 chosentests.add(tc);

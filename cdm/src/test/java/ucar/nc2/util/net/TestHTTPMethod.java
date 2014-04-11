@@ -34,7 +34,6 @@ package ucar.nc2.util.net;
 
 import ucar.httpclient.*;
 
-import org.junit.Test;
 import ucar.nc2.util.UnitTestCommon;
 
 import java.io.InputStream;

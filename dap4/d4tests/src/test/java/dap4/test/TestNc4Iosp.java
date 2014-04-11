@@ -1,17 +1,16 @@
 package dap4.test;
 
 import dap4.servlet.CDMDSP;
-import dap4.test.util.UnitTestCommon;
+import dap4.test.util.DapTestCommon;
 import ucar.nc2.dataset.NetcdfDataset;
 
 import java.io.*;
 import java.math.BigInteger;
 import java.nio.ByteOrder;
-import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 
-public class TestNc4Iosp extends UnitTestCommon
+public class TestNc4Iosp extends DapTestCommon
 {
     static protected final boolean DEBUG = false;
 

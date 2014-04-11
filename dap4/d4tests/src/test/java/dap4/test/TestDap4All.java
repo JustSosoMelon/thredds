@@ -1,11 +1,10 @@
 package dap4.test;
 
-import junit.framework.TestCase;
+import dap4.test.util.DapTestCommon;
 import junit.framework.TestResult;
 import junit.framework.TestSuite;
-import dap4.test.util.UnitTestCommon;
 
-public class TestDap4All extends UnitTestCommon
+public class TestDap4All extends DapTestCommon
 {
 
 

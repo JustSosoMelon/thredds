@@ -1,7 +1,7 @@
 package dap4.test;
 
 import   dap4.cdm.DapNetcdfFile;
-import dap4.test.util.UnitTestCommon;
+import dap4.test.util.DapTestCommon;
 import ucar.nc2.dataset.NetcdfDataset;
 
 import java.io.*;
@@ -11,7 +11,7 @@ import java.util.List;
 /**
  * Test at the NetcdfDataset level; access .ser files on server.
  */
-public class TestSerial extends UnitTestCommon
+public class TestSerial extends DapTestCommon
 {
     static protected final boolean DEBUG = false;
 
@@ -64,7 +64,7 @@ public class TestSerial extends UnitTestCommon
         String makeurl(String ce)
         {
             String url = server + "/" + dataset + "." + SERIALEXTENSION;
-            if(ce != null && ce.length() > 0) url += "?"+UnitTestCommon.CONSTRAINTTAG+"=" + ce;
+            if(ce != null && ce.length() > 0) url += "?"+ DapTestCommon.CONSTRAINTTAG+"=" + ce;
             return url;
         }
 

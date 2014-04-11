@@ -37,7 +37,6 @@ import ucar.httpclient.*;
 import org.junit.Test;
 import ucar.nc2.util.UnitTestCommon;
 
-import java.io.*;
 import java.nio.charset.Charset;
 
 import static junit.framework.Assert.assertFalse;

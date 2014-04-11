@@ -4,15 +4,14 @@ import dap4.dap4shared.ChunkInputStream;
 import dap4.core.util.*;
 import dap4.dap4shared.RequestMode;
 import dap4.test.servlet.*;
+import dap4.test.util.DapTestCommon;
 import dap4.test.util.Dump;
-import dap4.test.util.UnitTestCommon;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.math.BigInteger;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
-import java.nio.charset.Charset;
 import java.util.*;
 
 /**
@@ -20,7 +19,7 @@ import java.util.*;
  * constraint processing.
  */
 
-public class TestServletConstraints extends UnitTestCommon
+public class TestServletConstraints extends DapTestCommon
 {
 
     //////////////////////////////////////////////////

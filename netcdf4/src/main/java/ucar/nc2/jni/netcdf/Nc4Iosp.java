@@ -1816,11 +1816,10 @@ public class Nc4Iosp extends AbstractIOServiceProvider implements IOServiceProvi
   private Array readOpaque(int grpid, int varid, Section section, int size)
           throws IOException, InvalidRangeException {
     int ret;
-
+    int len = (int) section.computeSize();
     NativeLong[] origin = convert(section.getOrigin());
     NativeLong[] shape = convert(section.getShape());
     NativeLong[] stride = convert(section.getStride());
-    int len = (int) section.computeSize();
 
     ByteBuffer bb = ByteBuffer.allocate(len * size);
 
@@ -1829,14 +1828,16 @@ public class Nc4Iosp extends AbstractIOServiceProvider implements IOServiceProvi
       throw new IOException(ret + ": " + nc4.nc_strerror(ret));
     byte[] entire = bb.array();
 
-    // fix: this is ignoring the rank of section.
-    // was: ArrayObject values = new ArrayObject(ByteBuffer.class, new int[]{len});
-    int[] intshape = new int[shape.length];
-    for (int i = 0; i < intshape.length; i++) {
-      intshape[i] = shape[i].intValue();
+    if(shape != null) {
+        // fix: this is ignoring the rank of section.
+        // was: ArrayObject values = new ArrayObject(ByteBuffer.class, new int[]{len});
+        int[] intshape = new int[shape.length];
+        for (int i = 0; i < intshape.length; i++) {
+          intshape[i] = shape[i].intValue();
+        }
+        ArrayObject values = new ArrayObject(ByteBuffer.class, intshape);
+    } else {//scalar
     }
-    ArrayObject values = new ArrayObject(ByteBuffer.class, intshape);
-
     int count = 0;
     IndexIterator ii = values.getIndexIterator();
     while (ii.hasNext()) {
@@ -1897,6 +1898,7 @@ public class Nc4Iosp extends AbstractIOServiceProvider implements IOServiceProvi
   }
 
   private NativeLong[] convert(int[] from) {
+    if(from.length == 0) return null;
     NativeLong[] to = new NativeLong[from.length];
     for (int i = 0; i < from.length; i++)
       to[i] = new NativeLong(from[i]);

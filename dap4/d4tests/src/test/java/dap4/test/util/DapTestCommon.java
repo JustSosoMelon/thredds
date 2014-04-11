@@ -12,7 +12,7 @@ import java.io.*;
 import java.nio.charset.Charset;
 import java.util.*;
 
-public class UnitTestCommon extends TestCase
+public class DapTestCommon extends TestCase
 {
     //////////////////////////////////////////////////
     // Constants
@@ -22,6 +22,8 @@ public class UnitTestCommon extends TestCase
     static protected final Charset UTF8 = Charset.forName("UTF-8");
 
     static final String DEFAULTTREEROOT = "dap4";
+     // Look for these to verify we have found the thredds root
+    static final String[] SUBROOTS = new String[]{"httpclient", "cdm", "tds", "opendap"};
 
     static final String[] DEFAULTSUBDIRS = new String[]{"httpclient", "cdm", "tds", "opendap", "dap4"};
 
@@ -87,7 +89,9 @@ public class UnitTestCommon extends TestCase
     }
 
     // Walk around the directory structure to locate
-    // the path to a given directory.
+    // the path to the thredds root
+    // Same as code in UnitTestCommon, but for
+    // some reason, Intellij will not let me import it.
 
     static String locateThreddsRoot()
     {
@@ -106,7 +110,7 @@ public class UnitTestCommon extends TestCase
             int found = 0;
             String[] subdirs = prefix.list();
             for (String dirname : subdirs) {
-                for (String want : DEFAULTSUBDIRS) {
+                for (String want : SUBROOTS) {
                     if (dirname.equals(want)) {
                         found++;
                         break;
@@ -122,6 +126,15 @@ public class UnitTestCommon extends TestCase
             }
         }
         return null;
+    }
+
+    static String
+    locateDAP4Root()
+    {
+        String root = locateThreddsRoot();
+        if(root != null)
+            root = root + "/" + DEFAULTTREEROOT;
+        return root;
     }
 
     static protected String

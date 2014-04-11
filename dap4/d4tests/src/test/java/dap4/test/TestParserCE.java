@@ -10,13 +10,13 @@ import dap4.ce.parser.CEParser;
 import dap4.core.dmr.DapDataset;
 import dap4.core.dmr.DapFactoryDMR;
 import dap4.core.dmr.parser.Dap4Parser;
-import dap4.test.util.UnitTestCommon;
+import dap4.test.util.DapTestCommon;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class TestParserCE extends UnitTestCommon
+public class TestParserCE extends DapTestCommon
 {
 
     //////////////////////////////////////////////////

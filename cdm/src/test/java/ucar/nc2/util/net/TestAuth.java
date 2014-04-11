@@ -33,20 +33,16 @@
 
 package ucar.nc2.util.net;
 
-import org.apache.http.Header;
 import org.junit.Ignore;
 
 import ucar.httpclient.*;
-import org.apache.http.Header;
 import org.apache.http.auth.*;
 import org.apache.http.client.CredentialsProvider;
 import org.junit.Test;
-import ucar.nc2.util.EscapeStrings;
 import ucar.nc2.util.UnitTestCommon;
 
 import java.io.*;
 import java.util.List;
-import java.util.Map;
 
 public class TestAuth extends UnitTestCommon
 {

@@ -33,7 +33,6 @@ package ucar.nc2.util.net;
 
 import ucar.httpclient.*;
 
-import junit.framework.TestCase;
 import org.apache.http.auth.*;
 import org.apache.http.client.CredentialsProvider;
 import ucar.nc2.util.UnitTestCommon;
@@ -51,7 +50,7 @@ public class NoTestAuth2 extends UnitTestCommon
       public Data(String u,CredentialsProvider p) {this.url=u; this.provider=p;}
   }
     static private Data[] cases = new Data[] {
-      new Data("http://"+UnitTestCommon.REMOTESERVER+"/thredds/dodsC/restrict/testdata/testData.nc.html",
+      new Data("http://"+ UnitTestCommon.REMOTESERVER+"/thredds/dodsC/restrict/testdata/testData.nc.html",
                new CredentialsProvider() {
                    public Credentials getCredentials(AuthScope scope) //AuthScheme sch, String h, int p, boolean pr)
                    {

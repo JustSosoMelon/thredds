@@ -1,9 +1,8 @@
 package dap4.test;
 
-import dap4.test.util.UnitTestCommon;
+import dap4.test.util.DapTestCommon;
 import ucar.httpclient.*;
 import ucar.nc2.dataset.NetcdfDataset;
-import ucar.nc2.util.net.*;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -12,7 +11,7 @@ import java.util.List;
 /**
  * Test at the NetcdfDataset level
  */
-public class TestCDMClient extends UnitTestCommon
+public class TestCDMClient extends DapTestCommon
 {
     static final boolean DEBUG = true;
 

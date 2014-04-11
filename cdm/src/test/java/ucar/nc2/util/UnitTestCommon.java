@@ -34,14 +34,9 @@
 package ucar.nc2.util;
 
 import junit.framework.TestCase;
-import org.apache.http.*;
-import org.apache.http.protocol.HttpContext;
-import org.junit.Test;
 import ucar.unidata.test.Diff;
 
 import java.io.*;
-import java.util.ArrayList;
-import java.util.List;
 
 public class UnitTestCommon extends TestCase
 {
@@ -64,7 +59,7 @@ public class UnitTestCommon extends TestCase
     // Walk around the directory structure to locate
     // the path to a given directory.
 
-    static String locateThreddsRoot()
+    static public String locateThreddsRoot()
     {
         // Walk up the user.dir path looking for a node that has
         // all the directories in SUBROOTS.

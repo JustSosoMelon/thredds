@@ -1,9 +1,8 @@
 package dap4.test;
 
-import dap4.test.util.UnitTestCommon;
+import dap4.test.util.DapTestCommon;
 import ucar.httpclient.*;
 import ucar.nc2.dataset.NetcdfDataset;
-import ucar.nc2.util.net.*;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -12,7 +11,7 @@ import java.util.List;
 /**
  * Test at the NetcdfDataset level
  */
-public class TestConstraints extends UnitTestCommon
+public class TestConstraints extends DapTestCommon
 {
     static final boolean DEBUG = false;
 
@@ -61,7 +60,7 @@ public class TestConstraints extends UnitTestCommon
         String makeurl()
         {
             String url = url = server + "/" + dataset;
-            if(constraint != null) url += "?"+UnitTestCommon.CONSTRAINTTAG+"=" + constraint;
+            if(constraint != null) url += "?"+ DapTestCommon.CONSTRAINTTAG+"=" + constraint;
             return url;
         }
 
@@ -71,7 +70,7 @@ public class TestConstraints extends UnitTestCommon
             buf.append(dataset);
             buf.append("{");
             if(constraint != null)
-                buf.append("?"+UnitTestCommon.CONSTRAINTTAG+"=" + constraint);
+                buf.append("?"+ DapTestCommon.CONSTRAINTTAG+"=" + constraint);
             return buf.toString();
         }
     }

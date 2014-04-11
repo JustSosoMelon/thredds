@@ -1,16 +1,14 @@
 package dap4.test;
 
 import dap4.test.servlet.*;
-import dap4.test.util.UnitTestCommon;
-
-import java.nio.charset.Charset;
+import dap4.test.util.DapTestCommon;
 
 /**
  * TestFrontPage verifies the front page
  * generation code
  */
 
-public class TestDSR extends UnitTestCommon
+public class TestDSR extends DapTestCommon
 {
     static protected final boolean DEBUG = false;
 
