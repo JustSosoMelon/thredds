@@ -64,44 +64,12 @@ public class CDMDSP extends AbstractDSP
             try {
                 // register before H5Iosp
                 NetcdfFile.registerIOProvider(NC4CLASS, false);
-                Nc4Iosp.setLibraryAndPath(computeJNAPath(), "netcdf");
+                Nc4Iosp.setLibraryAndPath(null,null); // use defaults
             } catch (Throwable e) {
                 DapLog.error("Cant load IOSP Nc4Iosp");
                 throw new DapException(e.getMessage(), e.getCause());
             }
         }
-    }
-
-    static String
-    computeJNAPath()
-    {
-        // Compute the places to look for netcdf.dll or libnetcdf.so
-        String username = System.getProperty("user.name");
-        // Figure out windows vs linux
-        String os = System.getProperty("os.name").toLowerCase();
-        boolean windows = os.startsWith("windows");
-        // get the path separator
-        String sep = File.pathSeparator;
-        String jnapath = System.getProperty(Nc4Iosp.JNA_PATH);
-        String jnapathenv = System.getenv(Nc4Iosp.JNA_PATH_ENV);
-        if (jnapath != null && jnapath.length() == 0) jnapath = null;
-        if (jnapathenv != null && jnapathenv.length() == 0) jnapathenv = null;
-        if (jnapath == null) {
-            jnapath = jnapathenv;
-            if (jnapath == null) {// build it
-                if (windows) {
-                    jnapath =  "c:\\opt\\jna"
-                    ;
-                } else {
-                    jnapath = "/usr/local/lib"
-                            + sep + "/home/dmh/opt/jna/lib" //temporary
-                            + sep + "/home/mhermida/opt/lib" //temporary
-                    ;
-                }
-            }
-            System.setProperty(Nc4Iosp.JNA_PATH, jnapath);
-        }
-        return jnapath;
     }
 
     //////////////////////////////////////////////////

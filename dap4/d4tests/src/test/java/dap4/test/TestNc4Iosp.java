@@ -1,5 +1,6 @@
 package dap4.test;
 
+import dap4.core.util.DapException;
 import dap4.servlet.CDMDSP;
 import dap4.test.util.DapTestCommon;
 import ucar.nc2.dataset.NetcdfDataset;
@@ -30,6 +31,14 @@ public class TestNc4Iosp extends DapTestCommon
 
 
     static protected final BigInteger MASK = new BigInteger("FFFFFFFFFFFFFFFF", 16);
+
+    static {
+        try {
+            CDMDSP.loadNc4Iosp();
+        } catch (DapException de) {
+            System.err.println("Cannot load Nc4Iosp.netcdf library");
+        }
+    }
 
     //////////////////////////////////////////////////
     // Type Declarations
@@ -127,8 +136,8 @@ public class TestNc4Iosp extends DapTestCommon
     void
     chooseTestcases()
     {
-        if(false) {
-            chosentests = locate("test_vlen4.nc");
+        if(true) {
+            chosentests = locate("test_struct_array.nc");
             //chosentests.add(new Nc4IospTest("test_test.nc"));
         } else {
             for(Nc4IospTest tc : alltestcases)

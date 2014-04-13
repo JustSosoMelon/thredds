@@ -93,6 +93,23 @@ public class Nc4Iosp extends AbstractIOServiceProvider implements IOServiceProvi
           debugUserTypes = false,
           debugWrite = false;
 
+  static protected String DEFAULTJNAPATH;
+
+  static {
+    // Figure out windows vs linux
+    String os = System.getProperty("os.name").toLowerCase();
+    boolean windows = os.startsWith("windows");
+    // get the path separator
+    String sep = File.pathSeparator;
+    if(windows)
+        DEFAULTJNAPATH = "c:/opt/jna";
+    else
+        DEFAULTJNAPATH = "/usr/local/lib"
+                        + sep + "/home/dmh/opt/jna/lib" //temporary
+                        + sep + "/home/mhermida/opt/lib" //temporary
+                        ;
+  }
+
   static public void setWarnOff() {
     warn = false;// Suppress warning messages
   }
@@ -128,14 +145,21 @@ public class Nc4Iosp extends AbstractIOServiceProvider implements IOServiceProvi
    * @param lib_name  library name
    */
   static public void setLibraryAndPath(String jna_path, String lib_name) {
-    // See if jna_path exists
-    if(lib_name == null)
-        lib_name = DEFAULT_LIBNAME;
+    // Compute the jna path
+    if(jna_path == null) {
+        // Look at -D flags first, then env variables
+        jna_path = System.getProperty(JNA_PATH);
+        if(jna_path == null || jna_path.length() == 0) {
+            jna_path = System.getenv(JNA_PATH_ENV);
+            if(jna_path == null || jna_path.length() == 0)
+                jna_path = DEFAULTJNAPATH;
+        }
+    }
     if(jna_path != null) {
-      jnaPath = jna_path;
-      System.setProperty(JNA_PATH, jnaPath);
+        jnaPath = jna_path;
+        System.setProperty(JNA_PATH, jnaPath);
     } else 
-	System.err.println("Now jna path specified");
+	    System.err.println("Cannot determine jna path");
     if (lib_name == null)
       lib_name = DEFAULT_LIBNAME;
     libName = lib_name;
@@ -1583,6 +1607,9 @@ public class Nc4Iosp extends AbstractIOServiceProvider implements IOServiceProvi
     if (ret != 0)
       throw new IOException(ret + ": " + nc4.nc_strerror(ret));
 
+    /*
+    This does not seem right since the user type does not
+    normally appear in the CDM representation. */
     StructureMembers sm = createStructureMembers(userType);
     ArrayStructureBB asbb = new ArrayStructureBB(sm, section.getShape(), bbuff, 0);
 

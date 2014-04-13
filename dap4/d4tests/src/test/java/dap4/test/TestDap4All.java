@@ -22,13 +22,13 @@ public class TestDap4All extends DapTestCommon
     protected Class[] testclasses = new Class[]{
         TestParserDMR.class,
         TestParserCE.class,
-        TestH5Iosp.class,
         TestNc4Iosp.class,
         TestServlet.class,
         TestServletConstraints.class,
         TestCDMClient.class,
         TestDSR.class,
 /*    not yet testable
+        TestH5Iosp.class,
 TestFrontPage.java
 TestHyrax.java
 TestSerial.java

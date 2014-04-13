@@ -191,7 +191,7 @@ public class TestServlet extends DapTestCommon
     protected void
     chooseTestcases()
     {
-        if (true) {
+        if (false) {
             chosentests = locate("test_enum.nc");
         } else {
             for (ServletTest tc : alltestcases) {

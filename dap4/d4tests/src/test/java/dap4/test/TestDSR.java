@@ -56,7 +56,7 @@ public class TestDSR extends DapTestCommon
         throws Exception
     {
         super(name);
-        this.dap4root = getDAP4Root(); 
+        this.root = getDAP4Root();
         if(this.root == null)
             throw new Exception("dap4 root not found");
         this.datasetpath = this.root + "/" + DATADIR;

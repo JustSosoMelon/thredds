@@ -23,8 +23,6 @@ public class DapTestCommon extends TestCase
 
     static final String DEFAULTTREEROOT = "dap4";
      // Look for these to verify we have found the thredds root
-    static final String[] SUBROOTS = new String[]{"httpclient", "cdm", "tds", "opendap"};
-
     static final String[] DEFAULTSUBDIRS = new String[]{"httpclient", "cdm", "tds", "opendap", "dap4"};
 
     static public final String FILESERVER = "dap4:file://";
@@ -110,7 +108,7 @@ public class DapTestCommon extends TestCase
             int found = 0;
             String[] subdirs = prefix.list();
             for (String dirname : subdirs) {
-                for (String want : SUBROOTS) {
+                for (String want : DEFAULTSUBDIRS) {
                     if (dirname.equals(want)) {
                         found++;
                         break;
@@ -169,12 +167,12 @@ public class DapTestCommon extends TestCase
 
 	protected String title = "Testing";
 
-	public UnitTestCommon()
+	public DapTestCommon()
 	{
-		this("UnitTest");
+		this("dapTest");
 	}
 
-	public UnitTestCommon(String name)
+	public DapTestCommon(String name)
 	{
 		super(name);
 		this.title = name;
