@@ -178,7 +178,7 @@
     <profile>
       <id>dap4-testing</id>
       <modules>
-        <module>d4tests</module>
+        <module>dap4/d4tests</module>
       </modules>
     </profile>
 
