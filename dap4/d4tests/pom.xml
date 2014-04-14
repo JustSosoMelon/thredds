@@ -146,6 +146,7 @@
 	     <include>src/test/java/dap4/test/TestCDMClient.java</include>
 	     <include>src/test/java/dap4/test/TestDSR.java</include>
 	 </includes>
+<!--
          <excludes>
 	    <exclude>src/test/java/dap4/test/TestH5Iosp.java</exclude>
 <exclude>test/java/dap4/test/TestH5Iosp.java</exclude>
@@ -158,6 +159,7 @@
 	    <exclude>src/test/java/dap4/test/TestSerial.java</exclude>
 	    <exclude>src/test/java/dap4/test/TestDap4All.java</exclude>
          </excludes>
+-->
        </configuration>
        <executions>
          <execution>
