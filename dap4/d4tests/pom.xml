@@ -137,7 +137,22 @@
          <argLine>-Dfile.encoding=UTF-8</argLine>
          <argLine>-Dserver=remotetest</argLine>
 	 <encoding>UTF-8</encoding>                    
+	 <includes>
+	     <include>src/test/java/dap4/test/TestParserDMR.java</include>
+	     <include>src/test/java/dap4/test/TestParserCE.java</include>
+	     <include>src/test/java/dap4/test/TestNc4Iosp.java</include>
+	     <include>src/test/java/dap4/test/TestServlet.java</include>
+	     <include>src/test/java/dap4/test/TestServletConstraints.java</include>
+	     <include>src/test/java/dap4/test/TestCDMClient.java</include>
+	     <include>src/test/java/dap4/test/TestDSR.java</include>
+	 </includes>
          <excludes>
+	    <exclude>src/test/java/dap4/test/TestH5Iosp.java</exclude>
+<exclude>test/java/dap4/test/TestH5Iosp.java</exclude>
+<exclude>java/dap4/test/TestH5Iosp.java</exclude>
+<exclude>dap4/test/TestH5Iosp.java</exclude>
+<exclude>test/TestH5Iosp.java</exclude>
+<exclude>TestH5Iosp.java</exclude>
 	    <exclude>src/test/java/dap4/test/TestFrontPage.java</exclude>
 	    <exclude>src/test/java/dap4/test/TestHyrax.java</exclude>
 	    <exclude>src/test/java/dap4/test/TestSerial.java</exclude>

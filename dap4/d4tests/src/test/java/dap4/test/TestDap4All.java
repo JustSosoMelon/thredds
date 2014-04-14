@@ -28,7 +28,7 @@ public class TestDap4All extends DapTestCommon
         TestCDMClient.class,
         TestDSR.class,
 /*    not yet testable
-        TestH5Iosp.class,
+TestH5Iosp.class,
 TestFrontPage.java
 TestHyrax.java
 TestSerial.java
