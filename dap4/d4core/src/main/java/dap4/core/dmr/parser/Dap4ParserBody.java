@@ -288,7 +288,7 @@ abstract class Dap4ParserBody extends Dap4Actions
 
 public Object getLVal() {return null;}
 public int yylex() {return 0;}
-public void yyerror(String s) {System.err.println(s); System.err.println("near "+this.locator.toString());}
+public void yyerror(String s) {System.err.println(s); System.err.println("near "+getLocation().toString());}
 
 /* "Dap4ParserBody.java":294  */ /* lalr1.java:236  */
 
