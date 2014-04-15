@@ -175,13 +175,6 @@
       </dependencies>
     </profile>
 
-    <profile>
-      <id>dap4-testing</id>
-      <modules>
-        <module>dap4/d4tests</module>
-      </modules>
-    </profile>
-
   </profiles>
 
   <distributionManagement>
