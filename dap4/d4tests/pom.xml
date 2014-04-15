@@ -138,8 +138,13 @@
          <argLine>-Dserver=remotetest</argLine>
 	 <encoding>UTF-8</encoding>                    
 	 <includes>
-	     <include>src/test/java/dap4/test/TestParserDMR.java</include>
-	     <include>TestNc4Iosp.java</include>
+	     <include>**/TestParserDMR.java</include>
+             <include>**/TestParserCE.java</include>
+             <include>**/TestNc4Iosp.java</include>
+             <include>**/TestServlet.java</include>
+             <include>**/TestServletConstraints.java</include>
+             <include>**/TestCDMClient.java</include>
+             <include>**/TestDSR.java</include>
 	 </includes>
        </configuration>
        <executions>

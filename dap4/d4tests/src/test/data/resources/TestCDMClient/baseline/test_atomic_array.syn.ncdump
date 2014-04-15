@@ -10,14 +10,12 @@ netcdf test_atomic_array.syn {
     d5 = 5;
   variables:
     byte vu8(d2=2, d3=3);
-      :_Unsigned = "true";
       :_DAP4_Checksum_CRC32 = "0xe0a19273";
 
     short v16(d4=4);
       :_DAP4_Checksum_CRC32 = "0x4071b233";
 
     int vu32(d2=2, d3=3);
-      :_Unsigned = "true";
       :_DAP4_Checksum_CRC32 = "0xe0a132a3";
 
     double vd(d2=2);

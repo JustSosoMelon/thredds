@@ -17,7 +17,12 @@ import dap4.core.util.DapException;
 %code lexer {
 public Object getLVal() {return null;}
 public int yylex() {return 0;}
-public void yyerror(String s) {System.err.println(s);}
+public void yyerror(String s)
+{
+System.err.println(s);
+System.errr.println("near %s\n",this.locator());
+}
+
 }
 
 %token <SaxEvent> DATASET_ _DATASET

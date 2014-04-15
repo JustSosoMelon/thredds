@@ -98,8 +98,8 @@ abstract public class SaxEventHandler extends DefaultHandler
         throws SAXException
     {
         SaxEvent token = new SaxEvent(SaxEventType.STARTDOCUMENT, locator);
-        if(TRACE) System.err.printf("eventtype.%s: %s\n", token.eventtype.name(), token.toString());
-        yyevent(token);
+        if(TRACE) trace("eventtype.%s: %s\n", token.eventtype.name(), token.toString());
+        locatedEvent(token);
     }
 
     @Override
@@ -107,9 +107,8 @@ abstract public class SaxEventHandler extends DefaultHandler
         throws SAXException
     {
         SaxEvent token = new SaxEvent(SaxEventType.ENDDOCUMENT, locator);
-        if(TRACE) System.err.printf("eventtype.%s: %s\n",
-            token.eventtype.name(), token.toString());
-        yyevent(token);
+        if(TRACE) trace("eventtype.%s: %s\n",token.eventtype.name(), token.toString());
+        locatedEvent(token);
     }
 
     @Override
@@ -118,9 +117,8 @@ abstract public class SaxEventHandler extends DefaultHandler
         throws SAXException
     {
         SaxEvent token = new SaxEvent(SaxEventType.STARTELEMENT, locator, name, qualname, nsuri);
-        if(TRACE) System.err.printf("eventtype.%s: %s\n",
-            token.eventtype.name(), token.toString());
-        yyevent(token);
+        if(TRACE) trace("eventtype.%s: %s\n",token.eventtype.name(), token.toString());
+        locatedEvent(token);
         // Now pass the attributes as tokens
         int nattr = attributes.getLength();
         for(int i = 0; i < nattr; i++) {
@@ -129,9 +127,8 @@ abstract public class SaxEventHandler extends DefaultHandler
             String value = attributes.getValue(i);
             token = new SaxEvent(SaxEventType.ATTRIBUTE, locator, aname);
             token.value = value;
-            if(TRACE) System.err.printf("eventtype.%s: %s\n",
-                token.eventtype.name(), token.toString());
-            yyevent(token);
+            if(TRACE) trace("eventtype.%s: %s\n",token.eventtype.name(), token.toString());
+            locatedEvent(token);
         }
     }
 
@@ -140,9 +137,8 @@ abstract public class SaxEventHandler extends DefaultHandler
         throws SAXException
     {
         SaxEvent token = new SaxEvent(SaxEventType.ENDELEMENT, locator, name, qualname, nsuri);
-        if(TRACE) System.err.printf("eventtype.%s: %s\n",
-            token.eventtype.name(), token.toString());
-        yyevent(token);
+        if(TRACE) trace("eventtype.%s: %s\n",token.eventtype.name(), token.toString());
+        locatedEvent(token);
     }
 
     @Override
@@ -151,9 +147,8 @@ abstract public class SaxEventHandler extends DefaultHandler
     {
         SaxEvent token = new SaxEvent(SaxEventType.CHARACTERS, locator);
         token.text = new String(ch, start, length);
-        if(TRACE) System.err.printf("eventtype.%s: %s\n",
-            token.eventtype.name(), token.toString());
-        yyevent(token);
+        if(TRACE) trace("eventtype.%s: %s\n",token.eventtype.name(), token.toString());
+        locatedEvent(token);
     }
 
     // Following events are suppressed
@@ -214,8 +209,7 @@ abstract public class SaxEventHandler extends DefaultHandler
     @Override
     public InputSource resolveEntity(String publicId, String systemId)
     {
-        if(TRACE) System.err.printf("eventtype.RESOLVEENTITY: %s.%s\n",
-            publicId, systemId);
+        if(TRACE) trace("eventtype.RESOLVEENTITY: %s.%s\n",publicId, systemId)));
         return null;
     }
 
@@ -226,6 +220,7 @@ abstract public class SaxEventHandler extends DefaultHandler
     public void fatalError(SAXParseException e)
         throws SAXException
     {
+	e.setMessage(locatedError(e.getMessage()));
         throw e;
     }
 
@@ -233,15 +228,45 @@ abstract public class SaxEventHandler extends DefaultHandler
     public void error(SAXParseException e)
         throws SAXException
     {
-        System.err.println("Sax error: %s\n" + e);
+        System.err.printf("Sax error: %s; near %s\n",e,this.locator.toString());
     }
 
     @Override
     public void warning(SAXParseException e)
         throws SAXException
     {
-        System.err.println("Sax warning: " + e);
+        System.err.printf("Sax warning: %s; near %s\n",e,this.locator.toString());
     }
 
+
+    //////////////////////////////////////////////////
+    // Location printing
+
+    protected void
+    locatedEvent(SaxEvent token)
+	throws SAXException
+    {
+	try {
+	    yyevent(token);
+	} catch (SAXException se) {
+	    se.setMessage(locatedError(se.getMessage()));
+	    throw se;
+	}
+    }
+
+
+    protected String
+    locatedError(String msg)
+    {
+	String locmsg = msg + String.format("; near %s\n",this.locator.toString());
+	return locmsg;
+    }
+
+
+    protected void
+    trace(String msg, Object args...)
+    {
+        if(TRACE) System.err.printf(locatedError(String.format(msg,args)));
+    }
 
 } // class SaxEventHandler

@@ -7,28 +7,24 @@ netcdf test_atomic_types.nc {
       :_DAP4_Checksum_CRC32 = "0xa061b233";
 
     byte vu8;
-      :_Unsigned = "true";
       :_DAP4_Checksum_CRC32 = "0x000102f3";
 
     short v16;
       :_DAP4_Checksum_CRC32 = "0xd09162a3";
 
     short vu16;
-      :_Unsigned = "true";
       :_DAP4_Checksum_CRC32 = "0x0001f2f3";
 
     int v32;
       :_DAP4_Checksum_CRC32 = "0xd0714213";
 
     int vu32;
-      :_Unsigned = "true";
       :_DAP4_Checksum_CRC32 = "0xf0f1f2f3";
 
     long v64;
       :_DAP4_Checksum_CRC32 = "0x3051f2c3";
 
     long vu64;
-      :_Unsigned = "true";
       :_DAP4_Checksum_CRC32 = "0x10d14223";
 
     float vf;
