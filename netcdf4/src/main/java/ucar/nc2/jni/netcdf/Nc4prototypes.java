@@ -268,8 +268,8 @@ public interface Nc4prototypes extends Library {
   int nc_sync	(int ncid);
 
   int nc_def_grp (int parent_ncid, String name, IntByReference new_ncid);
-  int nc_def_dim(int ncid,  String name, long len, IntByReference dimid);
-  int nc_def_var (int ncid, String name, long xtype, int ndims, int[] dimids, IntByReference varidp);
+  int nc_def_dim(int ncid,  String name, NativeLong len, IntByReference dimid);
+  int nc_def_var (int ncid, String name, NativeLong xtype, int ndims, int[] dimids, IntByReference varidp);
 
   /* Rename a group */
   int nc_rename_grp(int grpid, String name);
@@ -323,22 +323,22 @@ public interface Nc4prototypes extends Library {
 
   // nc_put_vars_double(int ncid, int varid, const size_t *startp, const size_t *countp, const ptrdiff_t *stridep, const double *op);
 
-  // nc_put_att_string(int ncid, int varid, const char *name, long len, const char **op);
+  // nc_put_att_string(int ncid, int varid, const char *name, Nativelong len, const char **op);
 
   // write attributes
-  int nc_put_att (int ncid, int varid, String name, int xtype, long len, ByteBuffer value);
-  int nc_put_att_string(int ncid, int varid, String attName, long len, String[] value);
-  int nc_put_att_text(int ncid, int varid, String attName, long len, byte[] value);
-  int nc_put_att_uchar(int ncid, int varid, String attName, int xtype, long len, byte[] value);
-  int nc_put_att_schar(int ncid, int varid, String attName, int xtype, long len, byte[] value);
-  int nc_put_att_short(int ncid, int varid, String attName, int xtype, long len, short[] value);
-  int nc_put_att_ushort(int ncid, int varid, String attName, int xtype, long len, short[] value);
-  int nc_put_att_int(int ncid, int varid, String attName, int xtype, long len, int[] value);
-  int nc_put_att_uint(int ncid, int varid, String attName, int xtype, long len, int[] value);
-  int nc_put_att_longlong(int ncid, int varid, String attName, int xtype, long len, long[] value);
-  int nc_put_att_ulonglong(int ncid, int varid, String attName, int xtype, long len, long[] value);
-  int nc_put_att_float(int ncid, int varid, String attName, int xtype, long len, float[] value);
-  int nc_put_att_double(int ncid, int varid, String attName, int xtype, long len, double[] value);
+  int nc_put_att (int ncid, int varid, String name, int xtype, NativeLong len, ByteBuffer value);
+  int nc_put_att_string(int ncid, int varid, String attName, NativeLong len, String[] value);
+  int nc_put_att_text(int ncid, int varid, String attName, NativeLong len, byte[] value);
+  int nc_put_att_uchar(int ncid, int varid, String attName, int xtype, NativeLong len, byte[] value);
+  int nc_put_att_schar(int ncid, int varid, String attName, int xtype, NativeLong len, byte[] value);
+  int nc_put_att_short(int ncid, int varid, String attName, int xtype, NativeLong len, short[] value);
+  int nc_put_att_ushort(int ncid, int varid, String attName, int xtype, NativeLong len, short[] value);
+  int nc_put_att_int(int ncid, int varid, String attName, int xtype, NativeLong len, int[] value);
+  int nc_put_att_uint(int ncid, int varid, String attName, int xtype, NativeLong len, int[] value);
+  int nc_put_att_longlong(int ncid, int varid, String attName, int xtype, NativeLong len, long[] value);
+  int nc_put_att_ulonglong(int ncid, int varid, String attName, int xtype, NativeLong len, long[] value);
+  int nc_put_att_float(int ncid, int varid, String attName, int xtype, NativeLong len, float[] value);
+  int nc_put_att_double(int ncid, int varid, String attName, int xtype, NativeLong len, double[] value);
   
   /* Extra netcdf-4 stuff. */
   
@@ -385,13 +385,13 @@ public interface Nc4prototypes extends Library {
   int nc_set_default_format(int format, IntByReference old_formatp);
   
   /* Set the cache size, nelems, and preemption policy. */
-  int nc_set_chunk_cache(long size, long nelems, float preemption);
+  int nc_set_chunk_cache(NativeLong size, NativeLong nelems, float preemption);
   
   /* Get the cache size, nelems, and preemption policy. */
   int nc_get_chunk_cache(NativeLongByReference sizep, NativeLongByReference nelemsp, FloatByReference preemptionp);
   
   /* Set the per-variable cache size, nelems, and preemption policy. */
-  int nc_set_var_chunk_cache(int ncid, int varid, long size, long nelems, float preemption);
+  int nc_set_var_chunk_cache(int ncid, int varid, NativeLong size, NativeLong nelems, float preemption);
   
   /* Set the per-variable cache size, nelems, and preemption policy. */
   int nc_get_var_chunk_cache(int ncid, int varid, NativeLongByReference sizep, NativeLongByReference nelemsp, FloatByReference preemptionp);
