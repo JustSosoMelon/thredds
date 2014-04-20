@@ -104,9 +104,10 @@ public class Nc4Iosp extends AbstractIOServiceProvider implements IOServiceProvi
     if(windows)
         DEFAULTJNAPATH = "c:/opt/jna";
     else
-        DEFAULTJNAPATH = "/usr/local/lib"
-                        + sep + "/home/dmh/opt/jna/lib" //temporary
+        DEFAULTJNAPATH = 
+                        "/home/dmh/opt/jna/lib" //temporary until I get sudo on lucille
                         + sep + "/home/mhermida/opt/lib" //temporary
+			+ sep + "/usr/local/lib" // this is probably what it should be
                         ;
   }
 
