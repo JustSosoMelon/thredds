@@ -3,6 +3,7 @@
 
 package dap4.ce.parser;
 
+import dap4.ce.CEAST;
 import dap4.core.dmr.*;
 import dap4.core.dmr.parser.ParseException;
 import dap4.core.util.*;
@@ -206,6 +207,8 @@ public class CEParser extends CEParserBody
         throws ParseException
     {
         CEAST node = new CEAST(CEAST.Sort.SELECTION);
+	node.projection = projection;
+	node.filter = filter;
         return node;
     }
 

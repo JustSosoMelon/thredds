@@ -64,10 +64,17 @@ public class DapSerializer
     }
 
     public void
-    write()
+    initialize()
         throws IOException
     {
         writer = new SerialWriter(this.stream, this.order);
+    }
+
+    public void
+    write()
+        throws IOException
+    {
+	initialize();
         writer.startDataset();
         // Iterate over the top-level variables in the constraint
         for(DapVariable var : this.dmr.getTopVariables()) {

@@ -18,7 +18,7 @@ Comment out in case we are using an older version of bison
 %code imports {
 import dap4.core.util.Slice;
 import dap4.core.dmr.parser.ParseException;
-import static dap4.ce.parser.CEAST.*;
+import static dap4.ce.CEAST.*;
 }
 
 %code {
@@ -188,7 +188,7 @@ slice:
 index:  LONG ;
 
 /* 
-Semantics: The projection in a selection cannot have any
+Semantics: The projection in a selection currently cannot have any
 slices attached. It is purely a walk to a field of a sequence object.
 */
 selection:

@@ -2,9 +2,9 @@
    See the LICENSE file for more information.
 */
 
-package dap4.dap4servlet;
+package dap4.servlet;
 
-import dap4.ce.CEConstraint;
+import dap4.ce.*;
 import dap4.ce.parser.*;
 import dap4.core.dmr.*;
 import dap4.core.dmr.parser.Dap4Parser;
@@ -21,52 +21,48 @@ import java.net.MalformedURLException;
 import java.nio.ByteOrder;
 import java.nio.charset.Charset;
 
-public class Dap4Servlet extends javax.servlet.http.HttpServlet
+public class DapServlet extends javax.servlet.http.HttpServlet
 {
 
     //////////////////////////////////////////////////
     // Constants
 
-    static final boolean DEBUG = false;
+    static public final boolean DEBUG = false;
 
-    static final boolean PARSEDEBUG = false;
+    static public final boolean PARSEDEBUG = false;
 
-    static final String SERVLETNAME = "Dap4";
-
-    static final String TESTDATADIR = "testfiles";
-
-    static final String BIG_ENDIAN = "Big-Endian";
-    static final String LITTLE_ENDIAN = "Little-Endian";
+    static protected final String BIG_ENDIAN = "Big-Endian";
+    static protected final String LITTLE_ENDIAN = "Little-Endian";
 
     // Is this machine big endian?
-    static boolean IS_BIG_ENDIAN = (ByteOrder.nativeOrder() == ByteOrder.BIG_ENDIAN);
+    static protected boolean IS_BIG_ENDIAN = (ByteOrder.nativeOrder() == ByteOrder.BIG_ENDIAN);
 
-    static final String DMREXT = ".dmr";
-    static final String DATAEXT = ".dap";
-    static final String DSREXT = ".dsr";
+    static protected final String DMREXT = ".dmr";
+    static protected final String DATAEXT = ".dap";
+    static protected final String DSREXT = ".dsr";
 
-    static final String FAVICON = "favicon.ico";
+    static protected final String FAVICON = "favicon.ico";
 
     //////////////////////////////////////////////////
     // Instance variables
 
-    boolean compress = true;
+    protected boolean compress = true;
 
     // Define the path prefix for finding a dataset
     // given a url file spec
 
-    String datasetprefix = null;
+    protected String datasetprefix = null;
 
-    ByteOrder byteorder = ByteOrder.nativeOrder();
+    protected ByteOrder byteorder = ByteOrder.nativeOrder();
 
-    DapDSR dsrbuilder = new DapDSR();
+    protected DapDSR dsrbuilder = new DapDSR();
 
-    ServletInfo svcinfo = null;
+    protected ServletInfo svcinfo = null;
 
     //////////////////////////////////////////////////
     // Constructor(s)
 
-    public Dap4Servlet()
+    public DapServlet()
     {
     }
 
@@ -109,7 +105,7 @@ public class Dap4Servlet extends javax.servlet.http.HttpServlet
         DapRequest drq = getRequestState(svcinfo, req, resp);
 
         if(DEBUG) {
-            System.err.println("Dap4Servlet: processing url: " + drq.getOriginalURL());
+            System.err.println("DAP4 Servlet: processing url: " + drq.getOriginalURL());
         }
 
         if(url.endsWith("favicon.ico")) {
@@ -173,7 +169,7 @@ public class Dap4Servlet extends javax.servlet.http.HttpServlet
 
     /**
      * Process a capabilities request.
-     * Currently, generate the front page.
+     * Currently, does nothing (but see D4TSServlet.doCapabilities).
      *
      * @param drq The merged dap state
      */
@@ -365,7 +361,7 @@ public class Dap4Servlet extends javax.servlet.http.HttpServlet
      * @return the extracted servlet info
      */
 
-    ServletInfo
+    protected ServletInfo
     getRequestState(HttpServlet svc)
         throws IOException
     {
@@ -383,13 +379,12 @@ public class Dap4Servlet extends javax.servlet.http.HttpServlet
      *         from the servlet engine.
      */
 
-    DapRequest
+    protected DapRequest
     getRequestState(ServletInfo info, HttpServletRequest rq, HttpServletResponse rsp)
         throws IOException
     {
         return new DapRequest(info, rq, rsp);
     }
-
 
     /**
      * Return the full file path with
@@ -400,7 +395,7 @@ public class Dap4Servlet extends javax.servlet.http.HttpServlet
      * @param isdir       do we want a file or a directory
      */
 
-    String
+    protected String
     getResourceFile(DapRequest drq, String datasetname, boolean isdir)
         throws IOException
     {
@@ -428,11 +423,11 @@ public class Dap4Servlet extends javax.servlet.http.HttpServlet
     //////////////////////////////////////////////////////////
     // Error Methods
 
-/* Note that these error returns are assumed to be before
+    /* Note that these error returns are assumed to be before
        any DAP4 response has been generated. So they will
        set the header return code and an Error Response as body.
        Error chunks are handled elsewhere.
-*/
+     */
 
     /**
      * Generate an error based on the parameters
@@ -442,7 +437,8 @@ public class Dap4Servlet extends javax.servlet.http.HttpServlet
      * @param t        exception that caused the error; may be null
      * @throws IOException
      */
-    void senderror(DapRequest drq, int httpcode, Throwable t)
+    protected void
+    senderror(DapRequest drq, int httpcode, Throwable t)
         throws IOException
     {
         if(httpcode == 0) httpcode = HttpServletResponse.SC_BAD_REQUEST;

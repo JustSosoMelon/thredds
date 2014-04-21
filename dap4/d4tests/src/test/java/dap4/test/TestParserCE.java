@@ -5,7 +5,7 @@
 package dap4.test;
 
 import dap4.ce.CEConstraint;
-import dap4.ce.parser.CECompiler;
+import dap4.ce.CECompiler;
 import dap4.ce.parser.CEParser;
 import dap4.core.dmr.DapDataset;
 import dap4.core.dmr.DapFactoryDMR;

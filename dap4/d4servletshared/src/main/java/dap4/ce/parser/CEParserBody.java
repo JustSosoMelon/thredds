@@ -39,9 +39,10 @@ package dap4.ce.parser;
 /* "%code imports" blocks.  */
 /* "../../../../../../../grammars/ce.y":18  */ /* lalr1.java:93  */
 
+import dap4.ce.CEAST;
 import dap4.core.util.Slice;
 import dap4.core.dmr.parser.ParseException;
-import static dap4.ce.parser.CEAST.*;
+import static dap4.ce.CEAST.*;
 
 /* "CEParserBody.java":47  */ /* lalr1.java:93  */
 

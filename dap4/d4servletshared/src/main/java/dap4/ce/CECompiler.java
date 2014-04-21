@@ -1,7 +1,7 @@
 /* Copyright 2012, UCAR/Unidata.
    See the LICENSE file for more information. */
 
-package dap4.ce.parser;
+package dap4.ce;
 
 import dap4.ce.CEConstraint;
 import dap4.core.dmr.*;
@@ -46,8 +46,8 @@ public class CECompiler
 
     //////////////////////////////////////////////////
 
-    // Recursive AST walker
-    void
+    // Recursive AST walker; compilation of filters is done elsewhere.
+    protected void
     compileAST(CEAST ast)
         throws DapException
     {
@@ -66,10 +66,8 @@ public class CECompiler
             compilesegment(ast);
             break;
         case SELECTION:
-            break;
-        case EXPR:
-            break;
-        case CONSTANT:
+	    scopestack.clear();
+	    compileselection(ast);
             break;
         case DEFINE:
             dimredef(ast);
@@ -79,7 +77,20 @@ public class CECompiler
         }
     }
 
-    void
+    protected void
+    compileselection(CEAST ast)
+        throws DapException
+    {
+	DapVariable var = compilesegment(ast.projection);	
+	if(var.getSort() != DapSort.SEQUENCE)
+	    throw new DapException("Attempt to apply a filter to a non-sequence variable: "+var.getFQN());
+	// Convert field references in the filter
+	compilefilter((DapSequence)var,ast);
+	// add filter
+	ce.setFilter(var,ast.filter);	
+    }
+
+    protected DapVariable
     compilesegment(CEAST ast)
         throws DapException
     {
@@ -91,7 +102,7 @@ public class CECompiler
             if(matches.size() > 1)
                 throw new DapException("Multiply defined variable name: "+ast.name);
             if(matches.size() == 0)
-                node = null; // not of interest
+                throw new DapException("Undefined variable name: "+ast.name);
             else
                 node = matches.get(0);
         } else if(parent.getSort() == DapSort.STRUCTURE) {
@@ -111,11 +122,36 @@ public class CECompiler
         DapVariable var = (DapVariable) node;
         ce.addVariable(var,ast.slices);
         scopestack.push(var);
+	return var;
     }
+
+    /**
+Convert field references in a filter
+     */
+    public void
+    compilefilter(DapSequence seq, CEAST expr)
+	throws DapException
+    {
+	if(expr.sort == CEAST.Sort.SEGMENT) {
+	    // This must be a simple segment and it must appear in seq
+	    if(expr.subnodes != null)
+	        throw new DapException("compilefilter: Non-simple segment:"+expr.name);
+	    // Look for the name in the top-level field of seq
+	    expr.field = seq.findByName(expr.name);
+	    if(expr.field == null)
+	        throw new DapException("compilefilter: Unknown filter variable:"+expr.name);
+	} else if(expr.sort == CEAST.Sort.EXPR) {
+	    compilefilter(expr.lhs);
+	    compilefilter(expr.rhs);
+	} else if(expr.sort == CEAST.Sort.CONSTANT) {
+	    return;
+	} else
+	    throw new DapException("compilefilter: Unexpected node type:"+expr.sort);
+    }   
 
     /*
     // Create the necessary new dimension objects for a variable
-    void
+    protected void
     createdimensions(DapVariable var, List<Slice> slices)
         throws DapException
     {
@@ -146,7 +182,7 @@ public class CECompiler
     }  */
 
     // Process a dim redefinition
-    void
+    protected void
     dimredef(CEAST node)
         throws DapException
     {

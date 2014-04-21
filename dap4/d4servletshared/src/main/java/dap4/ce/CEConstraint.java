@@ -4,9 +4,11 @@
 
 package dap4.ce;
 
-import dap4.ce.parser.CEAST;
+import dap4.ce.CEAST;
+import dap4.core.data.*;
 import dap4.core.dmr.*;
 import dap4.core.util.*;
+import dap4.servlet.DapSerializer;
 
 import java.util.*;
 
@@ -23,10 +25,7 @@ import java.util.*;
  * any overriding of the dimensions of the variables.
  * The DMR printer and the serializer access the constraint
  * to determine what to put out.
- * <p/>
- * At some point this class will be substantially
- * more complex as it will contain predicates
- * and function invocations.
+ * Additionally, each variable (if appropriate) may have a filter expr.
  */
 
 public class CEConstraint
@@ -108,11 +107,23 @@ public class CEConstraint
     {
         DapVariable var;
         List<Slice> slices;
+        CEAST filter;
+
+        Segment(DapVariable var)
+        {
+            this(var, null, null);
+        }
 
         Segment(DapVariable var, List<Slice> slices)
         {
+            this(var, slices, null);
+        }
+
+        Segment(DapVariable var, List<Slice> slices, CEAST filter)
+        {
             this.var = var;
             this.slices = slices;
+            this.filter = filter;
         }
 
         public String toString()
@@ -120,9 +131,150 @@ public class CEConstraint
             StringBuilder buf = new StringBuilder();
             buf.append(var.getFQN());
             if(slices != null)
-                for(int i=0;i<slices.size();i++)
+                for(int i = 0;i < slices.size();i++)
                     buf.append(slices.get(i).toString());
+            if(this.filter != null) {
+                buf.append("|");
+                buf.append(filter.toString());
+            }
             return buf.toString();
+        }
+    }
+
+    static public class Filter implements Iterator<DataRecord>
+    {
+        protected DapSequence seq;
+        protected DataSequence data;
+        protected long nrecords;
+        protected CEAST filter;
+
+        protected int recno;
+        protected DataRecord current;
+
+        public Filter(DapSequence seq, DataSequence data, CEAST filter)
+        {
+            this.filter = filter;
+            this.seq = seq;
+            this.data = data;
+            this.nrecords = data.getRecordCount();
+            this.recno = 0; // actually recno of next record to read
+            this.current = null;
+        }
+
+        // Iterator interface
+        public boolean hasNext()
+        {
+            if(recno < nrecords)
+                return false;
+            // look for next matching record starting at recno
+            if(filter ==  null) {
+                this.current = data.readRecord(this.recno);
+                this.recno++;
+                return true;
+            } else for(;recno < nrecords;recno++) try {
+                this.current = data.readRecord(recno);
+                if(matches(this.seq, this.current, filter))
+                    return true;
+            } catch (DapException de) {
+                return false;
+            }
+            this.current = null;
+            return false;
+        }
+
+        public DataRecord next()
+        {
+            if(this.recno >= nrecords || this.current == null)
+                throw new NoSuchElementException();
+            return this.current;
+        }
+
+        public void remove()
+        {
+            throw new UnsupportedOperationException();
+        }
+
+        /* Evaluator */
+        protected boolean
+        matches(DapSequence seq, DataRecord record, CEAST expr)
+            throws DapException
+        {
+            if(expr.sort == CEAST.Sort.EXPR) {
+                switch (expr.lhs.sort) {
+                case EXPR:
+                    if(expr.op == CEAST.Operator.AND) {
+                        boolean lhstrue = matches(seq, record, expr.lhs);
+                        boolean rhstrue = matches(seq, record, expr.rhs);
+                        return lhstrue && rhstrue;
+                    } else {
+                        Object lvalue = null;
+                        Object rvalue = null;
+                        if(expr.lhs.sort == CEAST.Sort.CONSTANT)
+                            lvalue = expr.lhs.value;
+                        else if(expr.rhs.sort == CEAST.Sort.CONSTANT)
+                            rvalue = expr.rhs.value;
+                        else if(expr.lhs.sort == CEAST.Sort.SEGMENT)
+                            lvalue = eval(seq, record, expr.lhs.name);
+                        else if(expr.rhs.sort == CEAST.Sort.SEGMENT)
+                            rvalue = eval(seq, record, expr.rhs.name);
+                        int comparison = compare(lvalue, rvalue);
+                        switch (expr.op) {
+                        case LT:
+                            return (comparison < 0);
+                        case LE:
+                            return (comparison <= 0);
+                        case GT:
+                            return (comparison > 0);
+                        case GE:
+                            return (comparison >= 0);
+                        case EQ:
+                            return (comparison == 0);
+                        case NEQ:
+                            return (comparison != 0);
+                        case REQ:
+                            return lvalue.toString().matches(rvalue.toString());
+                        default:
+                            assert false; // should never happen
+                        }
+                    }
+                }
+            }
+            return false;
+        }
+
+        protected Object
+        eval(DapSequence seq, DataRecord record, String field)
+            throws DapException
+        {
+            DapVariable dapv = seq.findByName(field);
+            if(dapv == null)
+                throw new DapException("Unknown variable in filter: " + field);
+            if(dapv.getSort() != DapSort.ATOMICVARIABLE)
+                throw new DapException("Non-atomic variable in filter: " + field);
+            if(dapv.getRank() > 0)
+                throw new DapException("Non-scalar variable in filter: " + field);
+            DataAtomic da = (DataAtomic) (record.readfield(field));
+            return da.read(0);
+        }
+
+        protected int
+        compare(Object lvalue, Object rvalue)
+            throws DapException
+        {
+            if(lvalue instanceof String && rvalue instanceof String)
+                return ((String) lvalue).compareTo((String) rvalue);
+            if(lvalue instanceof Boolean && rvalue instanceof Boolean)
+                return compare((Boolean) lvalue ? 1 : 0, (Boolean) rvalue ? 1 : 0);
+            if(lvalue instanceof Double || lvalue instanceof Float
+                 || rvalue instanceof Double || rvalue instanceof Float) {
+                double d1 = ((Number)lvalue).doubleValue();
+                double d2 = ((Number)lvalue).doubleValue();
+                return Double.compare(d1,d2);
+            } else {
+                long l1 = ((Number)lvalue).longValue();
+                long l2 = ((Number)rvalue).longValue();
+                return Long.compare(l1,l2);
+            }
         }
     }
 
@@ -155,7 +307,7 @@ public class CEConstraint
     protected Map<DapNode, List<DapAttribute>> attributes = new HashMap<DapNode, List<DapAttribute>>();
     // Computed information
 
-    // Map original dimension to the redef 
+    // Map original dimension to the redef
     protected Map<DapDimension, DapDimension> redef = new HashMap<DapDimension, DapDimension>();
 
     // list of all referenced original dimensions
@@ -193,6 +345,19 @@ public class CEConstraint
         return this.dmr;
     }
 
+    public DapDimension getRedefDim(DapDimension orig)
+    {
+        return redef.get(orig);
+    }
+
+    public List<Slice> getVariableSlices(DapVariable var)
+    {
+        int index = findVariable(var);
+        if(index < 0)
+            return null;
+        return this.variables.get(index).slices;
+    }
+
     public void addRedef(DapDimension dim, Slice slice)
     {
         this.redefslice.put(dim, slice);
@@ -214,17 +379,11 @@ public class CEConstraint
         attrs.add(attr);
     }
 
-    public DapDimension getRedefDim(DapDimension orig)
+    public void setFilter(DapVariable var, CEAST filter)
     {
-        return redef.get(orig);
-    }
-
-    public List<Slice> getVariableSlices(DapVariable var)
-    {
-        int index = findVariable(var);
-        if(index < 0)
-            return null;
-        return this.variables.get(index).slices;
+        Segment seg = findSegment(var);
+        if(seg != null)
+            seg.filter = filter;
     }
 
     //////////////////////////////////////////////////
@@ -362,11 +521,37 @@ public class CEConstraint
         for(DapVariable field : struct.getFields()) {
             if(!first) buf.append(";");
             first = false;
-            Segment fseg = getVariable(field);
+            Segment fseg = findSegment(field);
             dumpvar(fseg, buf, forconstraint);
         }
         buf.append(RBRACE);
     }
+
+    //////////////////////////////////////////////////
+    // Filter evaluation
+
+    /**
+     * Filter evaluation is carried out through an iterator
+     * that can be called by e.g. a serializer.
+     * The iterator evaluates records from a sequence one-by-one
+     * and returns the next one that matches the filter.
+     * In order to evaluate a record, we need as input:
+     * 1.  the DapSequence from which
+     * the free variables in
+     * the filter are taken.
+     * 2.  the DataRecord to evaluate
+     *
+     * @param dapseq
+     * @param dataseq
+     */
+
+    public Filter
+    filterIterator(DapSequence dapseq, DataSequence dataseq)
+    {
+        // Locate the filter for this sequence
+        return new Filter(dapseq,dataseq, this.filter);
+    }
+
 
     //////////////////////////////////////////////////
     // Utilities
@@ -381,7 +566,7 @@ public class CEConstraint
         return -1;
     }
 
-    protected Segment getVariable(DapVariable var)
+    protected Segment findSegment(DapVariable var)
     {
         for(int i = 0;i < variables.size();i++) {
             if(variables.get(i).var == var)
@@ -440,7 +625,7 @@ public class CEConstraint
             for(DapVariable field : dstruct.getFields()) {
                 if(findVariable(field) < 0) {
                     // Add field as leaf
-                    this.variables.add(new Segment(field, null));
+                    this.variables.add(new Segment(field));
                 }
                 if(field.getSort() == DapSort.STRUCTURE || field.getSort() == DapSort.SEQUENCE) {
                     if(expansionCount((DapStructure) field) == 0)
@@ -577,7 +762,7 @@ public class CEConstraint
     protected void computegroups()
     {
         // 1. variables
-        for(int i=0;i<variables.size();i++) {
+        for(int i = 0;i < variables.size();i++) {
             DapVariable var = variables.get(i).var;
             List<DapGroup> path = var.getGroupPath();
             for(DapGroup group : path) {
