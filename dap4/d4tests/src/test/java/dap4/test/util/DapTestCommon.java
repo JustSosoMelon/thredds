@@ -7,6 +7,7 @@ package dap4.test.util;
 import junit.framework.TestCase;
 import dap4.core.util.DapUtil;
 import ucar.nc2.dataset.NetcdfDataset;
+//import ucar.nc2.util.UnitTestCommon;
 
 import java.io.*;
 import java.nio.charset.Charset;
