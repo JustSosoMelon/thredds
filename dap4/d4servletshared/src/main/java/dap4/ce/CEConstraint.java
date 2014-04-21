@@ -130,10 +130,11 @@ public class CEConstraint
         {
             StringBuilder buf = new StringBuilder();
             buf.append(var.getFQN());
-            if(slices != null)
-                for(int i = 0;i < slices.size();i++)
+            if (slices != null)
+                for (int i = 0; i < slices.size(); i++) {
                     buf.append(slices.get(i).toString());
-            if(this.filter != null) {
+                }
+            if (this.filter != null) {
                 buf.append("|");
                 buf.append(filter.toString());
             }
@@ -164,17 +165,19 @@ public class CEConstraint
         // Iterator interface
         public boolean hasNext()
         {
-            if(recno < nrecords)
+            if (recno < nrecords)
                 return false;
-            // look for next matching record starting at recno
-            if(filter ==  null) {
-                this.current = data.readRecord(this.recno);
-                this.recno++;
-                return true;
-            } else for(;recno < nrecords;recno++) try {
-                this.current = data.readRecord(recno);
-                if(matches(this.seq, this.current, filter))
+            try {
+                // look for next matching record starting at recno
+                if (filter == null) {
+                    this.current = data.readRecord(this.recno);
+                    this.recno++;
                     return true;
+                } else for (; recno < nrecords; recno++) {
+                    this.current = data.readRecord(this.recno);
+                    if (matches(this.seq, this.current, filter))
+                        return true;
+                }
             } catch (DapException de) {
                 return false;
             }
@@ -184,7 +187,7 @@ public class CEConstraint
 
         public DataRecord next()
         {
-            if(this.recno >= nrecords || this.current == null)
+            if (this.recno >= nrecords || this.current == null)
                 throw new NoSuchElementException();
             return this.current;
         }
@@ -197,25 +200,25 @@ public class CEConstraint
         /* Evaluator */
         protected boolean
         matches(DapSequence seq, DataRecord record, CEAST expr)
-            throws DapException
+                throws DapException
         {
-            if(expr.sort == CEAST.Sort.EXPR) {
+            if (expr.sort == CEAST.Sort.EXPR) {
                 switch (expr.lhs.sort) {
                 case EXPR:
-                    if(expr.op == CEAST.Operator.AND) {
+                    if (expr.op == CEAST.Operator.AND) {
                         boolean lhstrue = matches(seq, record, expr.lhs);
                         boolean rhstrue = matches(seq, record, expr.rhs);
                         return lhstrue && rhstrue;
                     } else {
                         Object lvalue = null;
                         Object rvalue = null;
-                        if(expr.lhs.sort == CEAST.Sort.CONSTANT)
+                        if (expr.lhs.sort == CEAST.Sort.CONSTANT)
                             lvalue = expr.lhs.value;
-                        else if(expr.rhs.sort == CEAST.Sort.CONSTANT)
+                        else if (expr.rhs.sort == CEAST.Sort.CONSTANT)
                             rvalue = expr.rhs.value;
-                        else if(expr.lhs.sort == CEAST.Sort.SEGMENT)
+                        else if (expr.lhs.sort == CEAST.Sort.SEGMENT)
                             lvalue = eval(seq, record, expr.lhs.name);
-                        else if(expr.rhs.sort == CEAST.Sort.SEGMENT)
+                        else if (expr.rhs.sort == CEAST.Sort.SEGMENT)
                             rvalue = eval(seq, record, expr.rhs.name);
                         int comparison = compare(lvalue, rvalue);
                         switch (expr.op) {
@@ -244,14 +247,14 @@ public class CEConstraint
 
         protected Object
         eval(DapSequence seq, DataRecord record, String field)
-            throws DapException
+                throws DapException
         {
             DapVariable dapv = seq.findByName(field);
-            if(dapv == null)
+            if (dapv == null)
                 throw new DapException("Unknown variable in filter: " + field);
-            if(dapv.getSort() != DapSort.ATOMICVARIABLE)
+            if (dapv.getSort() != DapSort.ATOMICVARIABLE)
                 throw new DapException("Non-atomic variable in filter: " + field);
-            if(dapv.getRank() > 0)
+            if (dapv.getRank() > 0)
                 throw new DapException("Non-scalar variable in filter: " + field);
             DataAtomic da = (DataAtomic) (record.readfield(field));
             return da.read(0);
@@ -259,21 +262,21 @@ public class CEConstraint
 
         protected int
         compare(Object lvalue, Object rvalue)
-            throws DapException
+                throws DapException
         {
-            if(lvalue instanceof String && rvalue instanceof String)
+            if (lvalue instanceof String && rvalue instanceof String)
                 return ((String) lvalue).compareTo((String) rvalue);
-            if(lvalue instanceof Boolean && rvalue instanceof Boolean)
+            if (lvalue instanceof Boolean && rvalue instanceof Boolean)
                 return compare((Boolean) lvalue ? 1 : 0, (Boolean) rvalue ? 1 : 0);
-            if(lvalue instanceof Double || lvalue instanceof Float
-                 || rvalue instanceof Double || rvalue instanceof Float) {
-                double d1 = ((Number)lvalue).doubleValue();
-                double d2 = ((Number)lvalue).doubleValue();
-                return Double.compare(d1,d2);
+            if (lvalue instanceof Double || lvalue instanceof Float
+                    || rvalue instanceof Double || rvalue instanceof Float) {
+                double d1 = ((Number) lvalue).doubleValue();
+                double d2 = ((Number) lvalue).doubleValue();
+                return Double.compare(d1, d2);
             } else {
-                long l1 = ((Number)lvalue).longValue();
-                long l2 = ((Number)rvalue).longValue();
-                return Long.compare(l1,l2);
+                long l1 = ((Number) lvalue).longValue();
+                long l2 = ((Number) rvalue).longValue();
+                return Long.compare(l1, l2);
             }
         }
     }
@@ -353,7 +356,7 @@ public class CEConstraint
     public List<Slice> getVariableSlices(DapVariable var)
     {
         int index = findVariable(var);
-        if(index < 0)
+        if (index < 0)
             return null;
         return this.variables.get(index).slices;
     }
@@ -365,14 +368,14 @@ public class CEConstraint
 
     public void addVariable(DapVariable var, List<Slice> slices)
     {
-        if(findVariable(var) < 0)
+        if (findVariable(var) < 0)
             this.variables.add(new Segment(var, slices));
     }
 
     public void addAttribute(DapNode node, DapAttribute attr)
     {
         List<DapAttribute> attrs = this.attributes.get(node);
-        if(attrs == null) {
+        if (attrs == null) {
             attrs = new ArrayList<DapAttribute>();
             this.attributes.put(node, attrs);
         }
@@ -382,7 +385,7 @@ public class CEConstraint
     public void setFilter(DapVariable var, CEAST filter)
     {
         Segment seg = findSegment(var);
-        if(seg != null)
+        if (seg != null)
             seg.filter = filter;
     }
 
@@ -393,11 +396,11 @@ public class CEConstraint
     {
         StringBuilder buf = new StringBuilder();
         boolean first = true;
-        for(int i = 0;i < variables.size();i++) {
+        for (int i = 0; i < variables.size(); i++) {
             Segment seg = variables.get(i);
-            if(!seg.var.isTopLevel())
+            if (!seg.var.isTopLevel())
                 continue;
-            if(!first) buf.append(";");
+            if (!first) buf.append(";");
             first = false;
             dumpvar(seg, buf, false);
         }
@@ -414,7 +417,7 @@ public class CEConstraint
         switch (node.getSort()) {
         case DIMENSION:
             DapDimension dim = this.redef.get((DapDimension) node);
-            if(dim == null) dim = (DapDimension) node;
+            if (dim == null) dim = (DapDimension) node;
             isref = this.dimrefs.contains(dim);
             break;
         case ENUMERATION:
@@ -445,9 +448,9 @@ public class CEConstraint
      */
     public CEConstraint
     finish(boolean expand)
-        throws DapException
+            throws DapException
     {
-        if(!finished) {
+        if (!finished) {
             finished = true;
             expandCompoundTypes();
             // order is important
@@ -468,11 +471,11 @@ public class CEConstraint
     {
         StringBuilder buf = new StringBuilder();
         boolean first = true;
-        for(int i = 0;i < variables.size();i++) {
+        for (int i = 0; i < variables.size(); i++) {
             Segment seg = variables.get(i);
-            if(!seg.var.isTopLevel())
+            if (!seg.var.isTopLevel())
                 continue;
-            if(!first) buf.append(";");
+            if (!first) buf.append(";");
             first = false;
             dumpvar(seg, buf, true);
         }
@@ -489,37 +492,37 @@ public class CEConstraint
     protected void
     dumpvar(Segment seg, StringBuilder buf, boolean forconstraint)
     {
-        if(seg.var.isTopLevel())
+        if (seg.var.isTopLevel())
             buf.append(seg.var.getFQN());
         else
             buf.append(seg.var.getShortName());
         // Add any slices
         List<Slice> slices = seg.slices;
         List<DapDimension> dimset = seg.var.getDimensions();
-        if(slices != null)
+        if (slices != null)
             assert dimset.size() == slices.size();
-        for(int i = 0;i < dimset.size();i++) {
+        for (int i = 0; i < dimset.size(); i++) {
             Slice slice = slices.get(i);
             DapDimension dim = dimset.get(i);
-            if(!slice.isConstrained() && slice.isWhole())
+            if (!slice.isConstrained() && slice.isWhole())
                 buf.append("[]");
             else
                 buf.append(forconstraint ? slice.toConstraintString() : slice.toString());
         }
 
         // if the var is atomic, then we are done
-        if(seg.var.getSort() == DapSort.ATOMICVARIABLE)
+        if (seg.var.getSort() == DapSort.ATOMICVARIABLE)
             return;
         // If structure and all fields are in the view, then done
-        if(seg.var.getSort() == DapSort.STRUCTURE
-            && isWholeStructure((DapStructure) seg.var))
+        if (seg.var.getSort() == DapSort.STRUCTURE
+                && isWholeStructure((DapStructure) seg.var))
             return;
         // Need to insert {...} and recurse
         buf.append(LBRACE);
         DapStructure struct = (DapStructure) seg.var;
         boolean first = true;
-        for(DapVariable field : struct.getFields()) {
-            if(!first) buf.append(";");
+        for (DapVariable field : struct.getFields()) {
+            if (!first) buf.append(";");
             first = false;
             Segment fseg = findSegment(field);
             dumpvar(fseg, buf, forconstraint);
@@ -549,7 +552,8 @@ public class CEConstraint
     filterIterator(DapSequence dapseq, DataSequence dataseq)
     {
         // Locate the filter for this sequence
-        return new Filter(dapseq,dataseq, this.filter);
+        Segment seg = findSegment(dapseq);
+        return new Filter(dapseq, dataseq, seg.filter);
     }
 
 
@@ -559,8 +563,8 @@ public class CEConstraint
     /* Search the set of variables */
     protected int findVariable(DapVariable var)
     {
-        for(int i = 0;i < variables.size();i++) {
-            if(variables.get(i).var == var)
+        for (int i = 0; i < variables.size(); i++) {
+            if (variables.get(i).var == var)
                 return i;
         }
         return -1;
@@ -568,8 +572,8 @@ public class CEConstraint
 
     protected Segment findSegment(DapVariable var)
     {
-        for(int i = 0;i < variables.size();i++) {
-            if(variables.get(i).var == var)
+        for (int i = 0; i < variables.size(); i++) {
+            if (variables.get(i).var == var)
                 return variables.get(i);
         }
         return null;
@@ -582,12 +586,12 @@ public class CEConstraint
     protected boolean
     isWholeStructure(DapStructure struct)
     {
-        for(DapVariable field : struct.getFields()) {
-            if(findVariable(field) < 0)
+        for (DapVariable field : struct.getFields()) {
+            if (findVariable(field) < 0)
                 return false;
-            if(field.getSort() == DapSort.STRUCTURE) {
+            if (field.getSort() == DapSort.STRUCTURE) {
                 // recurse
-                if(!isWholeStructure((DapStructure) field))
+                if (!isWholeStructure((DapStructure) field))
                     return false;
             }
         }
@@ -607,28 +611,28 @@ public class CEConstraint
     {
         // Create a queue of unprocessed leaf compounds
         Queue<DapVariable> queue = new ArrayDeque<DapVariable>();
-        for(int i = 0;i < variables.size();i++) {
+        for (int i = 0; i < variables.size(); i++) {
             Segment seg = variables.get(i);
-            if(!seg.var.isTopLevel())
+            if (!seg.var.isTopLevel())
                 continue;
             // prime the queue
-            if(seg.var.getSort() == DapSort.STRUCTURE || seg.var.getSort() == DapSort.SEQUENCE) {
+            if (seg.var.getSort() == DapSort.STRUCTURE || seg.var.getSort() == DapSort.SEQUENCE) {
                 DapStructure struct = (DapStructure) seg.var; // remember Sequence subclass Structure
-                if(expansionCount(struct) == 0)
+                if (expansionCount(struct) == 0)
                     queue.add(seg.var);
             }
         }
         // Process the queue in prefix order
-        while(queue.size() > 0) {
+        while (queue.size() > 0) {
             DapVariable vvstruct = queue.remove();
             DapStructure dstruct = (DapStructure) vvstruct;
-            for(DapVariable field : dstruct.getFields()) {
-                if(findVariable(field) < 0) {
+            for (DapVariable field : dstruct.getFields()) {
+                if (findVariable(field) < 0) {
                     // Add field as leaf
                     this.variables.add(new Segment(field));
                 }
-                if(field.getSort() == DapSort.STRUCTURE || field.getSort() == DapSort.SEQUENCE) {
-                    if(expansionCount((DapStructure) field) == 0)
+                if (field.getSort() == DapSort.STRUCTURE || field.getSort() == DapSort.SEQUENCE) {
+                    if (expansionCount((DapStructure) field) == 0)
                         queue.add(field);
                 }
             }
@@ -648,8 +652,8 @@ public class CEConstraint
     expansionCount(DapStructure struct)
     {
         int count = 0;
-        for(DapVariable field : struct.getFields()) {
-            if(findVariable(field) >= 0) count++;
+        for (DapVariable field : struct.getFields()) {
+            if (findVariable(field) >= 0) count++;
         }
         return count;
     }
@@ -692,10 +696,10 @@ public class CEConstraint
      */
     protected void
     computedimensions()
-        throws DapException
+            throws DapException
     {
         // Build the redefmap
-        for(DapDimension key : redefslice.keySet()) {
+        for (DapDimension key : redefslice.keySet()) {
             Slice slice = redefslice.get(key);
             DapDimension newdim = (DapDimension) key.clone();
             newdim.setSize(slice.getCount());
@@ -703,33 +707,35 @@ public class CEConstraint
         }
 
         // Process each variable
-        for(int i = 0;i < variables.size();i++) {
+        for (int i = 0; i < variables.size(); i++) {
             Segment seg = variables.get(i);
-            if(seg.var.getRank() == 0)
+            if (seg.var.getRank() == 0)
                 continue;
             List<Slice> slices = seg.slices;
             List<DapDimension> orig = seg.var.getDimensions();
             // If the slice list is short then pad it with
             // default slices
-            if(slices == null)
+            if (slices == null)
                 slices = new ArrayList<Slice>();
-            while(slices.size() < orig.size()) // pad
+            while (slices.size() < orig.size()) // pad
+            {
                 slices.add(new Slice().setConstrained(false));
+            }
             assert (slices != null && slices.size() == orig.size());
-            for(int j = 0;j < slices.size();j++) {
+            for (int j = 0; j < slices.size(); j++) {
                 Slice slice = slices.get(j);
                 DapDimension dim0 = orig.get(j);
                 DapDimension newdim = redef.get(dim0);
-                if(newdim == null) newdim = dim0;
-                if(slice.incomplete())  // fill in the undefined last value
+                if (newdim == null) newdim = dim0;
+                if (slice.incomplete())  // fill in the undefined last value
                     slice.complete(newdim);
                 Slice newslice = null;
-                if(!slice.isConstrained()) {
+                if (!slice.isConstrained()) {
                     // replace with a new slice from the dim
                     newslice = new Slice().fill(newdim);
-                    if(newslice != null) {
+                    if (newslice != null) {
                         // track set of referenced non-anonymous dimensions
-                        if(!dimrefs.contains(dim0)) dimrefs.add(dim0);
+                        if (!dimrefs.contains(dim0)) dimrefs.add(dim0);
                         slices.set(j, newslice);
                     }
                 }
@@ -743,14 +749,14 @@ public class CEConstraint
      */
     protected void computeenums()
     {
-        for(int i = 0;i < variables.size();i++) {
+        for (int i = 0; i < variables.size(); i++) {
             Segment seg = variables.get(i);
-            if(seg.var.getSort() != DapSort.ATOMICVARIABLE)
+            if (seg.var.getSort() != DapSort.ATOMICVARIABLE)
                 continue;
             DapType daptype = seg.var.getBaseType();
-            if(!daptype.isEnumType())
+            if (!daptype.isEnumType())
                 continue;
-            if(!this.enums.contains((DapEnum) daptype))
+            if (!this.enums.contains((DapEnum) daptype))
                 this.enums.add((DapEnum) daptype);
         }
     }
@@ -762,29 +768,29 @@ public class CEConstraint
     protected void computegroups()
     {
         // 1. variables
-        for(int i = 0;i < variables.size();i++) {
+        for (int i = 0; i < variables.size(); i++) {
             DapVariable var = variables.get(i).var;
             List<DapGroup> path = var.getGroupPath();
-            for(DapGroup group : path) {
-                if(!this.groups.contains(group))
+            for (DapGroup group : path) {
+                if (!this.groups.contains(group))
                     this.groups.add(group);
             }
         }
         // 2. Dimensions
-        for(DapDimension dim : this.dimrefs) {
-            if(!dim.isShared())
+        for (DapDimension dim : this.dimrefs) {
+            if (!dim.isShared())
                 continue;
             List<DapGroup> path = dim.getGroupPath();
-            for(DapGroup group : path) {
-                if(!this.groups.contains(group))
+            for (DapGroup group : path) {
+                if (!this.groups.contains(group))
                     this.groups.add(group);
             }
         }
         // 2. enumerations
-        for(DapEnum en : this.enums) {
+        for (DapEnum en : this.enums) {
             List<DapGroup> path = en.getGroupPath();
-            for(DapGroup group : path) {
-                if(!this.groups.contains(group))
+            for (DapGroup group : path) {
+                if (!this.groups.contains(group))
                     this.groups.add(group);
             }
         }

@@ -141,8 +141,8 @@ Convert field references in a filter
 	    if(expr.field == null)
 	        throw new DapException("compilefilter: Unknown filter variable:"+expr.name);
 	} else if(expr.sort == CEAST.Sort.EXPR) {
-	    compilefilter(expr.lhs);
-	    compilefilter(expr.rhs);
+	    compilefilter(seq,expr.lhs);
+	    compilefilter(seq,expr.rhs);
 	} else if(expr.sort == CEAST.Sort.CONSTANT) {
 	    return;
 	} else
