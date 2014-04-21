@@ -173,7 +173,7 @@ public class TestCDMClient extends DapTestCommon
     chooseTestcases()
     {
         if(true) {
-            chosentests = locate("test_atomic_array.nc");
+            chosentests = locate("test_opaque.nc");
         } else {
             for(ClientTest tc : alltestcases)
                 chosentests.add(tc);
