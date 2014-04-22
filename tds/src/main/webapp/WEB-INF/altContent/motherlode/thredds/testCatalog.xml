@@ -53,7 +53,7 @@
   <!-- catalogRef xlink:href="cdmremoteCatalog.xml" xlink:title="CDM Remote Test datasets" name=""/ -->
 
   <!-- dennis -->
-  <datasetScan name="OPeNDAP Test Data" ID="testdods" path="testdods" location="/data/testdods/">
+  <datasetScan name="OPeNDAP Test Data" ID="testdods" path="testdods" location="/opt/testdods/">
     <metadata inherited="true">
       <serviceName>odap</serviceName>
       <dataType>Grid</dataType>
