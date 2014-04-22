@@ -44,7 +44,7 @@ public class UnitTestCommon extends TestCase
 
     // Hold the primary server names here so we do not
     // have to search all over
-    static final public String REMOTESERVER = "remotetest.unidata.ucar.edu";
+    static final public String DEFAULTSERVER = "remotetest.unidata.ucar.edu";
 
     /**
      * Temporary data directory (for writing temporary data).

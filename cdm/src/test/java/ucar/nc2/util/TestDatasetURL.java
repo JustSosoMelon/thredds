@@ -47,12 +47,9 @@ import java.io.File;
  * @author caron
  * @since Jun 16, 2008
  */
-public class TestDatasetURL extends TestCase {
+public class TestDatasetURL extends UnitTestCommon {
 
  
-  static public final String REMOTESERVER = "remotetest.unidata.ucar.edu";
-
-
   public TestDatasetURL(String name) {
     super(name);
   }
@@ -99,7 +96,7 @@ public class TestDatasetURL extends TestCase {
   }
 
   public void testDods() throws URISyntaxException {
-    String uriString = "http://"+REMOTESERVER+"/dts/test.53.dods?types[0:1:9]";
+    String uriString = "http://"+DEFAULTSERVER+"/dts/test.53.dods?types[0:1:9]";
     new URI(uriString);
   }
 

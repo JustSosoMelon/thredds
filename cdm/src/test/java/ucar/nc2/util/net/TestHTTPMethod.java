@@ -46,7 +46,7 @@ public class TestHTTPMethod extends UnitTestCommon
     //////////////////////////////////////////////////
     // Constants
 
-    static final String baseurl = "http://"+REMOTESERVER+"/dts";
+    static final String baseurl = "http://"+DEFAULTSERVER+"/dts";
     static String relativebaseline = "/cdm/src/test/data/ucar/nc2/util/net";
 
     static final String testcase = "test.01.dds";

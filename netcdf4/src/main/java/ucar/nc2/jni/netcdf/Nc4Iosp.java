@@ -105,9 +105,11 @@ public class Nc4Iosp extends AbstractIOServiceProvider implements IOServiceProvi
         DEFAULTJNAPATH = "c:/opt/jna";
     else
         DEFAULTJNAPATH = 
-                        "/home/dmh/opt/jna/lib" //temporary until I get sudo on lucille
+                        "/home/dmh/opt/jna/lib" //temporary
+/*
                         + sep + "/home/mhermida/opt/lib" //temporary
 			+ sep + "/usr/local/lib" // this is probably what it should be
+*/
                         ;
   }
 
@@ -170,6 +172,8 @@ public class Nc4Iosp extends AbstractIOServiceProvider implements IOServiceProvi
     if (nc4 == null) {
       if (jnaPath != null) {
         //Native.setProtected(true);
+          System.err.printf("XXXX: jnaPath=%s libName=%s\n",jnaPath,libName);
+          System.err.flush();
         nc4 = (Nc4prototypes) Native.loadLibrary(libName, Nc4prototypes.class);
         if (debug)
           System.out.printf(" Netcdf nc_inq_libvers='%s' isProtected=%s %n ", nc4.nc_inq_libvers(), Native.isProtected());
